@@ -1,19 +1,19 @@
-import React, { useState, useMemo } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { OTAProvider } from '../context/OTAContext';
+import { COLORS, SP, T } from '../lib/tokens';
 import GradientHeader from './GradientHeader';
-import StatsHeader from './StatsHeader';
-import SearchBar from './SearchBar';
-import SubjectCard from './SubjectCard';
 import QuickTip from './QuickTip';
+import SearchBar from './SearchBar';
+import StatsHeader from './StatsHeader';
+import SubjectCard from './SubjectCard';
 import SubjectDetailModal from './SubjectDetailModal';
-import { T, SP, CARD, COLORS, isSmall } from '../lib/tokens';
 
 interface SubjectItem {
   subject: string; code: string; total: number; present: number;
   absent: number; percentage: number;
-  records: Array<{ date: string; status: string }>; error?: string;
+  records: { date: string; status: string }[]; error?: string;
 }
 
 interface AttendanceScreenProps {
@@ -45,14 +45,14 @@ function Inner({ data, onBack }: Omit<AttendanceScreenProps, 'bundledScript'>) {
     <>
       <GradientHeader name={studentName} studentId={studentId} semester={data.semester} />
       <StatsHeader totalSubjects={data.subjects.length} avgPercent={data.overall.overallPercent} totalPresent={data.overall.totalPresent} totalDays={data.overall.totalDays} />
-      <QuickTip />
       <View style={s.sectionHead}>
-        <View>
-          <Text style={T.h3}>Subject-wise Attendance</Text>
-          <Text style={[T.micro, { color: COLORS.textMut, marginTop: 1 }]}>{data.subjects.length} subjects / {filtered.length} shown</Text>
+        <Text style={s.shLabel}>Subject-wise Attendance</Text>
+        <View style={s.shLine} />
+        <View style={[s.shBadge, { backgroundColor: '#EFF6FF', borderColor: '#BFDBFE' }]}>
+          <Text style={[s.shBadgeText, { color: '#1D4ED8' }]}>{data.subjects.length} subjects</Text>
         </View>
-        <View style={s.filterChip}><Text style={[T.micro, { color: COLORS.accent }]}>All</Text></View>
       </View>
+      <QuickTip />
       <SearchBar value={search} onChangeText={setSearch} />
     </>
   );
@@ -63,7 +63,7 @@ function Inner({ data, onBack }: Omit<AttendanceScreenProps, 'bundledScript'>) {
         <TouchableOpacity onPress={onBack} style={s.backBtn}>
           <Text style={s.backArrow}>{'<'}</Text>
         </TouchableOpacity>
-        <Text style={T.h3}>Attendance Dashboard</Text>
+        <Text style={s.navTitle}>Attendance Dashboard</Text>
         <View style={{ width: 34 }} />
       </View>
       <FlatList
@@ -86,10 +86,38 @@ function Inner({ data, onBack }: Omit<AttendanceScreenProps, 'bundledScript'>) {
 
 const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: COLORS.bg },
-  nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: CARD.marginH, paddingVertical: SP.md, backgroundColor: COLORS.white, borderBottomWidth: 1, borderBottomColor: CARD.border },
+  nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: COLORS.white, borderBottomWidth: 1, borderBottomColor: COLORS.borderLight },
   backBtn: { width: 34, height: 34, borderRadius: 10, backgroundColor: COLORS.surface, alignItems: 'center', justifyContent: 'center' },
   backArrow: { fontSize: 18, color: COLORS.textMut, fontWeight: '700' },
-  sectionHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: CARD.marginH, marginTop: SP.md, marginBottom: SP.xs },
-  filterChip: { backgroundColor: COLORS.accentLight, paddingHorizontal: SP.xl, paddingVertical: SP.xs, borderRadius: 20, borderWidth: 1, borderColor: '#DDD6FE' },
+  navTitle: { fontSize: 16, fontWeight: '700', color: COLORS.text },
+  sectionHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 14,
+    paddingHorizontal: 16,
+  },
+  shLabel: {
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 1.8,
+    textTransform: 'uppercase',
+    color: COLORS.textMut,
+  },
+  shLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: COLORS.borderLight,
+  },
+  shBadge: {
+    paddingHorizontal: 9,
+    paddingVertical: 3,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  shBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+  },
   empty: { paddingVertical: 48, alignItems: 'center' },
 });

@@ -7,7 +7,7 @@ import WebView, { WebViewMessageEvent } from 'react-native-webview';
 import { SCRAPER_SCRIPT } from '../lib/scraperScript';
 import { OTAContext, OTAProvider } from '../context/OTAContext';
 import AttendanceScreen from '../components/AttendanceScreen';
-import { T, SP, COLORS, isSmall } from '../lib/tokens';
+import { T, SP, COLORS } from '../lib/tokens';
 
 export default function Index() {
   return (

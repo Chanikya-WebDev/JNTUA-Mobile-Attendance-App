@@ -23,4 +23,5 @@ export const DEFAULT_OTA_CONFIG: OTAConfig = {
   accentColor: '#7C3AED',
   portalUrl: 'https://jntuaceastudents.classattendance.in/',
   showQuickTip: true,
+  quickTipText: 'Maintain 75% attendance to stay eligible for exams.',
 };

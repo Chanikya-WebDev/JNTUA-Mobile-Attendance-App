@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create, StateCreator } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -11,7 +11,7 @@ interface Subject {
   present: number;
   absent: number;
   percentage: number;
-  records: Array<{ date: string; status: string }>;
+  records: { date: string; status: string }[];
   error?: string;
 }
 
@@ -35,25 +35,33 @@ interface AttendanceState {
 }
 
 // Debug logging for Zustand store
-const storeLogger = (config) => (set, get, api) =>
-  config((...args) => {
-    console.log('Zustand store action:', args);
-    set(...args);
+type AttendanceStoreCreator = StateCreator<AttendanceState, [], [], AttendanceState>;
+
+const storeLogger = (config: AttendanceStoreCreator): AttendanceStoreCreator => (set, get, api) =>
+  config((partial, replace) => {
+    console.log('Zustand store action:', partial);
+    if (replace) {
+      set(partial as AttendanceState | ((state: AttendanceState) => AttendanceState), true);
+      return;
+    }
+    set(partial as Partial<AttendanceState> | ((state: AttendanceState) => Partial<AttendanceState>), false);
   }, get, api);
+
+const attendanceStoreCreator: AttendanceStoreCreator = (set) => ({
+  data: null,
+  setData: (data) => {
+    console.log('Zustand: Setting attendance data:', data);
+    set({ data });
+  },
+  clearData: () => {
+    console.log('Zustand: Clearing attendance data');
+    set({ data: null });
+  },
+});
 
 export const useAttendanceStore = create<AttendanceState>()(
   persist(
-    storeLogger((set) => ({
-      data: null,
-      setData: (data) => {
-        console.log('Zustand: Setting attendance data:', data);
-        set({ data });
-      },
-      clearData: () => {
-        console.log('Zustand: Clearing attendance data');
-        set({ data: null });
-      },
-    })),
+    storeLogger(attendanceStoreCreator),
     {
       name: 'attendance-store',
       storage: createJSONStorage(() => AsyncStorage),

@@ -227,6 +227,9 @@ The project uses EAS Update.
 Examples:
 
 - `App.tsx`
+- `views/` (Dashboard, OverlayScreens, WebViewScraper)
+- `components/` (CrabScene, Spike, DateLogModal)
+- `constants/theme.ts`
 - UI changes
 - TypeScript logic
 - scraper JavaScript
@@ -374,7 +377,7 @@ WebView bridge payloads should be runtime-validated before business logic consum
 - [ ] Attendance parsing works.
 - [ ] Dashboard calculations are correct.
 - [ ] Previous attendance works.
-- [ ] Reset/back behavior works.
+- [ ] Reset/back behavior works (↻ button resets; Android back handler is **not yet implemented**).
 - [ ] Portal failure handling works.
 - [ ] OTA update flow works in a standalone build.
 

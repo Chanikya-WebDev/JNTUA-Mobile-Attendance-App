@@ -23,7 +23,7 @@ All work must strictly adhere to the project's installed configuration. The `pac
 
 | Component | Package | Version |
 |-----------|---------|---------|
-| Expo SDK | `expo` | `~54.0.35` |
+| Expo SDK | `expo` | `~54.0.37` |
 | React Native | `react-native` | `0.81.5` |
 | React | `react` / `react-dom` | `19.1.0` |
 | TypeScript | `typescript` | `~5.9.2` |
@@ -34,9 +34,9 @@ All work must strictly adhere to the project's installed configuration. The `pac
 | Library | Version | Usage |
 |---------|---------|-------|
 | `react-native-webview` | `13.15.0` | Embedded portal WebView for scraping |
-| `expo-updates` | `~29.0.19` | Over-the-air update management |
-| `expo-file-system` | `~19.0.23` | Local persistence of scraped attendance data |
-| `expo-constants` | `~18.0.13` | Execution environment detection |
+| `expo-updates` | `~29.0.20` | Over-the-air update management |
+| `expo-file-system` | `~19.0.24` | Local persistence of scraped attendance data |
+| `expo-constants` | `~18.0.14` | Execution environment detection |
 | `expo-splash-screen` | `~31.0.13` | Splash screen lifecycle management |
 | `expo-build-properties` | `~1.0.10` | Android build configuration (buildArchs, minification) |
 | `react-native-web` | `~0.21.0` | Web rendering compatibility |
@@ -121,9 +121,17 @@ Any new native module (e.g., a native code dependency) requires a fresh EAS buil
 
 - All props, parameters, return types, and hook signatures must be fully typed.
 - Keep logic, styling, state management, and UI rendering cleanly decoupled across modules:
-  - `App.tsx` — UI rendering and WebView orchestration only.
-  - `utils/automationScripts.ts` — scraping scripts and shared TypeScript interfaces.
-  - `utils/storage.ts` — local persistence helpers.
+  - `App.tsx` — Top-level orchestrator: state dispatch, side-effects, message routing, render dispatch only.
+  - `reducers/appReducer.ts` — Typed `AppState`, `AppAction` discriminated union, `initialState`, `preserveSession`.
+  - `constants/theme.ts` — Color palette, `SERIF` font, `GITHUB_URL`, `STALL_TIMEOUT_MS`.
+  - `components/Spike.tsx` — Decorative spike element.
+  - `components/CrabScene.tsx` — Pure `Animated` API crab loader.
+  - `components/DateLogModal.tsx` — Attendance log modal with `FlatList`.
+  - `views/WebViewScraper.tsx` — WebView, user-agent, injected scripts, refresh-control, Previous Attendance button.
+  - `views/OverlayScreens.tsx` — Syncing/error overlays (CrabScene-based).
+  - `views/Dashboard.tsx` — Profile, summary card, subject list, skip/attend math, GitHub footer.
+  - `utils/automationScripts.ts` — Scraping scripts and shared TypeScript interfaces.
+  - `utils/storage.ts` — Local persistence helpers.
   - `utils/updateManager.ts` — OTA update lifecycle management.
 - Do not duplicate or mirror state. Derive calculated values directly during render (e.g., `overallPercentage`, `calculateCanSkip`).
 
@@ -137,20 +145,26 @@ Any new native module (e.g., a native code dependency) requires a fresh EAS buil
 
 The app drives the JNTUA-CEA portal through a `WebView` and extracts data via `window.ReactNativeWebView.postMessage`. The scraping flow is URL-driven:
 
-1. **`studenthome.php`** — `autoSubmitFirstSemesterScript` extracts student info (`STUDENT_INFO`), submits the subjects form.
-2. **`studentsubjects.php`** — `selectSubjectByIndexScript(index)` finds subject rows, reports `SUBJECT_COUNT`, clicks the row at `currentIndex`. Posts `SCRAPING_COMPLETE` when `currentIndex` exceeds the row count.
-3. **`studentsubatt.php`** — `parseDetailedAttendanceAndGoHomeScript` parses the attendance table, posts `ATTENDANCE_ITEM`, then navigates back to the home page.
+1. **`studenthome.php`** — `autoSubmitFirstSemesterScript` extracts student info (`STUDENT_INFO`), clears `sessionStorage.fetchedSubjectCodes`, submits the form whose `action` is `studentsubjects.php`.
+2. **`studentsubjects.php`** — `selectSubjectByIndexScript(index)` finds subject rows, reports `SUBJECT_COUNT`, checks `sessionStorage.fetchedSubjectCodes` to skip already-fetched subjects (posts `SUBJECT_SKIPPED`), clicks the row at `currentIndex`. Posts `SCRAPING_COMPLETE` when `currentIndex` exceeds the row count.
+3. **`studentsubatt.php`** — `parseDetailedAttendanceAndGoHomeScript` parses the attendance table, posts `ATTENDANCE_ITEM` (including `subCode` at runtime), tracks completed subjects in `sessionStorage`, navigates back to the home page. On table-load timeout (25 attempts), posts `SCRAPE_ERROR`.
 
 JavaScript is injected via `webViewRef.current?.injectJavaScript()` inside the `onNavigationStateChange` callback. Scripts must always end with `true;` to keep the WebView bridge alive.
+
+**Gap — Messaging protocol mismatch:** The scripts post `SUBJECT_SKIPPED` and `SCRAPE_ERROR`, but `App.tsx`'s `MessagePayload` type and `handleMessage` switch only handle `STUDENT_INFO`, `SUBJECT_COUNT`, `ATTENDANCE_ITEM`, `STRUCTURE_CHANGED`, and `SCRAPING_COMPLETE`. `STRUCTURE_CHANGED` is declared and handled (`SET_STRUCTURE_ERROR`) but is never posted by any script — the script posts `SCRAPE_ERROR` on timeout instead. `SUBJECT_SKIPPED` is not in the `MessagePayload` union and has no case in the switch.
 
 ### D. State Management
 
 - All dashboard state lives in a single `useReducer` with a typed `AppState` and discriminated-union `AppAction`.
-- The full `AppState` includes: `webViewKey`, `isLoggedIn`, `studentInfo`, `currentIndex`, `totalSubjects`, `fetchedIndices`, `subjectsData`, `isScrapingFinished`, `selectedSubject`, `hasPreviousResult`, `previousResult`, `isSelectionError`, `isSplashDismissed`, and `gatewayError`.
-- `RESET` returns to `initialState` while preserving `hasPreviousResult`, `previousResult`, `isSplashDismissed`, and bumping `webViewKey` (via `preserveSession`) — so the "Previous Attendance" button persists after Back is pressed and the WebView re-mounts fresh.
+- The full `AppState` includes: `webViewKey`, `isLoggedIn`, `studentInfo`, `currentIndex`, `totalSubjects`, `fetchedIndices`, `subjectsData`, `isScrapingFinished`, `selectedSubject`, `hasPreviousResult`, `previousResult`, `isSelectionError`, `isStructureError`, `isOffline`, `isSplashDismissed`, and `gatewayError`.
+- `RESET` returns to `initialState` while preserving `hasPreviousResult`, `previousResult`, and `isSplashDismissed` (via `preserveSession`) — so the "Previous Attendance" button persists after Back is pressed and the WebView re-mounts fresh.
+- `CLEAR_SELECTION_ERROR` and `CLEAR_GATEWAY_ERROR` also use `preserveSession` to reset error flags without losing persisted state.
 - `HYDRATE_PREVIOUS_RESULT` is a single atomic dispatch that restores the dashboard with zero re-scraping and no WebView re-authentication.
+- **Gap:** The stall detection interval that would dispatch `SET_SELECTION_ERROR` is **not implemented** in `App.tsx`. The `lastActivityRef` is updated in `handleMessage` but never polled. The `STALL_TIMEOUT_MS` constant (25_000 in both `App.tsx` and `constants/theme.ts`) is unused for active detection.
+- **Gap:** The Android `BackHandler` and web `popstate` listener described in Section 6.C are **not implemented**. `App.tsx` imports `BackHandler`, `Platform`, `Text`, and `ToastAndroid` but does not use them.
 
-> **[Updated]** `isSelectionError`, `isSplashDismissed`, and `gatewayError` state fields are now documented. The `preserveSession` helper (which preserves these fields on `RESET`, `CLEAR_SELECTION_ERROR`, and `CLEAR_GATEWAY_ERROR`) is now documented. The `CLEAR_GATEWAY_ERROR` and `SET_GATEWAY_ERROR` actions are documented.
+> **[Updated]** `isSelectionError`, `isStructureError`, `isOffline`, `isSplashDismissed`, and `gatewayError` state fields are now documented. The `preserveSession` helper (which preserves `hasPreviousResult`, `previousResult`, and `isSplashDismissed` on `RESET`, `CLEAR_SELECTION_ERROR`, and `CLEAR_GATEWAY_ERROR`) is now documented. The `CLEAR_GATEWAY_ERROR`, `SET_GATEWAY_ERROR`, `SET_OFFLINE`, `CLEAR_SELECTION_ERROR`, and `SET_STRUCTURE_ERROR` actions are documented.
+> **[Gap]** `isStructureError` and `isOffline` are in state and `OverlayScreens` but cannot currently be triggered via the normal scraping flow due to the `SCRAPE_ERROR` / `STRUCTURE_CHANGED` protocol mismatch (see Section 5.C). `isSelectionError` and `SET_SELECTION_ERROR` are declared but the polling interval that would dispatch it is not present in `App.tsx`.
 
 ### E. Persistence Model
 
@@ -168,11 +182,13 @@ JavaScript is injected via `webViewRef.current?.injectJavaScript()` inside the `
 
 ### A. Stall Detection
 
-When the app is logged in but scraping has not finished, an interval checks `lastActivityRef` every second. If no `postMessage` arrives within `STALL_TIMEOUT_MS` (15 seconds), `SET_SELECTION_ERROR` is dispatched, displaying a "Couldn't load subjects right now" overlay.
+When the app is logged in but scraping has not finished, an interval checks `lastActivityRef` every second. If no `postMessage` arrives within `STALL_TIMEOUT_MS` (25 seconds), `SET_SELECTION_ERROR` is dispatched, displaying a "Couldn't load subjects right now" overlay.
+
+**Gap:** The stall detection interval is **not implemented** in `App.tsx`. The `lastActivityRef` is updated in `handleMessage` but the polling `setInterval` that checks its value and dispatches `SET_SELECTION_ERROR` does not exist. The `STALL_TIMEOUT_MS` constant (25_000 in both `App.tsx:24` and `constants/theme.ts:33`) is unused for active detection. The `isSelectionError` state field and `OverlayScreens.tsx` overlay exist but cannot currently be triggered.
 
 ### B. Gateway Error Handling
 
-- HTTP 502 responses from the WebView trigger `SET_GATEWAY_ERROR`.
+- HTTP 502 responses from the WebView trigger `SET_GATEWAY_ERROR` (via the `onHttpError` callback checking `statusCode === 502`).
 - When `gatewayError` is true, an opaque overlay with `CrabScene` animation displays "Main attendance website is not working" with a "Try again" button that dispatches `RESET`.
 - Any subsequent `onLoadStart` call dispatches `CLEAR_GATEWAY_ERROR` to dismiss the overlay once the page loads normally.
 
@@ -180,6 +196,8 @@ When the app is logged in but scraping has not finished, an interval checks `las
 
 - **Hardware back press:** If a modal (subject log) is open, closes it. If the dashboard is shown (`isScrapingFinished && isLoggedIn`), dispatches `RESET` to return to the login flow. If a selection error is shown, dismisses it. Otherwise, a double-tap within 2 seconds exits the app via `BackHandler.exitApp()`, with a "Press back again to exit" toast.
 - **Web popstate:** On web, a `popstate` listener intercepts back-button navigation, routes it through the same `handleBackConsumed` logic, and re-pushes the history state to prevent leaving the app.
+
+**Gap:** The `BackHandler` and `popstate` logic described above is **not implemented** in the current `App.tsx`. `BackHandler`, `Platform`, `Text`, and `ToastAndroid` are imported but never used in the component body. No `BackHandler.addEventListener` call exists, and no `popstate` listener is registered. The hardware back button will use default system behavior.
 
 ### D. Splash Screen Management
 

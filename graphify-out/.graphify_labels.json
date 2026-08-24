@@ -4,14 +4,15 @@
   "2": "expo",
   "3": "scripts",
   "4": "JNTUA Attendance",
-  "5": "devDependencies",
+  "5": "Dashboard.tsx",
   "6": "tsconfig.json",
-  "7": "android",
+  "7": "Project Structure",
   "8": "eslint.config.js",
   "9": "AGENTS.md",
   "10": "BUILD-RULES.md",
   "11": "9. Final Production Gate — Mandatory",
-  "12": "Usage Guide",
-  "13": "Getting Started",
-  "14": "Production Readiness"
+  "12": "Mobile UX Features",
+  "13": "Production Readiness",
+  "14": "OTA Updates (EAS Update)",
+  "15": "Getting Started"
 }

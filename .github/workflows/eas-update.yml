@@ -1,0 +1,57 @@
+name: EAS Update
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: 'Update channel (must match eas.json build profile channel)'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      message:
+        description: 'Update message (defaults to commit SHA)'
+        required: false
+        default: ''
+
+jobs:
+  update:
+    name: Update ${{ inputs.channel }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+
+      - name: Setup Expo + EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Quality gates (lint + typecheck)
+        run: |
+          npm run lint
+          npx tsc --noEmit
+
+      - name: Publish update
+        env:
+          CHANNEL: ${{ inputs.channel }}
+          MESSAGE: ${{ inputs.message || github.sha }}
+        run: |
+          eas update \
+            --channel "$CHANNEL" \
+            --message "$MESSAGE" \
+            --non-interactive

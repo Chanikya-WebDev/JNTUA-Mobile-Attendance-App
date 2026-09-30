@@ -1,15 +1,32 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { WebView, WebViewMessageEvent, WebViewNavigation } from "react-native-webview";
+import { WebView } from "react-native-webview";
+import type {
+  WebViewMessageEvent,
+  WebViewNavigation,
+} from "react-native-webview";
 import type { WebView as WebViewType } from "react-native-webview";
 import { COLORS } from "../constants/theme";
+
+export const PORTAL_BASE_URL = "https://jntuaceastudents.classattendance.in";
+export const PORTAL_HOST = "jntuaceastudents.classattendance.in";
+export const PORTAL_ORIGIN_WHITELIST = ["https://jntuaceastudents.classattendance.in"];
+
+export function isPortalHost(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" && parsed.hostname === PORTAL_HOST;
+  } catch {
+    return false;
+  }
+}
 
 const INJECT_HUMAN_NOTE_JS = `
   (function() {
     if (document.getElementById('human-verify-note')) return;
     var note = document.createElement('div');
     note.id = 'human-verify-note';
-    note.innerHTML = "⚠️ Don't click login until you are verified as human";
+    note.textContent = "⚠️ Don't click login until you are verified as human";
     note.style.cssText = "background-color: #efe9de; color: #cc785c; padding: 10px 14px; margin: 12px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; text-align: center; border: 1px solid #e8e0d2;";
     var form = document.querySelector('form') || document.body;
     form.insertBefore(note, form.firstChild);
@@ -22,6 +39,7 @@ interface WebViewScraperProps {
   webViewKey: number;
   isScrapingFinished: boolean;
   isLoggedIn: boolean;
+  isScrapingActive: boolean;
   hasPreviousResult: boolean;
   onLoadStart: () => void;
   onNavigationStateChange: (navState: WebViewNavigation) => void;
@@ -29,6 +47,7 @@ interface WebViewScraperProps {
   onError: () => void;
   onHttpError: (event: { nativeEvent: { statusCode: number } }) => void;
   onPreviousAttendance: () => void;
+  onRefreshRequest: () => void;
 }
 
 export function WebViewScraper({
@@ -36,6 +55,7 @@ export function WebViewScraper({
   webViewKey,
   isScrapingFinished,
   isLoggedIn,
+  isScrapingActive,
   hasPreviousResult,
   onLoadStart,
   onNavigationStateChange,
@@ -43,8 +63,10 @@ export function WebViewScraper({
   onError,
   onHttpError,
   onPreviousAttendance,
+  onRefreshRequest,
 }: WebViewScraperProps) {
   const handleRefresh = () => {
+    onRefreshRequest();
     webViewRef.current?.reload();
   };
 
@@ -55,7 +77,8 @@ export function WebViewScraper({
           <WebView
             key={webViewKey}
             ref={webViewRef}
-            source={{ uri: "https://jntuaceastudents.classattendance.in/" }}
+            source={{ uri: `${PORTAL_BASE_URL}/` }}
+            originWhitelist={PORTAL_ORIGIN_WHITELIST}
             userAgent="Mozilla/5.0 (Linux; Android 13; SM-S901B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"
             onLoadStart={onLoadStart}
             injectedJavaScript={INJECT_HUMAN_NOTE_JS}
@@ -65,17 +88,23 @@ export function WebViewScraper({
             onHttpError={onHttpError}
             javaScriptEnabled
             domStorageEnabled
+            cacheEnabled
             incognito={false}
+            setSupportMultipleWindows={false}
+            mediaPlaybackRequiresUserAction
+            androidLayerType="hardware"
             style={{ flex: 1 }}
           />
-          <TouchableOpacity style={styles.refreshBtn} onPress={handleRefresh} activeOpacity={0.7}>
-            <Text style={styles.refreshBtnText}>⟳</Text>
-          </TouchableOpacity>
+          {!isScrapingActive && (
+            <TouchableOpacity style={styles.refreshBtn} onPress={handleRefresh} activeOpacity={0.7} accessibilityRole="button" accessibilityLabel="Reload attendance portal">
+              <Text style={styles.refreshBtnText}>⟳</Text>
+            </TouchableOpacity>
+          )}
         </>
       )}
 
       {!isLoggedIn && hasPreviousResult && (
-        <TouchableOpacity style={styles.prevBtn} onPress={onPreviousAttendance} activeOpacity={0.88}>
+        <TouchableOpacity style={styles.prevBtn} onPress={onPreviousAttendance} activeOpacity={0.88} accessibilityRole="button" accessibilityLabel="View previous attendance">
           <Text style={styles.prevBtnIcon}>↺</Text>
           <Text style={styles.prevBtnText}>Previous Attendance</Text>
         </TouchableOpacity>

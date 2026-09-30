@@ -15,11 +15,12 @@ export interface StudentInfo {
 export interface AttendanceRecord {
   date: string;
   time: string;
-  status: 'Present' | 'Absent' | 'Unknown';
+  status: "Present" | "Absent" | "Unknown";
 }
 
 export interface SubjectAttendanceData {
   subjectName: string;
+  subCode?: string;
   present: number;
   absent: number;
   total: number;
@@ -71,6 +72,15 @@ export const autoSubmitFirstSemesterScript = `
 
 export const selectSubjectByIndexScript = (targetIndex: number): string => `
   (function() {
+    function safeParseCodes() {
+      try {
+        const raw = sessionStorage.getItem('fetchedSubjectCodes') || '[]';
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        return [];
+      }
+    }
     let attempts = 0;
     const interval = setInterval(() => {
       attempts++;
@@ -88,7 +98,7 @@ export const selectSubjectByIndexScript = (targetIndex: number): string => `
         }
 
         // State Check: Retrieve stored list of fetched subject codes
-        const fetchedCodes = JSON.parse(sessionStorage.getItem('fetchedSubjectCodes') || '[]');
+        const fetchedCodes = safeParseCodes();
 
         if (${targetIndex} < rows.length) {
           const targetRow = rows[${targetIndex}];
@@ -114,6 +124,12 @@ export const selectSubjectByIndexScript = (targetIndex: number): string => `
         }
       } else if (attempts >= 20) {
         clearInterval(interval);
+        if (window.ReactNativeWebView) {
+          window.ReactNativeWebView.postMessage(JSON.stringify({
+            type: 'SCRAPE_ERROR',
+            message: 'Timed out waiting for subject list to load.'
+          }));
+        }
       }
     }, 200);
   })();
@@ -151,10 +167,16 @@ export const parseDetailedAttendanceAndGoHomeScript = `
 
         // Track completed subject in sessionStorage to avoid re-fetching
         if (subCode) {
-          const fetchedCodes = JSON.parse(sessionStorage.getItem('fetchedSubjectCodes') || '[]');
-          if (!fetchedCodes.includes(subCode)) {
-            fetchedCodes.push(subCode);
-            sessionStorage.setItem('fetchedSubjectCodes', JSON.stringify(fetchedCodes));
+          try {
+            const rawCodes = sessionStorage.getItem('fetchedSubjectCodes') || '[]';
+            const parsedCodes = JSON.parse(rawCodes);
+            const fetchedCodes = Array.isArray(parsedCodes) ? parsedCodes : [];
+            if (!fetchedCodes.includes(subCode)) {
+              fetchedCodes.push(subCode);
+              sessionStorage.setItem('fetchedSubjectCodes', JSON.stringify(fetchedCodes));
+            }
+          } catch (e) {
+            try { sessionStorage.setItem('fetchedSubjectCodes', JSON.stringify([subCode])); } catch (ignored) {}
           }
         }
 

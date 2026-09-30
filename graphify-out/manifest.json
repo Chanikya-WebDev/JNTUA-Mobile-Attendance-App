@@ -1,8 +1,8 @@
 {
   "App.tsx": {
-    "mtime": 1788532723.5725513,
-    "seen": 1788533934.0910814,
-    "ast_hash": "67a3c264f6a1dfc5b2b9c4cb3f867ef0",
+    "mtime": 1790167785.8178585,
+    "seen": 1790174164.8333404,
+    "ast_hash": "bcff79781bb6335652e08e261a38f54c",
     "semantic_hash": ""
   },
   "app.json": {
@@ -30,39 +30,39 @@
     "semantic_hash": "70ae5b7763e0f990f5714771f5f0ec92"
   },
   "utils/automationScripts.ts": {
-    "mtime": 1788533166.268146,
-    "seen": 1788533934.0911045,
-    "ast_hash": "0c1c4521ca32402c6d53c6eb0f04d656",
+    "mtime": 1790167741.545205,
+    "seen": 1790174164.8333688,
+    "ast_hash": "a6e5ba4e5f0b00e6fadb73609406ab16",
     "semantic_hash": ""
   },
   "utils/storage.ts": {
-    "mtime": 1786373852.2833354,
-    "seen": 1788533934.091107,
-    "ast_hash": "412cd644228b7e93f02d4168fe269539",
-    "semantic_hash": "412cd644228b7e93f02d4168fe269539"
+    "mtime": 1790167560.486896,
+    "seen": 1790174164.8333712,
+    "ast_hash": "b089b0de149ecf5036d9249a32dabda3",
+    "semantic_hash": ""
   },
   "utils/updateManager.ts": {
-    "mtime": 1786485445.0548897,
-    "seen": 1788533934.091108,
-    "ast_hash": "eea28c55371c4ef32b7b9c7a065aa25b",
+    "mtime": 1790167988.338892,
+    "seen": 1790174164.833372,
+    "ast_hash": "a8ada61ade66beda8fdc018fc29ffed8",
     "semantic_hash": ""
   },
   "AGENTS.md": {
-    "mtime": 1787580086.627946,
-    "seen": 1788533934.0911129,
-    "ast_hash": "ec1b9889c2d3cd11d1898d35f5a3d4c9",
+    "mtime": 1790172297.1994941,
+    "seen": 1790174164.8333778,
+    "ast_hash": "2f508e4ddbb962d5b02e3fddb14e32ea",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1788534722.2065322,
-    "seen": 1790161901.8280463,
-    "ast_hash": "1db48285dcada5cd8663981a8bf8513a",
+    "mtime": 1790170031.5890384,
+    "seen": 1790174164.83338,
+    "ast_hash": "9a086947854739f2835b404020e910d9",
     "semantic_hash": ""
   },
   "BUILD-RULES.md": {
-    "mtime": 1787580004.0824378,
-    "seen": 1788533934.091114,
-    "ast_hash": "325493d3eed4b598684ae1fc9743a6a0",
+    "mtime": 1790173939.4637136,
+    "seen": 1790174164.833379,
+    "ast_hash": "a447d6fd8e755f65a0212faf774211d3",
     "semantic_hash": ""
   },
   "components/CrabScene.tsx": {
@@ -90,27 +90,27 @@
     "semantic_hash": ""
   },
   "reducers/appReducer.ts": {
-    "mtime": 1788532390.9379041,
-    "seen": 1788533934.0910964,
-    "ast_hash": "35f883b383bcfc2ae9896a3a93236578",
+    "mtime": 1790167532.0906892,
+    "seen": 1790174164.8333626,
+    "ast_hash": "90045d4bd245bc3f40f25a23be7f5487",
     "semantic_hash": ""
   },
   "views/Dashboard.tsx": {
-    "mtime": 1787576137.9713032,
-    "seen": 1788533934.0911093,
-    "ast_hash": "11469d1e1c957dc7bdb987b17bab7d35",
+    "mtime": 1790174128.4819715,
+    "seen": 1790174164.8333728,
+    "ast_hash": "6c8c8c19138553f0fe22c9535f6b6e20",
     "semantic_hash": ""
   },
   "views/OverlayScreens.tsx": {
-    "mtime": 1787577554.1414216,
-    "seen": 1788533934.0911107,
-    "ast_hash": "c9132a06e557494df7978e1880bbdcd3",
+    "mtime": 1790167724.0866084,
+    "seen": 1790174164.833374,
+    "ast_hash": "78cc922db0912cbe2270da638fb75223",
     "semantic_hash": ""
   },
   "views/WebViewScraper.tsx": {
-    "mtime": 1788532975.938625,
-    "seen": 1788533934.091112,
-    "ast_hash": "1783cb27ac47b0d13749e43dcba73235",
+    "mtime": 1790167988.2298906,
+    "seen": 1790174164.8333752,
+    "ast_hash": "9a4fa453e80de127bd5db2e4c2e3d1a3",
     "semantic_hash": ""
   },
   ".vscode/settings.json": {
@@ -129,6 +129,48 @@
     "mtime": 1787724660.0,
     "seen": 1788533934.0911174,
     "ast_hash": "1dfbf6bca4ef62466727968f1df9b37a",
+    "semantic_hash": ""
+  },
+  "__tests__/appReducer.test.ts": {
+    "mtime": 1790167861.4264185,
+    "seen": 1790174164.8333445,
+    "ast_hash": "75d46c80ae5aea6e1fa7c59b72a95b3e",
+    "semantic_hash": ""
+  },
+  "__tests__/attendanceMath.test.ts": {
+    "mtime": 1790167929.6919825,
+    "seen": 1790174164.8333464,
+    "ast_hash": "a45a54412bad5fa802e53036c1630f15",
+    "semantic_hash": ""
+  },
+  "__tests__/bridgeValidator.test.ts": {
+    "mtime": 1790167861.3984177,
+    "seen": 1790174164.8333478,
+    "ast_hash": "13b43a9fc42e182ed57896c3dafaee97",
+    "semantic_hash": ""
+  },
+  "scripts/regression-check.sh": {
+    "mtime": 1790167899.373363,
+    "seen": 1790174164.833364,
+    "ast_hash": "0e909c9b62a210bb3e37ed6781131e58",
+    "semantic_hash": ""
+  },
+  "utils/attendanceMath.ts": {
+    "mtime": 1790174098.9648223,
+    "seen": 1790174164.833367,
+    "ast_hash": "b3bd0e255cd3c928222413dfe8fcddad",
+    "semantic_hash": ""
+  },
+  "utils/bridgeValidator.ts": {
+    "mtime": 1790167423.1723497,
+    "seen": 1790174164.83337,
+    "ast_hash": "41f112f60cfef5bc171c4372f9ac2efb",
+    "semantic_hash": ""
+  },
+  ".github/workflows/eas-build.yml": {
+    "mtime": 1790172025.7269268,
+    "seen": 1790174164.8333762,
+    "ast_hash": "21646e0fbf89f62713e369a0d54937ed",
     "semantic_hash": ""
   }
 }

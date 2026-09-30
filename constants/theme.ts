@@ -1,5 +1,3 @@
-import { Platform } from "react-native";
-
 export const COLORS = {
   canvas: "#faf9f5",
   surfaceCard: "#efe9de",
@@ -28,6 +26,6 @@ export const COLORS = {
   overlay: "rgba(20, 20, 19, 0.58)",
 };
 
-export const SERIF = Platform.OS === "ios" ? "Georgia" : "serif";
+export const SERIF = "serif";
 export const GITHUB_URL = "https://github.com/Chanikya-WebDev/JNTUA-Mobile-Attendance-App";
 export const STALL_TIMEOUT_MS = 25000;

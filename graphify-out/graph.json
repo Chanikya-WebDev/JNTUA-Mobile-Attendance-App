@@ -4,19 +4,6 @@
   "graph": {},
   "nodes": [
     {
-      "id": "app_messagepayload",
-      "label": "MessagePayload",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "messagepayload",
-      "source_file": "App.tsx",
-      "source_location": "L26"
-    },
-    {
       "id": "components_datelogmodal_datelogmodalprops",
       "label": "DateLogModalProps",
       "_callable": true,
@@ -40,7 +27,7 @@
       "file_type": "code",
       "norm_label": "appaction",
       "source_file": "reducers/appReducer.ts",
-      "source_location": "L52"
+      "source_location": "L56"
     },
     {
       "id": "reducers_appreducer_appstate",
@@ -118,7 +105,7 @@
       "file_type": "code",
       "norm_label": "previousattendanceresult",
       "source_file": "utils/storage.ts",
-      "source_location": "L4"
+      "source_location": "L8"
     },
     {
       "id": "utils_updatemanager_updatemanager",
@@ -131,7 +118,7 @@
       "file_type": "code",
       "norm_label": "updatemanager",
       "source_file": "utils/updateManager.ts",
-      "source_location": "L13"
+      "source_location": "L12"
     },
     {
       "id": "utils_updatemanager_updatestatus",
@@ -144,7 +131,7 @@
       "file_type": "code",
       "norm_label": "updatestatus",
       "source_file": "utils/updateManager.ts",
-      "source_location": "L5"
+      "source_location": "L4"
     },
     {
       "id": "views_dashboard_dashboardprops",
@@ -157,7 +144,33 @@
       "file_type": "code",
       "norm_label": "dashboardprops",
       "source_file": "views/Dashboard.tsx",
-      "source_location": "L7"
+      "source_location": "L15"
+    },
+    {
+      "id": "views_webviewscraper_webviewscraperprops",
+      "label": "WebViewScraperProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "WebViewScraper.tsx",
+      "file_type": "code",
+      "norm_label": "webviewscraperprops",
+      "source_file": "views/WebViewScraper.tsx",
+      "source_location": "L37"
+    },
+    {
+      "id": "utils_attendancemath_overallstats",
+      "label": "OverallStats",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Dashboard.tsx",
+      "file_type": "code",
+      "norm_label": "overallstats",
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L5"
     },
     {
       "id": "views_overlayscreens_overlayscreensprops",
@@ -170,20 +183,20 @@
       "file_type": "code",
       "norm_label": "overlayscreensprops",
       "source_file": "views/OverlayScreens.tsx",
-      "source_location": "L6"
+      "source_location": "L5"
     },
     {
-      "id": "views_webviewscraper_webviewscraperprops",
-      "label": "WebViewScraperProps",
+      "id": "utils_bridgevalidator_bridgemessage",
+      "label": "BridgeMessage",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "Dashboard.tsx",
+      "community": 7,
+      "community_name": "bridgeValidator.ts",
       "file_type": "code",
-      "norm_label": "webviewscraperprops",
-      "source_file": "views/WebViewScraper.tsx",
-      "source_location": "L20"
+      "norm_label": "bridgemessage",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L7"
     },
     {
       "id": "app_app",
@@ -195,7 +208,7 @@
       "file_type": "code",
       "norm_label": "app()",
       "source_file": "App.tsx",
-      "source_location": "L33"
+      "source_location": "L24"
     },
     {
       "id": "components_datelogmodal_datelogmodal",
@@ -219,7 +232,7 @@
       "file_type": "code",
       "norm_label": "appreducer()",
       "source_file": "reducers/appReducer.ts",
-      "source_location": "L70"
+      "source_location": "L75"
     },
     {
       "id": "reducers_appreducer_preservesession",
@@ -231,7 +244,7 @@
       "file_type": "code",
       "norm_label": "preservesession()",
       "source_file": "reducers/appReducer.ts",
-      "source_location": "L42"
+      "source_location": "L46"
     },
     {
       "id": "utils_automationscripts_selectsubjectbyindexscript",
@@ -243,7 +256,7 @@
       "file_type": "code",
       "norm_label": "selectsubjectbyindexscript()",
       "source_file": "utils/automationScripts.ts",
-      "source_location": "L72"
+      "source_location": "L73"
     },
     {
       "id": "utils_storage_clearpreviousresult",
@@ -255,7 +268,7 @@
       "file_type": "code",
       "norm_label": "clearpreviousresult()",
       "source_file": "utils/storage.ts",
-      "source_location": "L68"
+      "source_location": "L104"
     },
     {
       "id": "utils_storage_getstorageuri",
@@ -267,7 +280,19 @@
       "file_type": "code",
       "norm_label": "getstorageuri()",
       "source_file": "utils/storage.ts",
-      "source_location": "L11"
+      "source_location": "L16"
+    },
+    {
+      "id": "utils_storage_isattendancerecord",
+      "label": "isAttendanceRecord()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "isattendancerecord()",
+      "source_file": "utils/storage.ts",
+      "source_location": "L21"
     },
     {
       "id": "utils_storage_ispreviousattendanceresult",
@@ -279,7 +304,7 @@
       "file_type": "code",
       "norm_label": "ispreviousattendanceresult()",
       "source_file": "utils/storage.ts",
-      "source_location": "L18"
+      "source_location": "L34"
     },
     {
       "id": "utils_storage_loadpreviousresult",
@@ -291,7 +316,7 @@
       "file_type": "code",
       "norm_label": "loadpreviousresult()",
       "source_file": "utils/storage.ts",
-      "source_location": "L56"
+      "source_location": "L90"
     },
     {
       "id": "utils_storage_savepreviousresult",
@@ -303,7 +328,7 @@
       "file_type": "code",
       "norm_label": "savepreviousresult()",
       "source_file": "utils/storage.ts",
-      "source_location": "L49"
+      "source_location": "L78"
     },
     {
       "id": "utils_updatemanager_shouldcheckonmount",
@@ -315,7 +340,7 @@
       "file_type": "code",
       "norm_label": "shouldcheckonmount()",
       "source_file": "utils/updateManager.ts",
-      "source_location": "L26"
+      "source_location": "L25"
     },
     {
       "id": "utils_updatemanager_useupdatemanager",
@@ -327,7 +352,43 @@
       "file_type": "code",
       "norm_label": "useupdatemanager()",
       "source_file": "utils/updateManager.ts",
-      "source_location": "L34"
+      "source_location": "L33"
+    },
+    {
+      "id": "views_overlayscreens_overlayscreens",
+      "label": "OverlayScreens()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "overlayscreens()",
+      "source_file": "views/OverlayScreens.tsx",
+      "source_location": "L20"
+    },
+    {
+      "id": "views_webviewscraper_isportalhost",
+      "label": "isPortalHost()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "WebViewScraper.tsx",
+      "file_type": "code",
+      "norm_label": "isportalhost()",
+      "source_file": "views/WebViewScraper.tsx",
+      "source_location": "L15"
+    },
+    {
+      "id": "views_webviewscraper_webviewscraper",
+      "label": "WebViewScraper()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "WebViewScraper.tsx",
+      "file_type": "code",
+      "norm_label": "webviewscraper()",
+      "source_file": "views/WebViewScraper.tsx",
+      "source_location": "L53"
     },
     {
       "id": "components_crabscene_crabscene",
@@ -354,6 +415,78 @@
       "source_location": "L5"
     },
     {
+      "id": "tests_attendancemath_test_subject",
+      "label": "subject()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Dashboard.tsx",
+      "file_type": "code",
+      "norm_label": "subject()",
+      "source_file": "__tests__/attendanceMath.test.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "utils_attendancemath_calculatecanskip",
+      "label": "calculateCanSkip()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Dashboard.tsx",
+      "file_type": "code",
+      "norm_label": "calculatecanskip()",
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L38"
+    },
+    {
+      "id": "utils_attendancemath_calculateclassestoreach75",
+      "label": "calculateClassesToReach75()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Dashboard.tsx",
+      "file_type": "code",
+      "norm_label": "calculateclassestoreach75()",
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L53"
+    },
+    {
+      "id": "utils_attendancemath_computeoverallstats",
+      "label": "computeOverallStats()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Dashboard.tsx",
+      "file_type": "code",
+      "norm_label": "computeoverallstats()",
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "utils_attendancemath_getlastattendancedate",
+      "label": "getLastAttendanceDate()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Dashboard.tsx",
+      "file_type": "code",
+      "norm_label": "getlastattendancedate()",
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L63"
+    },
+    {
+      "id": "utils_attendancemath_sanitizepercentage",
+      "label": "sanitizePercentage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Dashboard.tsx",
+      "file_type": "code",
+      "norm_label": "sanitizepercentage()",
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L74"
+    },
+    {
       "id": "views_dashboard_dashboard",
       "label": "Dashboard()",
       "_callable": true,
@@ -363,31 +496,79 @@
       "file_type": "code",
       "norm_label": "dashboard()",
       "source_file": "views/Dashboard.tsx",
-      "source_location": "L15"
+      "source_location": "L22"
     },
     {
-      "id": "views_overlayscreens_overlayscreens",
-      "label": "OverlayScreens()",
+      "id": "utils_bridgevalidator_isattendancerecord",
+      "label": "isAttendanceRecord()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "Dashboard.tsx",
+      "community": 7,
+      "community_name": "bridgeValidator.ts",
       "file_type": "code",
-      "norm_label": "overlayscreens()",
-      "source_file": "views/OverlayScreens.tsx",
-      "source_location": "L20"
+      "norm_label": "isattendancerecord()",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L39"
     },
     {
-      "id": "views_webviewscraper_webviewscraper",
-      "label": "WebViewScraper()",
+      "id": "utils_bridgevalidator_isbridgemessage",
+      "label": "isBridgeMessage()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "Dashboard.tsx",
+      "community": 7,
+      "community_name": "bridgeValidator.ts",
       "file_type": "code",
-      "norm_label": "webviewscraper()",
-      "source_file": "views/WebViewScraper.tsx",
-      "source_location": "L34"
+      "norm_label": "isbridgemessage()",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L69"
+    },
+    {
+      "id": "utils_bridgevalidator_isrecord",
+      "label": "isRecord()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "bridgeValidator.ts",
+      "file_type": "code",
+      "norm_label": "isrecord()",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L26"
+    },
+    {
+      "id": "utils_bridgevalidator_isstudentinfo",
+      "label": "isStudentInfo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "bridgeValidator.ts",
+      "file_type": "code",
+      "norm_label": "isstudentinfo()",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L30"
+    },
+    {
+      "id": "utils_bridgevalidator_issubjectattendancedata",
+      "label": "isSubjectAttendanceData()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "bridgeValidator.ts",
+      "file_type": "code",
+      "norm_label": "issubjectattendancedata()",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L50"
+    },
+    {
+      "id": "utils_bridgevalidator_parsebridgemessage",
+      "label": "parseBridgeMessage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "bridgeValidator.ts",
+      "file_type": "code",
+      "norm_label": "parsebridgemessage()",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L102"
     },
     {
       "id": "app_styles",
@@ -398,7 +579,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "App.tsx",
-      "source_location": "L188"
+      "source_location": "L244"
     },
     {
       "id": "app_tsx_app",
@@ -445,6 +626,17 @@
       "source_location": "L64"
     },
     {
+      "id": "constants_theme_stall_timeout_ms",
+      "label": "STALL_TIMEOUT_MS",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "stall_timeout_ms",
+      "source_file": "constants/theme.ts",
+      "source_location": "L33"
+    },
+    {
       "id": "reducers_appreducer",
       "label": "appReducer.ts",
       "_origin": "ast",
@@ -464,7 +656,18 @@
       "file_type": "code",
       "norm_label": "initialstate",
       "source_file": "reducers/appReducer.ts",
-      "source_location": "L23"
+      "source_location": "L25"
+    },
+    {
+      "id": "tests_appreducer_test",
+      "label": "appReducer.test.ts",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "appreducer.test.ts",
+      "source_file": "__tests__/appReducer.test.ts",
+      "source_location": "L1"
     },
     {
       "id": "utils_automationscripts",
@@ -486,7 +689,7 @@
       "file_type": "code",
       "norm_label": "autosubmitfirstsemesterscript",
       "source_file": "utils/automationScripts.ts",
-      "source_location": "L30"
+      "source_location": "L31"
     },
     {
       "id": "utils_automationscripts_parsedetailedattendanceandgohomescript",
@@ -497,7 +700,7 @@
       "file_type": "code",
       "norm_label": "parsedetailedattendanceandgohomescript",
       "source_file": "utils/automationScripts.ts",
-      "source_location": "L123"
+      "source_location": "L139"
     },
     {
       "id": "utils_storage",
@@ -787,184 +990,64 @@
       "source_location": "L1"
     },
     {
-      "id": "build_rules_10_required_verification_pipeline",
-      "label": "10. Required Verification Pipeline",
+      "id": "build_rules_1_frozen_targets",
+      "label": "1. Frozen Targets",
       "_origin": "ast",
       "community": 10,
       "community_name": "BUILD-RULES.md",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "10. required verification pipeline",
+      "norm_label": "1. frozen targets",
       "source_file": "BUILD-RULES.md",
-      "source_location": "L287"
+      "source_location": "L5"
     },
     {
-      "id": "build_rules_11_webview_safety_rules",
-      "label": "11. WebView Safety Rules",
+      "id": "build_rules_2_adding_dependencies",
+      "label": "2. Adding Dependencies",
       "_origin": "ast",
       "community": 10,
       "community_name": "BUILD-RULES.md",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "11. webview safety rules",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L314"
-    },
-    {
-      "id": "build_rules_12_production_release_checklist",
-      "label": "12. Production Release Checklist",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "12. production release checklist",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L345"
-    },
-    {
-      "id": "build_rules_13_hard_failure_policy",
-      "label": "13. Hard Failure Policy",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "13. hard failure policy",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L395"
-    },
-    {
-      "id": "build_rules_14_agent_rule",
-      "label": "14. Agent Rule",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "14. agent rule",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L416"
-    },
-    {
-      "id": "build_rules_1_non_negotiable_build_targets",
-      "label": "1. Non-Negotiable Build Targets",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "1. non-negotiable build targets",
+      "norm_label": "2. adding dependencies",
       "source_file": "BUILD-RULES.md",
       "source_location": "L9"
     },
     {
-      "id": "build_rules_2_dependency_minimalism",
-      "label": "2. Dependency Minimalism",
+      "id": "build_rules_3_cleanup_lockfile",
+      "label": "3. Cleanup & Lockfile",
       "_origin": "ast",
       "community": 10,
       "community_name": "BUILD-RULES.md",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "2. dependency minimalism",
+      "norm_label": "3. cleanup & lockfile",
       "source_file": "BUILD-RULES.md",
-      "source_location": "L28"
+      "source_location": "L13"
     },
     {
-      "id": "build_rules_3_mandatory_unused_package_cleanup",
-      "label": "3. Mandatory Unused-Package Cleanup",
+      "id": "build_rules_4_build_discipline",
+      "label": "4. Build Discipline",
       "_origin": "ast",
       "community": 10,
       "community_name": "BUILD-RULES.md",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "3. mandatory unused-package cleanup",
+      "norm_label": "4. build discipline",
       "source_file": "BUILD-RULES.md",
-      "source_location": "L63"
+      "source_location": "L17"
     },
     {
-      "id": "build_rules_4_current_application_runtime_dependencies",
-      "label": "4. Current Application Runtime Dependencies",
+      "id": "build_rules_5_verify_release",
+      "label": "5. Verify & Release",
       "_origin": "ast",
       "community": 10,
       "community_name": "BUILD-RULES.md",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "4. current application runtime dependencies",
+      "norm_label": "5. verify & release",
       "source_file": "BUILD-RULES.md",
-      "source_location": "L123"
-    },
-    {
-      "id": "build_rules_5_arm64_only_policy",
-      "label": "5. ARM64-Only Policy",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "5. arm64-only policy",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L143"
-    },
-    {
-      "id": "build_rules_6_production_optimization",
-      "label": "6. Production Optimization",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "6. production optimization",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L175"
-    },
-    {
-      "id": "build_rules_7_expo_go_policy",
-      "label": "7. Expo Go Policy",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "7. expo go policy",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L196"
-    },
-    {
-      "id": "build_rules_8_ota_update_rules",
-      "label": "8. OTA Update Rules",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "8. ota update rules",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L221"
-    },
-    {
-      "id": "build_rules_9_lockfile_integrity",
-      "label": "9. Lockfile Integrity",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "9. lockfile integrity",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L254"
-    },
-    {
-      "id": "build_rules_before_adding_a_package",
-      "label": "Before adding a package",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "before adding a package",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L32"
+      "source_location": "L24"
     },
     {
       "id": "build_rules_build_rules_md",
@@ -979,575 +1062,11 @@
       "source_location": "L1"
     },
     {
-      "id": "build_rules_code",
-      "label": "Code",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "code",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L356"
-    },
-    {
-      "id": "build_rules_dependencies",
-      "label": "Dependencies",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "dependencies",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L347"
-    },
-    {
-      "id": "build_rules_functional",
-      "label": "Functional",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "functional",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L371"
-    },
-    {
-      "id": "build_rules_installation_rule",
-      "label": "Installation rule",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "installation rule",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L45"
-    },
-    {
-      "id": "build_rules_jntua_attendance_build_dependency_release_rules",
-      "label": "JNTUA Attendance \u2014 Build, Dependency & Release Rules",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "jntua attendance \u2014 build, dependency & release rules",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L3"
-    },
-    {
-      "id": "build_rules_native_build",
-      "label": "Native build",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "native build",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L364"
-    },
-    {
-      "id": "build_rules_new_native_build_required",
-      "label": "New native build required",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "new native build required",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L238"
-    },
-    {
-      "id": "build_rules_ota_eligible",
-      "label": "OTA-eligible",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "ota-eligible",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L225"
-    },
-    {
-      "id": "build_rules_release",
-      "label": "Release",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BUILD-RULES.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "release",
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L384"
-    },
-    {
-      "id": "agents_9_final_production_gate_mandatory",
-      "label": "9. Final Production Gate \u2014 Mandatory",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "9. Final Production Gate \u2014 Mandatory",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "9. final production gate \u2014 mandatory",
-      "source_file": "AGENTS.md",
-      "source_location": "L294"
-    },
-    {
-      "id": "agents_a_dependency_hygiene",
-      "label": "A. Dependency Hygiene",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "9. Final Production Gate \u2014 Mandatory",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "a. dependency hygiene",
-      "source_file": "AGENTS.md",
-      "source_location": "L298"
-    },
-    {
-      "id": "agents_b_architecture_gate",
-      "label": "B. Architecture Gate",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "9. Final Production Gate \u2014 Mandatory",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "b. architecture gate",
-      "source_file": "AGENTS.md",
-      "source_location": "L329"
-    },
-    {
-      "id": "agents_c_expo_go_development_gate",
-      "label": "C. Expo Go / Development Gate",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "9. Final Production Gate \u2014 Mandatory",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "c. expo go / development gate",
-      "source_file": "AGENTS.md",
-      "source_location": "L347"
-    },
-    {
-      "id": "agents_d_static_quality_gate",
-      "label": "D. Static Quality Gate",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "9. Final Production Gate \u2014 Mandatory",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "d. static quality gate",
-      "source_file": "AGENTS.md",
-      "source_location": "L363"
-    },
-    {
-      "id": "agents_e_configuration_gate",
-      "label": "E. Configuration Gate",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "9. Final Production Gate \u2014 Mandatory",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "e. configuration gate",
-      "source_file": "AGENTS.md",
-      "source_location": "L389"
-    },
-    {
-      "id": "agents_f_ota_gate",
-      "label": "F. OTA Gate",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "9. Final Production Gate \u2014 Mandatory",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "f. ota gate",
-      "source_file": "AGENTS.md",
-      "source_location": "L406"
-    },
-    {
-      "id": "agents_g_webview_production_gate",
-      "label": "G. WebView Production Gate",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "9. Final Production Gate \u2014 Mandatory",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "g. webview production gate",
-      "source_file": "AGENTS.md",
-      "source_location": "L438"
-    },
-    {
-      "id": "agents_h_persistence_gate",
-      "label": "H. Persistence Gate",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "9. Final Production Gate \u2014 Mandatory",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "h. persistence gate",
-      "source_file": "AGENTS.md",
-      "source_location": "L451"
-    },
-    {
-      "id": "agents_i_production_build_gate",
-      "label": "I. Production Build Gate",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "9. Final Production Gate \u2014 Mandatory",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "i. production build gate",
-      "source_file": "AGENTS.md",
-      "source_location": "L461"
-    },
-    {
-      "id": "agents_j_final_agent_declaration",
-      "label": "J. Final Agent Declaration",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "9. Final Production Gate \u2014 Mandatory",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "j. final agent declaration",
-      "source_file": "AGENTS.md",
-      "source_location": "L483"
-    },
-    {
-      "id": "agents_k_change_discipline",
-      "label": "K. Change Discipline",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "9. Final Production Gate \u2014 Mandatory",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "k. change discipline",
-      "source_file": "AGENTS.md",
-      "source_location": "L511"
-    },
-    {
-      "id": "readme_animated_loader_crabscene",
-      "label": "Animated Loader (CrabScene)",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Mobile UX Features",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "animated loader (crabscene)",
-      "source_file": "README.md",
-      "source_location": "L857"
-    },
-    {
-      "id": "readme_custom_user_agent",
-      "label": "Custom User Agent",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Mobile UX Features",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "custom user agent",
-      "source_file": "README.md",
-      "source_location": "L886"
-    },
-    {
-      "id": "readme_human_verify_note",
-      "label": "Human-Verify Note",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Mobile UX Features",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "human-verify note",
-      "source_file": "README.md",
-      "source_location": "L895"
-    },
-    {
-      "id": "readme_mobile_ux_features",
-      "label": "Mobile UX Features",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Mobile UX Features",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "mobile ux features",
-      "source_file": "README.md",
-      "source_location": "L855"
-    },
-    {
-      "id": "readme_ota_update_banner",
-      "label": "OTA Update Banner",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Mobile UX Features",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "ota update banner",
-      "source_file": "README.md",
-      "source_location": "L909"
-    },
-    {
-      "id": "readme_refresh_button",
-      "label": "Refresh Button",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Mobile UX Features",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "refresh button",
-      "source_file": "README.md",
-      "source_location": "L902"
-    },
-    {
-      "id": "readme_splash_screen_management",
-      "label": "Splash Screen Management",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Mobile UX Features",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "splash screen management",
-      "source_file": "README.md",
-      "source_location": "L877"
-    },
-    {
-      "id": "readme_before_a_production_build",
-      "label": "Before a production build",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "Production Readiness",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "before a production build",
-      "source_file": "README.md",
-      "source_location": "L1071"
-    },
-    {
-      "id": "readme_build_a_preview_artifact",
-      "label": "Build a preview artifact",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "Production Readiness",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "build a preview artifact",
-      "source_file": "README.md",
-      "source_location": "L1085"
-    },
-    {
-      "id": "readme_build_for_production",
-      "label": "Build for production",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "Production Readiness",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "build for production",
-      "source_file": "README.md",
-      "source_location": "L1094"
-    },
-    {
-      "id": "readme_expo_go_build_warning",
-      "label": "Expo Go build warning",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "Production Readiness",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "expo go build warning",
-      "source_file": "README.md",
-      "source_location": "L1104"
-    },
-    {
-      "id": "readme_native_build_configuration",
-      "label": "Native build configuration",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "Production Readiness",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "native build configuration",
-      "source_file": "README.md",
-      "source_location": "L1127"
-    },
-    {
-      "id": "readme_production_readiness",
-      "label": "Production Readiness",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "Production Readiness",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "production readiness",
-      "source_file": "README.md",
-      "source_location": "L1064"
-    },
-    {
-      "id": "readme_recommended_release_sequence",
-      "label": "Recommended release sequence",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "Production Readiness",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "recommended release sequence",
-      "source_file": "README.md",
-      "source_location": "L1141"
-    },
-    {
-      "id": "readme_channels",
-      "label": "Channels",
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "OTA Updates (EAS Update)",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "channels",
-      "source_file": "README.md",
-      "source_location": "L1003"
-    },
-    {
-      "id": "readme_configuration",
-      "label": "Configuration",
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "OTA Updates (EAS Update)",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "configuration",
-      "source_file": "README.md",
-      "source_location": "L986"
-    },
-    {
-      "id": "readme_native_build_runbook",
-      "label": "Native Build Runbook",
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "OTA Updates (EAS Update)",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "native build runbook",
-      "source_file": "README.md",
-      "source_location": "L1029"
-    },
-    {
-      "id": "readme_ota_updates_eas_update",
-      "label": "OTA Updates (EAS Update)",
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "OTA Updates (EAS Update)",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "ota updates (eas update)",
-      "source_file": "README.md",
-      "source_location": "L978"
-    },
-    {
-      "id": "readme_publishing_runbook",
-      "label": "Publishing Runbook",
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "OTA Updates (EAS Update)",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "publishing runbook",
-      "source_file": "README.md",
-      "source_location": "L1013"
-    },
-    {
-      "id": "readme_what_requires_a_new_build_vs_an_ota_update",
-      "label": "What requires a new build vs. an OTA update",
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "OTA Updates (EAS Update)",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "what requires a new build vs. an ota update",
-      "source_file": "README.md",
-      "source_location": "L1046"
-    },
-    {
-      "id": "readme_getting_started",
-      "label": "Getting Started",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "Getting Started",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "getting started",
-      "source_file": "README.md",
-      "source_location": "L512"
-    },
-    {
-      "id": "readme_install",
-      "label": "Install",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "Getting Started",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "install",
-      "source_file": "README.md",
-      "source_location": "L524"
-    },
-    {
-      "id": "readme_prerequisites",
-      "label": "Prerequisites",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "Getting Started",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "prerequisites",
-      "source_file": "README.md",
-      "source_location": "L514"
-    },
-    {
-      "id": "readme_recommended_development_build",
-      "label": "Recommended development build",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "Getting Started",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "recommended development build",
-      "source_file": "README.md",
-      "source_location": "L545"
-    },
-    {
-      "id": "readme_run",
-      "label": "Run",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "Getting Started",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "run",
-      "source_file": "README.md",
-      "source_location": "L532"
-    },
-    {
-      "id": "readme_verify_quality_gates",
-      "label": "Verify quality gates",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "Getting Started",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "verify quality gates",
-      "source_file": "README.md",
-      "source_location": "L576"
-    },
-    {
       "id": "app_adaptiveicon_backgroundcolor",
       "label": "backgroundColor",
       "_origin": "ast",
-      "community": 2,
-      "community_name": "expo",
+      "community": 11,
+      "community_name": "android",
       "file_type": "code",
       "norm_label": "backgroundcolor",
       "source_file": "app.json",
@@ -1557,8 +1076,8 @@
       "id": "app_android_adaptiveicon",
       "label": "adaptiveIcon",
       "_origin": "ast",
-      "community": 2,
-      "community_name": "expo",
+      "community": 11,
+      "community_name": "android",
       "file_type": "code",
       "norm_label": "adaptiveicon",
       "source_file": "app.json",
@@ -1568,8 +1087,8 @@
       "id": "app_android_edgetoedgeenabled",
       "label": "edgeToEdgeEnabled",
       "_origin": "ast",
-      "community": 2,
-      "community_name": "expo",
+      "community": 11,
+      "community_name": "android",
       "file_type": "code",
       "norm_label": "edgetoedgeenabled",
       "source_file": "app.json",
@@ -1579,8 +1098,8 @@
       "id": "app_android_package",
       "label": "package",
       "_origin": "ast",
-      "community": 2,
-      "community_name": "expo",
+      "community": 11,
+      "community_name": "android",
       "file_type": "code",
       "norm_label": "package",
       "source_file": "app.json",
@@ -1590,8 +1109,8 @@
       "id": "app_android_permissions",
       "label": "permissions",
       "_origin": "ast",
-      "community": 2,
-      "community_name": "expo",
+      "community": 11,
+      "community_name": "android",
       "file_type": "code",
       "norm_label": "permissions",
       "source_file": "app.json",
@@ -1601,12 +1120,119 @@
       "id": "app_android_predictivebackgestureenabled",
       "label": "predictiveBackGestureEnabled",
       "_origin": "ast",
-      "community": 2,
-      "community_name": "expo",
+      "community": 11,
+      "community_name": "android",
       "file_type": "code",
       "norm_label": "predictivebackgestureenabled",
       "source_file": "app.json",
       "source_location": "L16"
+    },
+    {
+      "id": "app_expo_android",
+      "label": "android",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "android",
+      "file_type": "code",
+      "norm_label": "android",
+      "source_file": "app.json",
+      "source_location": "L11"
+    },
+    {
+      "id": "ref_internet",
+      "label": "INTERNET",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "android",
+      "file_type": "concept",
+      "norm_label": "internet",
+      "source_file": "app.json",
+      "source_location": "L17"
+    },
+    {
+      "id": "views_webviewscraper",
+      "label": "WebViewScraper.tsx",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "WebViewScraper.tsx",
+      "file_type": "code",
+      "norm_label": "webviewscraper.tsx",
+      "source_file": "views/WebViewScraper.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "views_webviewscraper_portal_base_url",
+      "label": "PORTAL_BASE_URL",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "WebViewScraper.tsx",
+      "file_type": "code",
+      "norm_label": "portal_base_url",
+      "source_file": "views/WebViewScraper.tsx",
+      "source_location": "L11"
+    },
+    {
+      "id": "views_webviewscraper_portal_host",
+      "label": "PORTAL_HOST",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "WebViewScraper.tsx",
+      "file_type": "code",
+      "norm_label": "portal_host",
+      "source_file": "views/WebViewScraper.tsx",
+      "source_location": "L12"
+    },
+    {
+      "id": "views_webviewscraper_portal_origin_whitelist",
+      "label": "PORTAL_ORIGIN_WHITELIST",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "WebViewScraper.tsx",
+      "file_type": "code",
+      "norm_label": "portal_origin_whitelist",
+      "source_file": "views/WebViewScraper.tsx",
+      "source_location": "L13"
+    },
+    {
+      "id": "views_webviewscraper_styles",
+      "label": "styles",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "WebViewScraper.tsx",
+      "file_type": "code",
+      "norm_label": "styles",
+      "source_file": "views/WebViewScraper.tsx",
+      "source_location": "L112"
+    },
+    {
+      "id": "scripts_regression_check",
+      "label": "regression-check.sh",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "regression-check.sh",
+      "file_type": "code",
+      "metadata": {
+        "language": "bash",
+        "kind": "file"
+      },
+      "norm_label": "regression-check.sh",
+      "source_file": "scripts/regression-check.sh",
+      "source_location": "L1"
+    },
+    {
+      "id": "scripts_regression_check_sh__entry",
+      "label": "regression-check.sh script",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "regression-check.sh",
+      "file_type": "code",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_entrypoint"
+      },
+      "norm_label": "regression-check.sh script",
+      "source_file": "scripts/regression-check.sh",
+      "source_location": "L1"
     },
     {
       "id": "app_eas_projectid",
@@ -1640,17 +1266,6 @@
       "norm_label": "expo",
       "source_file": "app.json",
       "source_location": "L2"
-    },
-    {
-      "id": "app_expo_android",
-      "label": "android",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "expo",
-      "file_type": "code",
-      "norm_label": "android",
-      "source_file": "app.json",
-      "source_location": "L11"
     },
     {
       "id": "app_expo_experiments",
@@ -1860,17 +1475,6 @@
       "norm_label": "url",
       "source_file": "app.json",
       "source_location": "L49"
-    },
-    {
-      "id": "ref_internet",
-      "label": "INTERNET",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "expo",
-      "file_type": "concept",
-      "norm_label": "internet",
-      "source_file": "app.json",
-      "source_location": "L17"
     },
     {
       "id": "package",
@@ -2171,174 +1775,6 @@
       "source_location": "L1"
     },
     {
-      "id": "readme_1_gateway_error_handling_http_502",
-      "label": "1. Gateway Error Handling (HTTP 502)",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "1. gateway error handling (http 502)",
-      "source_file": "README.md",
-      "source_location": "L922"
-    },
-    {
-      "id": "readme_1_log_in",
-      "label": "1. Log in",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "1. log in",
-      "source_file": "README.md",
-      "source_location": "L588"
-    },
-    {
-      "id": "readme_2_automatic_sync",
-      "label": "2. Automatic sync",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "2. automatic sync",
-      "source_file": "README.md",
-      "source_location": "L596"
-    },
-    {
-      "id": "readme_2_offline_error_handling",
-      "label": "2. Offline Error Handling",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "2. offline error handling",
-      "source_file": "README.md",
-      "source_location": "L932"
-    },
-    {
-      "id": "readme_3_read_the_dashboard",
-      "label": "3. Read the dashboard",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "3. read the dashboard",
-      "source_file": "README.md",
-      "source_location": "L609"
-    },
-    {
-      "id": "readme_3_structure_error_handling",
-      "label": "3. Structure Error Handling",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "3. structure error handling",
-      "source_file": "README.md",
-      "source_location": "L940"
-    },
-    {
-      "id": "readme_4_inspect_a_subject_log",
-      "label": "4. Inspect a subject log",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "4. inspect a subject log",
-      "source_file": "README.md",
-      "source_location": "L632"
-    },
-    {
-      "id": "readme_4_selection_error_stall_detection",
-      "label": "4. Selection Error (Stall Detection)",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "4. selection error (stall detection)",
-      "source_file": "README.md",
-      "source_location": "L953"
-    },
-    {
-      "id": "readme_5_refresh",
-      "label": "5. Refresh",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "5. refresh",
-      "source_file": "README.md",
-      "source_location": "L639"
-    },
-    {
-      "id": "readme_6_view_previous_attendance",
-      "label": "6. View previous attendance",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "6. view previous attendance",
-      "source_file": "README.md",
-      "source_location": "L644"
-    },
-    {
-      "id": "readme_7_reset_the_app",
-      "label": "7. Reset the app",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "7. reset the app",
-      "source_file": "README.md",
-      "source_location": "L652"
-    },
-    {
-      "id": "readme_architecture",
-      "label": "Architecture",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "architecture",
-      "source_file": "README.md",
-      "source_location": "L89"
-    },
-    {
-      "id": "readme_classes_to_reach_75",
-      "label": "Classes to Reach 75%",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "classes to reach 75%",
-      "source_file": "README.md",
-      "source_location": "L799"
-    },
-    {
-      "id": "readme_color_threshold_zones",
-      "label": "Color Threshold Zones",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "color threshold zones",
-      "source_file": "README.md",
-      "source_location": "L766"
-    },
-    {
       "id": "readme_contributing",
       "label": "Contributing",
       "_origin": "ast",
@@ -2348,43 +1784,7 @@
       "node_kind": "heading",
       "norm_label": "contributing",
       "source_file": "README.md",
-      "source_location": "L1203"
-    },
-    {
-      "id": "readme_data_pipeline",
-      "label": "Data Pipeline",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "data pipeline",
-      "source_file": "README.md",
-      "source_location": "L664"
-    },
-    {
-      "id": "readme_documentation_gaps",
-      "label": "Documentation Gaps",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "documentation gaps",
-      "source_file": "README.md",
-      "source_location": "L1227"
-    },
-    {
-      "id": "readme_error_dismissal",
-      "label": "Error Dismissal",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "error dismissal",
-      "source_file": "README.md",
-      "source_location": "L966"
+      "source_location": "L231"
     },
     {
       "id": "readme_error_handling",
@@ -2396,7 +1796,31 @@
       "node_kind": "heading",
       "norm_label": "error handling",
       "source_file": "README.md",
-      "source_location": "L917"
+      "source_location": "L179"
+    },
+    {
+      "id": "readme_features",
+      "label": "Features",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "JNTUA Attendance",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "features",
+      "source_file": "README.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "readme_getting_started",
+      "label": "Getting Started",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "JNTUA Attendance",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "getting started",
+      "source_file": "README.md",
+      "source_location": "L105"
     },
     {
       "id": "readme_how_it_works",
@@ -2408,7 +1832,7 @@
       "node_kind": "heading",
       "norm_label": "how it works",
       "source_file": "README.md",
-      "source_location": "L63"
+      "source_location": "L39"
     },
     {
       "id": "readme_jntua_attendance",
@@ -2423,18 +1847,6 @@
       "source_location": "L1"
     },
     {
-      "id": "readme_key_design_decisions",
-      "label": "Key design decisions",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "key design decisions",
-      "source_file": "README.md",
-      "source_location": "L156"
-    },
-    {
       "id": "readme_license",
       "label": "License",
       "_origin": "ast",
@@ -2444,79 +1856,67 @@
       "node_kind": "heading",
       "norm_label": "license",
       "source_file": "README.md",
-      "source_location": "L1295"
+      "source_location": "L240"
     },
     {
-      "id": "readme_messaging_protocol",
-      "label": "Messaging protocol",
+      "id": "readme_ota_updates",
+      "label": "OTA Updates",
       "_origin": "ast",
       "community": 4,
       "community_name": "JNTUA Attendance",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "messaging protocol",
+      "norm_label": "ota updates",
       "source_file": "README.md",
-      "source_location": "L698"
+      "source_location": "L192"
     },
     {
-      "id": "readme_module_responsibilities",
-      "label": "Module responsibilities",
+      "id": "readme_persistence",
+      "label": "Persistence",
       "_origin": "ast",
       "community": 4,
       "community_name": "JNTUA Attendance",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "module responsibilities",
+      "norm_label": "persistence",
       "source_file": "README.md",
-      "source_location": "L139"
+      "source_location": "L170"
     },
     {
-      "id": "readme_previous_attendance_persistence",
-      "label": "Previous Attendance Persistence",
+      "id": "readme_prerequisites",
+      "label": "Prerequisites",
       "_origin": "ast",
       "community": 4,
       "community_name": "JNTUA Attendance",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "previous attendance persistence",
+      "norm_label": "prerequisites",
       "source_file": "README.md",
-      "source_location": "L813"
+      "source_location": "L107"
     },
     {
-      "id": "readme_project_idea",
-      "label": "Project Idea",
+      "id": "readme_project_structure",
+      "label": "Project Structure",
       "_origin": "ast",
       "community": 4,
       "community_name": "JNTUA Attendance",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "project idea",
+      "norm_label": "project structure",
       "source_file": "README.md",
-      "source_location": "L39"
+      "source_location": "L62"
     },
     {
-      "id": "readme_reducer_item_handling",
-      "label": "Reducer item handling",
+      "id": "readme_quality_gates_mandatory",
+      "label": "Quality gates (mandatory)",
       "_origin": "ast",
       "community": 4,
       "community_name": "JNTUA Attendance",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "reducer item handling",
+      "norm_label": "quality gates (mandatory)",
       "source_file": "README.md",
-      "source_location": "L733"
-    },
-    {
-      "id": "readme_skip_capacity_calculation",
-      "label": "Skip Capacity Calculation",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "JNTUA Attendance",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "skip capacity calculation",
-      "source_file": "README.md",
-      "source_location": "L781"
+      "source_location": "L123"
     },
     {
       "id": "readme_table_of_contents",
@@ -2528,7 +1928,7 @@
       "node_kind": "heading",
       "norm_label": "table of contents",
       "source_file": "README.md",
-      "source_location": "L17"
+      "source_location": "L9"
     },
     {
       "id": "readme_tech_stack",
@@ -2540,19 +1940,19 @@
       "node_kind": "heading",
       "norm_label": "tech stack",
       "source_file": "README.md",
-      "source_location": "L489"
+      "source_location": "L87"
     },
     {
-      "id": "readme_the_75_rule_logic",
-      "label": "The 75% Rule Logic",
+      "id": "readme_the_75_rule",
+      "label": "The 75% Rule",
       "_origin": "ast",
       "community": 4,
       "community_name": "JNTUA Attendance",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "the 75% rule logic",
+      "norm_label": "the 75% rule",
       "source_file": "README.md",
-      "source_location": "L744"
+      "source_location": "L147"
     },
     {
       "id": "readme_troubleshooting",
@@ -2564,19 +1964,19 @@
       "node_kind": "heading",
       "norm_label": "troubleshooting",
       "source_file": "README.md",
-      "source_location": "L1153"
+      "source_location": "L216"
     },
     {
-      "id": "readme_usage_guide",
-      "label": "Usage Guide",
+      "id": "readme_usage",
+      "label": "Usage",
       "_origin": "ast",
       "community": 4,
       "community_name": "JNTUA Attendance",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "usage guide",
+      "norm_label": "usage",
       "source_file": "README.md",
-      "source_location": "L586"
+      "source_location": "L136"
     },
     {
       "id": "components_crabscene",
@@ -2645,15 +2045,37 @@
       "source_location": "L31"
     },
     {
-      "id": "constants_theme_stall_timeout_ms",
-      "label": "STALL_TIMEOUT_MS",
+      "id": "tests_attendancemath_test",
+      "label": "attendanceMath.test.ts",
       "_origin": "ast",
       "community": 5,
       "community_name": "Dashboard.tsx",
       "file_type": "code",
-      "norm_label": "stall_timeout_ms",
-      "source_file": "constants/theme.ts",
-      "source_location": "L33"
+      "norm_label": "attendancemath.test.ts",
+      "source_file": "__tests__/attendanceMath.test.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "utils_attendancemath",
+      "label": "attendanceMath.ts",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Dashboard.tsx",
+      "file_type": "code",
+      "norm_label": "attendancemath.ts",
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "utils_attendancemath_attendance_threshold",
+      "label": "ATTENDANCE_THRESHOLD",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Dashboard.tsx",
+      "file_type": "code",
+      "norm_label": "attendance_threshold",
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L3"
     },
     {
       "id": "views_dashboard",
@@ -2675,7 +2097,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "views/Dashboard.tsx",
-      "source_location": "L180"
+      "source_location": "L194"
     },
     {
       "id": "views_overlayscreens",
@@ -2697,29 +2119,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "views/OverlayScreens.tsx",
-      "source_location": "L115"
-    },
-    {
-      "id": "views_webviewscraper",
-      "label": "WebViewScraper.tsx",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "Dashboard.tsx",
-      "file_type": "code",
-      "norm_label": "webviewscraper.tsx",
-      "source_file": "views/WebViewScraper.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "views_webviewscraper_styles",
-      "label": "styles",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "Dashboard.tsx",
-      "file_type": "code",
-      "norm_label": "styles",
-      "source_file": "views/WebViewScraper.tsx",
-      "source_location": "L87"
+      "source_location": "L122"
     },
     {
       "id": "tsconfig",
@@ -2821,160 +2221,37 @@
       "source_location": "L11"
     },
     {
-      "id": "readme_app_tsx",
-      "label": "`App.tsx`",
+      "id": "tests_bridgevalidator_test",
+      "label": "bridgeValidator.test.ts",
       "_origin": "ast",
       "community": 7,
-      "community_name": "Project Structure",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "`app.tsx`",
-      "source_file": "README.md",
-      "source_location": "L242"
+      "community_name": "bridgeValidator.ts",
+      "file_type": "code",
+      "norm_label": "bridgevalidator.test.ts",
+      "source_file": "__tests__/bridgeValidator.test.ts",
+      "source_location": "L1"
     },
     {
-      "id": "readme_components_crabscene_tsx",
-      "label": "`components/CrabScene.tsx`",
+      "id": "utils_bridgevalidator",
+      "label": "bridgeValidator.ts",
       "_origin": "ast",
       "community": 7,
-      "community_name": "Project Structure",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "`components/crabscene.tsx`",
-      "source_file": "README.md",
-      "source_location": "L377"
+      "community_name": "bridgeValidator.ts",
+      "file_type": "code",
+      "norm_label": "bridgevalidator.ts",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L1"
     },
     {
-      "id": "readme_components_datelogmodal_tsx",
-      "label": "`components/DateLogModal.tsx`",
+      "id": "utils_bridgevalidator_known_types",
+      "label": "KNOWN_TYPES",
       "_origin": "ast",
       "community": 7,
-      "community_name": "Project Structure",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "`components/datelogmodal.tsx`",
-      "source_file": "README.md",
-      "source_location": "L399"
-    },
-    {
-      "id": "readme_components_spike_tsx",
-      "label": "`components/Spike.tsx`",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "Project Structure",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "`components/spike.tsx`",
-      "source_file": "README.md",
-      "source_location": "L393"
-    },
-    {
-      "id": "readme_constants_theme_ts",
-      "label": "`constants/theme.ts`",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "Project Structure",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "`constants/theme.ts`",
-      "source_file": "README.md",
-      "source_location": "L406"
-    },
-    {
-      "id": "readme_project_structure",
-      "label": "Project Structure",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "Project Structure",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "project structure",
-      "source_file": "README.md",
-      "source_location": "L208"
-    },
-    {
-      "id": "readme_reducers_appreducer_ts",
-      "label": "`reducers/appReducer.ts`",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "Project Structure",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "`reducers/appreducer.ts`",
-      "source_file": "README.md",
-      "source_location": "L263"
-    },
-    {
-      "id": "readme_utils_automationscripts_ts",
-      "label": "`utils/automationScripts.ts`",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "Project Structure",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "`utils/automationscripts.ts`",
-      "source_file": "README.md",
-      "source_location": "L415"
-    },
-    {
-      "id": "readme_utils_storage_ts",
-      "label": "`utils/storage.ts`",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "Project Structure",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "`utils/storage.ts`",
-      "source_file": "README.md",
-      "source_location": "L439"
-    },
-    {
-      "id": "readme_utils_updatemanager_ts",
-      "label": "`utils/updateManager.ts`",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "Project Structure",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "`utils/updatemanager.ts`",
-      "source_file": "README.md",
-      "source_location": "L465"
-    },
-    {
-      "id": "readme_views_dashboard_tsx",
-      "label": "`views/Dashboard.tsx`",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "Project Structure",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "`views/dashboard.tsx`",
-      "source_file": "README.md",
-      "source_location": "L354"
-    },
-    {
-      "id": "readme_views_overlayscreens_tsx",
-      "label": "`views/OverlayScreens.tsx`",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "Project Structure",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "`views/overlayscreens.tsx`",
-      "source_file": "README.md",
-      "source_location": "L331"
-    },
-    {
-      "id": "readme_views_webviewscraper_tsx",
-      "label": "`views/WebViewScraper.tsx`",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "Project Structure",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "`views/webviewscraper.tsx`",
-      "source_file": "README.md",
-      "source_location": "L310"
+      "community_name": "bridgeValidator.ts",
+      "file_type": "code",
+      "norm_label": "known_types",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L16"
     },
     {
       "id": "eslint_config",
@@ -3022,184 +2299,64 @@
       "source_location": "L1"
     },
     {
-      "id": "agents_1_prohibition_of_latest",
-      "label": "1. Prohibition of `@latest`",
+      "id": "agents_1_project_snapshot",
+      "label": "1. Project Snapshot",
       "_origin": "ast",
       "community": 9,
       "community_name": "AGENTS.md",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "1. prohibition of `@latest`",
-      "source_file": "AGENTS.md",
-      "source_location": "L91"
-    },
-    {
-      "id": "agents_1_project_identity_governance",
-      "label": "1. Project Identity & Governance",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "1. project identity & governance",
+      "norm_label": "1. project snapshot",
       "source_file": "AGENTS.md",
       "source_location": "L3"
     },
     {
-      "id": "agents_2_pinned_technical_stack",
-      "label": "2. Pinned Technical Stack",
+      "id": "agents_2_non_negotiables",
+      "label": "2. Non-Negotiables",
       "_origin": "ast",
       "community": 9,
       "community_name": "AGENTS.md",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "2. pinned technical stack",
+      "norm_label": "2. non-negotiables",
       "source_file": "AGENTS.md",
-      "source_location": "L18"
+      "source_location": "L22"
     },
     {
-      "id": "agents_2_standard_installation_method",
-      "label": "2. Standard Installation Method",
+      "id": "agents_3_webview_scraping_do_not_break",
+      "label": "3. WebView Scraping \u2014 Do Not Break",
       "_origin": "ast",
       "community": 9,
       "community_name": "AGENTS.md",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "2. standard installation method",
+      "norm_label": "3. webview scraping \u2014 do not break",
       "source_file": "AGENTS.md",
-      "source_location": "L95"
+      "source_location": "L31"
     },
     {
-      "id": "agents_3_dependency_pre_checks",
-      "label": "3. Dependency Pre-checks",
+      "id": "agents_4_state_persistence_errors_ota",
+      "label": "4. State, Persistence, Errors, OTA",
       "_origin": "ast",
       "community": 9,
       "community_name": "AGENTS.md",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "3. dependency pre-checks",
+      "norm_label": "4. state, persistence, errors, ota",
       "source_file": "AGENTS.md",
-      "source_location": "L102"
+      "source_location": "L43"
     },
     {
-      "id": "agents_3_mandatory_lint_gate",
-      "label": "3. Mandatory Lint Gate",
+      "id": "agents_5_workflow_release_gate",
+      "label": "5. Workflow & Release Gate",
       "_origin": "ast",
       "community": 9,
       "community_name": "AGENTS.md",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "3. mandatory lint gate",
+      "norm_label": "5. workflow & release gate",
       "source_file": "AGENTS.md",
-      "source_location": "L64"
-    },
-    {
-      "id": "agents_4_native_dependency_impact",
-      "label": "4. Native Dependency Impact",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "4. native dependency impact",
-      "source_file": "AGENTS.md",
-      "source_location": "L110"
-    },
-    {
-      "id": "agents_4_package_dependency_rules",
-      "label": "4. Package & Dependency Rules",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "4. package & dependency rules",
-      "source_file": "AGENTS.md",
-      "source_location": "L89"
-    },
-    {
-      "id": "agents_5_architectural_code_quality_rules",
-      "label": "5. Architectural & Code Quality Rules",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "5. architectural & code quality rules",
-      "source_file": "AGENTS.md",
-      "source_location": "L118"
-    },
-    {
-      "id": "agents_6_error_handling_mobile_ux",
-      "label": "6. Error Handling & Mobile UX",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "6. error handling & mobile ux",
-      "source_file": "AGENTS.md",
-      "source_location": "L181"
-    },
-    {
-      "id": "agents_7_ota_update_workflow",
-      "label": "7. OTA Update Workflow",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "7. ota update workflow",
-      "source_file": "AGENTS.md",
-      "source_location": "L213"
-    },
-    {
-      "id": "agents_8_execution_workflow",
-      "label": "8. Execution Workflow",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "8. execution workflow",
-      "source_file": "AGENTS.md",
-      "source_location": "L264"
-    },
-    {
-      "id": "agents_a_modular_design_strict_types",
-      "label": "A. Modular Design & Strict Types",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "a. modular design & strict types",
-      "source_file": "AGENTS.md",
-      "source_location": "L120"
-    },
-    {
-      "id": "agents_a_stall_detection",
-      "label": "A. Stall Detection",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "a. stall detection",
-      "source_file": "AGENTS.md",
-      "source_location": "L183"
-    },
-    {
-      "id": "agents_actively_used_libraries",
-      "label": "Actively Used Libraries",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "actively used libraries",
-      "source_file": "AGENTS.md",
-      "source_location": "L32"
+      "source_location": "L50"
     },
     {
       "id": "agents_agents_md",
@@ -3212,213 +2369,21 @@
       "norm_label": "agents.md",
       "source_file": "AGENTS.md",
       "source_location": "L1"
-    },
-    {
-      "id": "agents_b_gateway_error_handling",
-      "label": "B. Gateway Error Handling",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "b. gateway error handling",
-      "source_file": "AGENTS.md",
-      "source_location": "L189"
-    },
-    {
-      "id": "agents_b_minimalist_code_principles",
-      "label": "B. Minimalist Code Principles",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "b. minimalist code principles",
-      "source_file": "AGENTS.md",
-      "source_location": "L138"
-    },
-    {
-      "id": "agents_c_back_handler_android",
-      "label": "C. Back Handler (Android)",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "c. back handler (android)",
-      "source_file": "AGENTS.md",
-      "source_location": "L195"
-    },
-    {
-      "id": "agents_c_webview_scraping_architecture",
-      "label": "C. WebView Scraping Architecture",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "c. webview scraping architecture",
-      "source_file": "AGENTS.md",
-      "source_location": "L144"
-    },
-    {
-      "id": "agents_channels",
-      "label": "Channels",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "channels",
-      "source_file": "AGENTS.md",
-      "source_location": "L215"
-    },
-    {
-      "id": "agents_core_directives",
-      "label": "Core Directives",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "core directives",
-      "source_file": "AGENTS.md",
-      "source_location": "L9"
-    },
-    {
-      "id": "agents_d_splash_screen_management",
-      "label": "D. Splash Screen Management",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "d. splash screen management",
-      "source_file": "AGENTS.md",
-      "source_location": "L202"
-    },
-    {
-      "id": "agents_d_state_management",
-      "label": "D. State Management",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "d. state management",
-      "source_file": "AGENTS.md",
-      "source_location": "L156"
-    },
-    {
-      "id": "agents_e_animated_loader_crabscene",
-      "label": "E. Animated Loader (CrabScene)",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "e. animated loader (crabscene)",
-      "source_file": "AGENTS.md",
-      "source_location": "L207"
-    },
-    {
-      "id": "agents_e_persistence_model",
-      "label": "E. Persistence Model",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "e. persistence model",
-      "source_file": "AGENTS.md",
-      "source_location": "L169"
-    },
-    {
-      "id": "agents_execution_protocol",
-      "label": "Execution Protocol",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "execution protocol",
-      "source_file": "AGENTS.md",
-      "source_location": "L68"
-    },
-    {
-      "id": "agents_framework_runtime",
-      "label": "Framework & Runtime",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "framework & runtime",
-      "source_file": "AGENTS.md",
-      "source_location": "L22"
-    },
-    {
-      "id": "agents_graphify",
-      "label": "graphify",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "graphify",
-      "source_file": "AGENTS.md",
-      "source_location": "L279"
-    },
-    {
-      "id": "agents_native_build_configuration",
-      "label": "Native Build Configuration",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "native build configuration",
-      "source_file": "AGENTS.md",
-      "source_location": "L49"
-    },
-    {
-      "id": "agents_native_build_runbook",
-      "label": "Native Build Runbook",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "native build runbook",
-      "source_file": "AGENTS.md",
-      "source_location": "L250"
-    },
-    {
-      "id": "agents_publishing_runbook",
-      "label": "Publishing Runbook",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "publishing runbook",
-      "source_file": "AGENTS.md",
-      "source_location": "L234"
-    },
-    {
-      "id": "agents_update_behaviour",
-      "label": "Update Behaviour",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "AGENTS.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "update behaviour",
-      "source_file": "AGENTS.md",
-      "source_location": "L224"
     }
   ],
   "links": [
+    {
+      "source": "app_app",
+      "target": "utils_updatemanager_shouldcheckonmount",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "App.tsx",
+      "source_location": "L149",
+      "weight": 1.0
+    },
     {
       "source": "app_app",
       "target": "utils_storage_loadpreviousresult",
@@ -3428,7 +2393,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "App.tsx",
-      "source_location": "L103",
+      "source_location": "L156",
       "weight": 1.0
     },
     {
@@ -3440,7 +2405,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "App.tsx",
-      "source_location": "L117",
+      "source_location": "L171",
       "weight": 1.0
     },
     {
@@ -3452,7 +2417,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "App.tsx",
-      "source_location": "L42",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "app_app",
+      "target": "views_webviewscraper_isportalhost",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "App.tsx",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -3464,19 +2441,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "App.tsx",
-      "source_location": "L72",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
       "source": "app_app",
-      "target": "utils_updatemanager_shouldcheckonmount",
+      "target": "utils_bridgevalidator_parsebridgemessage",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "App.tsx",
-      "source_location": "L96",
+      "source_location": "L88",
       "weight": 1.0
     },
     {
@@ -3488,7 +2465,91 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "reducers/appReducer.ts",
-      "source_location": "L73",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_bridgevalidator_isattendancerecord",
+      "target": "utils_bridgevalidator_isrecord",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_bridgevalidator_isbridgemessage",
+      "target": "utils_bridgevalidator_isrecord",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_bridgevalidator_isbridgemessage",
+      "target": "utils_bridgevalidator_isstudentinfo",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_bridgevalidator_isbridgemessage",
+      "target": "utils_bridgevalidator_issubjectattendancedata",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L83",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_bridgevalidator_isstudentinfo",
+      "target": "utils_bridgevalidator_isrecord",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_bridgevalidator_issubjectattendancedata",
+      "target": "utils_bridgevalidator_isrecord",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_bridgevalidator_parsebridgemessage",
+      "target": "utils_bridgevalidator_isbridgemessage",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L106",
       "weight": 1.0
     },
     {
@@ -3500,7 +2561,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "utils/storage.ts",
-      "source_location": "L70",
+      "source_location": "L106",
       "weight": 1.0
     },
     {
@@ -3512,7 +2573,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "utils/storage.ts",
-      "source_location": "L58",
+      "source_location": "L92",
       "weight": 1.0
     },
     {
@@ -3524,7 +2585,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "utils/storage.ts",
-      "source_location": "L61",
+      "source_location": "L97",
       "weight": 1.0
     },
     {
@@ -3536,7 +2597,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "utils/storage.ts",
-      "source_location": "L52",
+      "source_location": "L82",
       "weight": 1.0
     },
     {
@@ -3548,7 +2609,67 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "utils/updateManager.ts",
-      "source_location": "L81",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "views_dashboard_dashboard",
+      "target": "utils_attendancemath_sanitizepercentage",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "views/Dashboard.tsx",
+      "source_location": "L152",
+      "weight": 1.0
+    },
+    {
+      "source": "views_dashboard_dashboard",
+      "target": "utils_attendancemath_calculatecanskip",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "views/Dashboard.tsx",
+      "source_location": "L154",
+      "weight": 1.0
+    },
+    {
+      "source": "views_dashboard_dashboard",
+      "target": "utils_attendancemath_calculateclassestoreach75",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "views/Dashboard.tsx",
+      "source_location": "L155",
+      "weight": 1.0
+    },
+    {
+      "source": "views_dashboard_dashboard",
+      "target": "utils_attendancemath_getlastattendancedate",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "views/Dashboard.tsx",
+      "source_location": "L156",
+      "weight": 1.0
+    },
+    {
+      "source": "views_dashboard_dashboard",
+      "target": "utils_attendancemath_computeoverallstats",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "views/Dashboard.tsx",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -3572,7 +2693,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "reducers/appReducer.ts",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -3584,7 +2705,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "reducers/appReducer.ts",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -3601,26 +2722,26 @@
     },
     {
       "source": "utils_storage_previousattendanceresult",
-      "target": "utils_automationscripts_studentinfo",
+      "target": "utils_automationscripts_subjectattendancedata",
       "relation": "references",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "utils/storage.ts",
-      "source_location": "L5",
+      "source_location": "L10",
       "weight": 1.0
     },
     {
       "source": "utils_storage_previousattendanceresult",
-      "target": "utils_automationscripts_subjectattendancedata",
+      "target": "utils_automationscripts_studentinfo",
       "relation": "references",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "utils/storage.ts",
-      "source_location": "L6",
+      "source_location": "L9",
       "weight": 1.0
     },
     {
@@ -3632,7 +2753,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "views/Dashboard.tsx",
-      "source_location": "L8",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -3644,7 +2765,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "views/Dashboard.tsx",
-      "source_location": "L9",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -3721,6 +2842,18 @@
     },
     {
       "source": "app_tsx_app",
+      "target": "views_webviewscraper_isportalhost",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "App.tsx",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "app_tsx_app",
       "target": "views_webviewscraper_webviewscraper",
       "relation": "imports",
       "_origin": "ast",
@@ -3769,26 +2902,14 @@
     },
     {
       "source": "app_tsx_app",
-      "target": "utils_automationscripts_studentinfo",
+      "target": "utils_bridgevalidator_parsebridgemessage",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "App.tsx",
-      "source_location": "L14",
-      "weight": 1.0
-    },
-    {
-      "source": "app_tsx_app",
-      "target": "utils_automationscripts_subjectattendancedata",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "App.tsx",
-      "source_location": "L14",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -3800,24 +2921,24 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "App.tsx",
-      "source_location": "L21",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
       "source": "app_tsx_app",
-      "target": "utils_storage_previousattendanceresult",
+      "target": "utils_storage_savepreviousresult",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "App.tsx",
-      "source_location": "L21",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
       "source": "app_tsx_app",
-      "target": "utils_storage_savepreviousresult",
+      "target": "utils_storage_previousattendanceresult",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -3854,6 +2975,18 @@
     {
       "source": "app_tsx_app",
       "target": "constants_theme_colors",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "App.tsx",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "app_tsx_app",
+      "target": "constants_theme_stall_timeout_ms",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -4188,6 +3321,186 @@
       "weight": 1.0
     },
     {
+      "source": "tests_appreducer_test",
+      "target": "reducers_appreducer_appreducer",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "__tests__/appReducer.test.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_appreducer_test",
+      "target": "reducers_appreducer_initialstate",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "__tests__/appReducer.test.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_attendancemath_test",
+      "target": "utils_automationscripts_subjectattendancedata",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "__tests__/attendanceMath.test.ts",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_attendancemath_test",
+      "target": "utils_attendancemath_calculatecanskip",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "__tests__/attendanceMath.test.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_attendancemath_test",
+      "target": "utils_attendancemath_calculateclassestoreach75",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "__tests__/attendanceMath.test.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_attendancemath_test",
+      "target": "utils_attendancemath_computeoverallstats",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "__tests__/attendanceMath.test.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_attendancemath_test",
+      "target": "utils_attendancemath_sanitizepercentage",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "__tests__/attendanceMath.test.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_bridgevalidator_test",
+      "target": "utils_bridgevalidator_isbridgemessage",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "__tests__/bridgeValidator.test.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_bridgevalidator_test",
+      "target": "utils_bridgevalidator_parsebridgemessage",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "__tests__/bridgeValidator.test.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_attendancemath",
+      "target": "utils_automationscripts_attendancerecord",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_attendancemath",
+      "target": "utils_automationscripts_subjectattendancedata",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_bridgevalidator",
+      "target": "utils_automationscripts_attendancerecord",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_bridgevalidator",
+      "target": "utils_automationscripts_studentinfo",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_bridgevalidator",
+      "target": "utils_automationscripts_subjectattendancedata",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_storage",
+      "target": "utils_automationscripts_attendancerecord",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "utils/storage.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
       "source": "utils_storage",
       "target": "utils_automationscripts_studentinfo",
       "relation": "imports",
@@ -4284,6 +3597,78 @@
       "weight": 1.0
     },
     {
+      "source": "views_dashboard",
+      "target": "utils_attendancemath_attendance_threshold",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "views/Dashboard.tsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "views_dashboard",
+      "target": "utils_attendancemath_calculatecanskip",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "views/Dashboard.tsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "views_dashboard",
+      "target": "utils_attendancemath_calculateclassestoreach75",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "views/Dashboard.tsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "views_dashboard",
+      "target": "utils_attendancemath_computeoverallstats",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "views/Dashboard.tsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "views_dashboard",
+      "target": "utils_attendancemath_getlastattendancedate",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "views/Dashboard.tsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "views_dashboard",
+      "target": "utils_attendancemath_sanitizepercentage",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "views/Dashboard.tsx",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
       "source": "views_overlayscreens",
       "target": "components_crabscene_crabscene",
       "relation": "imports",
@@ -4328,7 +3713,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "views/WebViewScraper.tsx",
-      "source_location": "L5",
+      "source_location": "L9",
       "weight": 1.0
     },
     {
@@ -4381,6 +3766,18 @@
     },
     {
       "source": "app_tsx_app",
+      "target": "utils_bridgevalidator",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "App.tsx",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "app_tsx_app",
       "target": "utils_storage",
       "relation": "imports_from",
       "_origin": "ast",
@@ -4389,6 +3786,7 @@
       "context": "import",
       "source_file": "App.tsx",
       "source_location": "L21",
+      "type_only": true,
       "weight": 1.0
     },
     {
@@ -4497,6 +3895,7 @@
       "context": "import",
       "source_file": "reducers/appReducer.ts",
       "source_location": "L1",
+      "type_only": true,
       "weight": 1.0
     },
     {
@@ -4509,6 +3908,82 @@
       "context": "import",
       "source_file": "reducers/appReducer.ts",
       "source_location": "L2",
+      "type_only": true,
+      "weight": 1.0
+    },
+    {
+      "source": "tests_appreducer_test",
+      "target": "reducers_appreducer",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "__tests__/appReducer.test.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_attendancemath_test",
+      "target": "utils_automationscripts",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "__tests__/attendanceMath.test.ts",
+      "source_location": "L10",
+      "type_only": true,
+      "weight": 1.0
+    },
+    {
+      "source": "tests_attendancemath_test",
+      "target": "utils_attendancemath",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "__tests__/attendanceMath.test.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_bridgevalidator_test",
+      "target": "utils_bridgevalidator",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "__tests__/bridgeValidator.test.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_attendancemath",
+      "target": "utils_automationscripts",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L1",
+      "type_only": true,
+      "weight": 1.0
+    },
+    {
+      "source": "utils_bridgevalidator",
+      "target": "utils_automationscripts",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L1",
+      "type_only": true,
       "weight": 1.0
     },
     {
@@ -4521,6 +3996,7 @@
       "context": "import",
       "source_file": "utils/storage.ts",
       "source_location": "L2",
+      "type_only": true,
       "weight": 1.0
     },
     {
@@ -4557,6 +4033,19 @@
       "context": "import",
       "source_file": "views/Dashboard.tsx",
       "source_location": "L5",
+      "type_only": true,
+      "weight": 1.0
+    },
+    {
+      "source": "views_dashboard",
+      "target": "utils_attendancemath",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "views/Dashboard.tsx",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -4592,7 +4081,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "views/WebViewScraper.tsx",
-      "source_location": "L5",
+      "source_location": "L9",
       "weight": 1.0
     },
     {
@@ -4607,19 +4096,8 @@
       "weight": 1.0
     },
     {
-      "source": "agents_1_project_identity_governance",
-      "target": "agents_core_directives",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L9",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_2_pinned_technical_stack",
-      "target": "agents_framework_runtime",
+      "source": "agents_agents_md",
+      "target": "agents_2_non_negotiables",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -4629,437 +4107,8 @@
       "weight": 1.0
     },
     {
-      "source": "agents_2_pinned_technical_stack",
-      "target": "agents_actively_used_libraries",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L32",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_2_pinned_technical_stack",
-      "target": "agents_native_build_configuration",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L49",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_3_mandatory_lint_gate",
-      "target": "agents_execution_protocol",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L68",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_4_package_dependency_rules",
-      "target": "agents_3_dependency_pre_checks",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L102",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_4_package_dependency_rules",
-      "target": "agents_4_native_dependency_impact",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L110",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_4_package_dependency_rules",
-      "target": "agents_1_prohibition_of_latest",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L91",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_4_package_dependency_rules",
-      "target": "agents_2_standard_installation_method",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L95",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_5_architectural_code_quality_rules",
-      "target": "agents_a_modular_design_strict_types",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L120",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_5_architectural_code_quality_rules",
-      "target": "agents_b_minimalist_code_principles",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L138",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_5_architectural_code_quality_rules",
-      "target": "agents_c_webview_scraping_architecture",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L144",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_5_architectural_code_quality_rules",
-      "target": "agents_d_state_management",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L156",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_5_architectural_code_quality_rules",
-      "target": "agents_e_persistence_model",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L169",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_6_error_handling_mobile_ux",
-      "target": "agents_a_stall_detection",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L183",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_6_error_handling_mobile_ux",
-      "target": "agents_b_gateway_error_handling",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L189",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_6_error_handling_mobile_ux",
-      "target": "agents_c_back_handler_android",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L195",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_6_error_handling_mobile_ux",
-      "target": "agents_d_splash_screen_management",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L202",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_6_error_handling_mobile_ux",
-      "target": "agents_e_animated_loader_crabscene",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L207",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_7_ota_update_workflow",
-      "target": "agents_channels",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L215",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_7_ota_update_workflow",
-      "target": "agents_update_behaviour",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L224",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_7_ota_update_workflow",
-      "target": "agents_publishing_runbook",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L234",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_7_ota_update_workflow",
-      "target": "agents_native_build_runbook",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L250",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_9_final_production_gate_mandatory",
-      "target": "agents_a_dependency_hygiene",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L298",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_9_final_production_gate_mandatory",
-      "target": "agents_b_architecture_gate",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L329",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_9_final_production_gate_mandatory",
-      "target": "agents_c_expo_go_development_gate",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L347",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_9_final_production_gate_mandatory",
-      "target": "agents_d_static_quality_gate",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L363",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_9_final_production_gate_mandatory",
-      "target": "agents_e_configuration_gate",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L389",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_9_final_production_gate_mandatory",
-      "target": "agents_f_ota_gate",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L406",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_9_final_production_gate_mandatory",
-      "target": "agents_g_webview_production_gate",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L438",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_9_final_production_gate_mandatory",
-      "target": "agents_h_persistence_gate",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L451",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_9_final_production_gate_mandatory",
-      "target": "agents_i_production_build_gate",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L461",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_9_final_production_gate_mandatory",
-      "target": "agents_j_final_agent_declaration",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L483",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_9_final_production_gate_mandatory",
-      "target": "agents_k_change_discipline",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L511",
-      "weight": 1.0
-    },
-    {
       "source": "agents_agents_md",
-      "target": "agents_5_architectural_code_quality_rules",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L118",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_agents_md",
-      "target": "agents_2_pinned_technical_stack",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L18",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_agents_md",
-      "target": "agents_6_error_handling_mobile_ux",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L181",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_agents_md",
-      "target": "agents_7_ota_update_workflow",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L213",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_agents_md",
-      "target": "agents_8_execution_workflow",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L264",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_agents_md",
-      "target": "agents_graphify",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L279",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_agents_md",
-      "target": "agents_9_final_production_gate_mandatory",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L294",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_agents_md",
-      "target": "agents_1_project_identity_governance",
+      "target": "agents_1_project_snapshot",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5070,24 +4119,35 @@
     },
     {
       "source": "agents_agents_md",
-      "target": "agents_3_mandatory_lint_gate",
+      "target": "agents_3_webview_scraping_do_not_break",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AGENTS.md",
-      "source_location": "L64",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
       "source": "agents_agents_md",
-      "target": "agents_4_package_dependency_rules",
+      "target": "agents_4_state_persistence_errors_ota",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AGENTS.md",
-      "source_location": "L89",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "agents_agents_md",
+      "target": "agents_5_workflow_release_gate",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L50",
       "weight": 1.0
     },
     {
@@ -5400,35 +4460,24 @@
     },
     {
       "source": "app_tsx_app",
-      "target": "app_styles",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "App.tsx",
-      "source_location": "L188",
-      "weight": 1.0
-    },
-    {
-      "source": "app_tsx_app",
-      "target": "app_messagepayload",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "App.tsx",
-      "source_location": "L26",
-      "weight": 1.0
-    },
-    {
-      "source": "app_tsx_app",
       "target": "app_app",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "App.tsx",
-      "source_location": "L33",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "app_tsx_app",
+      "target": "app_styles",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "App.tsx",
+      "source_location": "L244",
       "weight": 1.0
     },
     {
@@ -5443,261 +4492,52 @@
       "weight": 1.0
     },
     {
-      "source": "build_rules_12_production_release_checklist",
-      "target": "build_rules_dependencies",
+      "source": "build_rules_build_rules_md",
+      "target": "build_rules_3_cleanup_lockfile",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "BUILD-RULES.md",
-      "source_location": "L347",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_12_production_release_checklist",
-      "target": "build_rules_code",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L356",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_12_production_release_checklist",
-      "target": "build_rules_native_build",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L364",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_12_production_release_checklist",
-      "target": "build_rules_functional",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L371",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_12_production_release_checklist",
-      "target": "build_rules_release",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L384",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_2_dependency_minimalism",
-      "target": "build_rules_before_adding_a_package",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L32",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_2_dependency_minimalism",
-      "target": "build_rules_installation_rule",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L45",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_8_ota_update_rules",
-      "target": "build_rules_ota_eligible",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L225",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_8_ota_update_rules",
-      "target": "build_rules_new_native_build_required",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L238",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
       "source": "build_rules_build_rules_md",
-      "target": "build_rules_4_current_application_runtime_dependencies",
+      "target": "build_rules_4_build_discipline",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "BUILD-RULES.md",
-      "source_location": "L123",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
       "source": "build_rules_build_rules_md",
-      "target": "build_rules_5_arm64_only_policy",
+      "target": "build_rules_5_verify_release",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "BUILD-RULES.md",
-      "source_location": "L143",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
       "source": "build_rules_build_rules_md",
-      "target": "build_rules_6_production_optimization",
+      "target": "build_rules_1_frozen_targets",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "BUILD-RULES.md",
-      "source_location": "L175",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
       "source": "build_rules_build_rules_md",
-      "target": "build_rules_7_expo_go_policy",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L196",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_build_rules_md",
-      "target": "build_rules_8_ota_update_rules",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L221",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_build_rules_md",
-      "target": "build_rules_9_lockfile_integrity",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L254",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_build_rules_md",
-      "target": "build_rules_2_dependency_minimalism",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L28",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_build_rules_md",
-      "target": "build_rules_10_required_verification_pipeline",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L287",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_build_rules_md",
-      "target": "build_rules_jntua_attendance_build_dependency_release_rules",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L3",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_build_rules_md",
-      "target": "build_rules_11_webview_safety_rules",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L314",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_build_rules_md",
-      "target": "build_rules_12_production_release_checklist",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L345",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_build_rules_md",
-      "target": "build_rules_13_hard_failure_policy",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L395",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_build_rules_md",
-      "target": "build_rules_14_agent_rule",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L416",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_build_rules_md",
-      "target": "build_rules_3_mandatory_unused_package_cleanup",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "BUILD-RULES.md",
-      "source_location": "L63",
-      "weight": 1.0
-    },
-    {
-      "source": "build_rules_build_rules_md",
-      "target": "build_rules_1_non_negotiable_build_targets",
+      "target": "build_rules_2_adding_dependencies",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -6213,105 +5053,6 @@
       "weight": 1.0
     },
     {
-      "source": "readme_architecture",
-      "target": "readme_module_responsibilities",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L139",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_architecture",
-      "target": "readme_key_design_decisions",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L156",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_data_pipeline",
-      "target": "readme_messaging_protocol",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L698",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_data_pipeline",
-      "target": "readme_reducer_item_handling",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L733",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_error_handling",
-      "target": "readme_1_gateway_error_handling_http_502",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L922",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_error_handling",
-      "target": "readme_2_offline_error_handling",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L932",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_error_handling",
-      "target": "readme_3_structure_error_handling",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L940",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_error_handling",
-      "target": "readme_4_selection_error_stall_detection",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L953",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_error_handling",
-      "target": "readme_error_dismissal",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L966",
-      "weight": 1.0
-    },
-    {
       "source": "readme_getting_started",
       "target": "readme_prerequisites",
       "relation": "contains",
@@ -6319,150 +5060,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L514",
+      "source_location": "L107",
       "weight": 1.0
     },
     {
       "source": "readme_getting_started",
-      "target": "readme_install",
+      "target": "readme_quality_gates_mandatory",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L524",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_getting_started",
-      "target": "readme_run",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L532",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_getting_started",
-      "target": "readme_recommended_development_build",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L545",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_getting_started",
-      "target": "readme_verify_quality_gates",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L576",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_jntua_attendance",
-      "target": "readme_production_readiness",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L1064",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_jntua_attendance",
-      "target": "readme_troubleshooting",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L1153",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_jntua_attendance",
-      "target": "readme_contributing",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L1203",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_jntua_attendance",
-      "target": "readme_documentation_gaps",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L1227",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_jntua_attendance",
-      "target": "readme_license",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L1295",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_jntua_attendance",
-      "target": "readme_table_of_contents",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L17",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_jntua_attendance",
-      "target": "readme_project_structure",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L208",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_jntua_attendance",
-      "target": "readme_project_idea",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L39",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_jntua_attendance",
-      "target": "readme_tech_stack",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L489",
+      "source_location": "L123",
       "weight": 1.0
     },
     {
@@ -6473,84 +5082,40 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L512",
+      "source_location": "L105",
       "weight": 1.0
     },
     {
       "source": "readme_jntua_attendance",
-      "target": "readme_usage_guide",
+      "target": "readme_usage",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L586",
+      "source_location": "L136",
       "weight": 1.0
     },
     {
       "source": "readme_jntua_attendance",
-      "target": "readme_how_it_works",
+      "target": "readme_the_75_rule",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L63",
+      "source_location": "L147",
       "weight": 1.0
     },
     {
       "source": "readme_jntua_attendance",
-      "target": "readme_data_pipeline",
+      "target": "readme_persistence",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L664",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_jntua_attendance",
-      "target": "readme_the_75_rule_logic",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L744",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_jntua_attendance",
-      "target": "readme_previous_attendance_persistence",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L813",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_jntua_attendance",
-      "target": "readme_mobile_ux_features",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L855",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_jntua_attendance",
-      "target": "readme_architecture",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L89",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -6561,447 +5126,106 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L917",
+      "source_location": "L179",
       "weight": 1.0
     },
     {
       "source": "readme_jntua_attendance",
-      "target": "readme_ota_updates_eas_update",
+      "target": "readme_ota_updates",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L978",
+      "source_location": "L192",
       "weight": 1.0
     },
     {
-      "source": "readme_mobile_ux_features",
-      "target": "readme_animated_loader_crabscene",
+      "source": "readme_jntua_attendance",
+      "target": "readme_troubleshooting",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L857",
+      "source_location": "L216",
       "weight": 1.0
     },
     {
-      "source": "readme_mobile_ux_features",
-      "target": "readme_splash_screen_management",
+      "source": "readme_jntua_attendance",
+      "target": "readme_contributing",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L877",
+      "source_location": "L231",
       "weight": 1.0
     },
     {
-      "source": "readme_mobile_ux_features",
-      "target": "readme_custom_user_agent",
+      "source": "readme_jntua_attendance",
+      "target": "readme_license",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L886",
+      "source_location": "L240",
       "weight": 1.0
     },
     {
-      "source": "readme_mobile_ux_features",
-      "target": "readme_human_verify_note",
+      "source": "readme_jntua_attendance",
+      "target": "readme_features",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L895",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
-      "source": "readme_mobile_ux_features",
-      "target": "readme_refresh_button",
+      "source": "readme_jntua_attendance",
+      "target": "readme_how_it_works",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L902",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
-      "source": "readme_mobile_ux_features",
-      "target": "readme_ota_update_banner",
+      "source": "readme_jntua_attendance",
+      "target": "readme_project_structure",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L909",
+      "source_location": "L62",
       "weight": 1.0
     },
     {
-      "source": "readme_ota_updates_eas_update",
-      "target": "readme_channels",
+      "source": "readme_jntua_attendance",
+      "target": "readme_tech_stack",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L1003",
+      "source_location": "L87",
       "weight": 1.0
     },
     {
-      "source": "readme_ota_updates_eas_update",
-      "target": "readme_publishing_runbook",
+      "source": "readme_jntua_attendance",
+      "target": "readme_table_of_contents",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L1013",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_ota_updates_eas_update",
-      "target": "readme_native_build_runbook",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L1029",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_ota_updates_eas_update",
-      "target": "readme_what_requires_a_new_build_vs_an_ota_update",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L1046",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_ota_updates_eas_update",
-      "target": "readme_configuration",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L986",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_production_readiness",
-      "target": "readme_before_a_production_build",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L1071",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_production_readiness",
-      "target": "readme_build_a_preview_artifact",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L1085",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_production_readiness",
-      "target": "readme_build_for_production",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L1094",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_production_readiness",
-      "target": "readme_expo_go_build_warning",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L1104",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_production_readiness",
-      "target": "readme_native_build_configuration",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L1127",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_production_readiness",
-      "target": "readme_recommended_release_sequence",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L1141",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_project_structure",
-      "target": "readme_app_tsx",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L242",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_project_structure",
-      "target": "readme_reducers_appreducer_ts",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L263",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_project_structure",
-      "target": "readme_views_webviewscraper_tsx",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L310",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_project_structure",
-      "target": "readme_views_overlayscreens_tsx",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L331",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_project_structure",
-      "target": "readme_views_dashboard_tsx",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L354",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_project_structure",
-      "target": "readme_components_crabscene_tsx",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L377",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_project_structure",
-      "target": "readme_components_spike_tsx",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L393",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_project_structure",
-      "target": "readme_components_datelogmodal_tsx",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L399",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_project_structure",
-      "target": "readme_constants_theme_ts",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L406",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_project_structure",
-      "target": "readme_utils_automationscripts_ts",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L415",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_project_structure",
-      "target": "readme_utils_storage_ts",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L439",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_project_structure",
-      "target": "readme_utils_updatemanager_ts",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L465",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_the_75_rule_logic",
-      "target": "readme_color_threshold_zones",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L766",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_the_75_rule_logic",
-      "target": "readme_skip_capacity_calculation",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L781",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_the_75_rule_logic",
-      "target": "readme_classes_to_reach_75",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L799",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_usage_guide",
-      "target": "readme_1_log_in",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L588",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_usage_guide",
-      "target": "readme_2_automatic_sync",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L596",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_usage_guide",
-      "target": "readme_3_read_the_dashboard",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L609",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_usage_guide",
-      "target": "readme_4_inspect_a_subject_log",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L632",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_usage_guide",
-      "target": "readme_5_refresh",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L639",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_usage_guide",
-      "target": "readme_6_view_previous_attendance",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L644",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_usage_guide",
-      "target": "readme_7_reset_the_app",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L652",
+      "source_location": "L9",
       "weight": 1.0
     },
     {
@@ -7012,7 +5236,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "reducers/appReducer.ts",
-      "source_location": "L23",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -7034,7 +5258,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "reducers/appReducer.ts",
-      "source_location": "L42",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -7045,7 +5269,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "reducers/appReducer.ts",
-      "source_location": "L52",
+      "source_location": "L56",
       "weight": 1.0
     },
     {
@@ -7056,7 +5280,29 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "reducers/appReducer.ts",
-      "source_location": "L70",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_regression_check",
+      "target": "scripts_regression_check_sh__entry",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/regression-check.sh",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_attendancemath_test",
+      "target": "tests_attendancemath_test_subject",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "__tests__/attendanceMath.test.ts",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -7115,6 +5361,83 @@
       "weight": 1.0
     },
     {
+      "source": "utils_attendancemath",
+      "target": "utils_attendancemath_computeoverallstats",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_attendancemath",
+      "target": "utils_attendancemath_attendance_threshold",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_attendancemath",
+      "target": "utils_attendancemath_calculatecanskip",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_attendancemath",
+      "target": "utils_attendancemath_overallstats",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_attendancemath",
+      "target": "utils_attendancemath_calculateclassestoreach75",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_attendancemath",
+      "target": "utils_attendancemath_getlastattendancedate",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_attendancemath",
+      "target": "utils_attendancemath_sanitizepercentage",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "utils/attendanceMath.ts",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
       "source": "utils_automationscripts",
       "target": "utils_automationscripts_parsedetailedattendanceandgohomescript",
       "relation": "contains",
@@ -7122,7 +5445,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "utils/automationScripts.ts",
-      "source_location": "L123",
+      "source_location": "L139",
       "weight": 1.0
     },
     {
@@ -7166,7 +5489,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "utils/automationScripts.ts",
-      "source_location": "L30",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -7177,7 +5500,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "utils/automationScripts.ts",
-      "source_location": "L72",
+      "source_location": "L73",
       "weight": 1.0
     },
     {
@@ -7192,58 +5515,91 @@
       "weight": 1.0
     },
     {
-      "source": "utils_storage",
-      "target": "utils_storage_getstorageuri",
+      "source": "utils_bridgevalidator",
+      "target": "utils_bridgevalidator_parsebridgemessage",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "utils/storage.ts",
-      "source_location": "L11",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L102",
       "weight": 1.0
     },
     {
-      "source": "utils_storage",
-      "target": "utils_storage_ispreviousattendanceresult",
+      "source": "utils_bridgevalidator",
+      "target": "utils_bridgevalidator_known_types",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "utils/storage.ts",
-      "source_location": "L18",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
-      "source": "utils_storage",
-      "target": "utils_storage_previousattendanceresult",
+      "source": "utils_bridgevalidator",
+      "target": "utils_bridgevalidator_isrecord",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "utils/storage.ts",
-      "source_location": "L4",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
-      "source": "utils_storage",
-      "target": "utils_storage_savepreviousresult",
+      "source": "utils_bridgevalidator",
+      "target": "utils_bridgevalidator_isstudentinfo",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "utils/storage.ts",
-      "source_location": "L49",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
-      "source": "utils_storage",
-      "target": "utils_storage_loadpreviousresult",
+      "source": "utils_bridgevalidator",
+      "target": "utils_bridgevalidator_isattendancerecord",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "utils/storage.ts",
-      "source_location": "L56",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_bridgevalidator",
+      "target": "utils_bridgevalidator_issubjectattendancedata",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_bridgevalidator",
+      "target": "utils_bridgevalidator_isbridgemessage",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_bridgevalidator",
+      "target": "utils_bridgevalidator_bridgemessage",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L7",
       "weight": 1.0
     },
     {
@@ -7254,7 +5610,73 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "utils/storage.ts",
-      "source_location": "L68",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_storage",
+      "target": "utils_storage_getstorageuri",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "utils/storage.ts",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_storage",
+      "target": "utils_storage_isattendancerecord",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "utils/storage.ts",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_storage",
+      "target": "utils_storage_ispreviousattendanceresult",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "utils/storage.ts",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_storage",
+      "target": "utils_storage_savepreviousresult",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "utils/storage.ts",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_storage",
+      "target": "utils_storage_previousattendanceresult",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "utils/storage.ts",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_storage",
+      "target": "utils_storage_loadpreviousresult",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "utils/storage.ts",
+      "source_location": "L90",
       "weight": 1.0
     },
     {
@@ -7265,7 +5687,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "utils/updateManager.ts",
-      "source_location": "L13",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -7276,7 +5698,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "utils/updateManager.ts",
-      "source_location": "L26",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -7287,7 +5709,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "utils/updateManager.ts",
-      "source_location": "L34",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -7298,12 +5720,12 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "utils/updateManager.ts",
-      "source_location": "L5",
+      "source_location": "L4",
       "weight": 1.0
     },
     {
       "source": "views_dashboard",
-      "target": "views_dashboard_dashboard",
+      "target": "views_dashboard_dashboardprops",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7320,18 +5742,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "views/Dashboard.tsx",
-      "source_location": "L180",
+      "source_location": "L194",
       "weight": 1.0
     },
     {
       "source": "views_dashboard",
-      "target": "views_dashboard_dashboardprops",
+      "target": "views_dashboard_dashboard",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "views/Dashboard.tsx",
-      "source_location": "L7",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -7342,7 +5764,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "views/OverlayScreens.tsx",
-      "source_location": "L115",
+      "source_location": "L122",
       "weight": 1.0
     },
     {
@@ -7364,29 +5786,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "views/OverlayScreens.tsx",
-      "source_location": "L6",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
       "source": "views_webviewscraper",
-      "target": "views_webviewscraper_webviewscraperprops",
+      "target": "views_webviewscraper_portal_base_url",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "views/WebViewScraper.tsx",
-      "source_location": "L20",
-      "weight": 1.0
-    },
-    {
-      "source": "views_webviewscraper",
-      "target": "views_webviewscraper_webviewscraper",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "views/WebViewScraper.tsx",
-      "source_location": "L34",
+      "source_location": "L11",
       "weight": 1.0
     },
     {
@@ -7397,7 +5808,62 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "views/WebViewScraper.tsx",
-      "source_location": "L87",
+      "source_location": "L112",
+      "weight": 1.0
+    },
+    {
+      "source": "views_webviewscraper",
+      "target": "views_webviewscraper_portal_host",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "views/WebViewScraper.tsx",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "views_webviewscraper",
+      "target": "views_webviewscraper_portal_origin_whitelist",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "views/WebViewScraper.tsx",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "views_webviewscraper",
+      "target": "views_webviewscraper_isportalhost",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "views/WebViewScraper.tsx",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "views_webviewscraper",
+      "target": "views_webviewscraper_webviewscraperprops",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "views/WebViewScraper.tsx",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "views_webviewscraper",
+      "target": "views_webviewscraper_webviewscraper",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "views/WebViewScraper.tsx",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -7409,10 +5875,34 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "App.tsx",
-      "source_location": "L41",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_bridgevalidator_issubjectattendancedata",
+      "target": "utils_bridgevalidator_isattendancerecord",
+      "relation": "indirect_call",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "context": "argument",
+      "source_file": "utils/bridgeValidator.ts",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "utils_storage_ispreviousattendanceresult",
+      "target": "utils_storage_isattendancerecord",
+      "relation": "indirect_call",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "context": "argument",
+      "source_file": "utils/storage.ts",
+      "source_location": "L74",
       "weight": 1.0
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "360c677853e26ded9092268c9349dd40db5c81d2"
+  "built_at_commit": "d9c1eed36f2d40c5a7b1ef779346a83acd6f4059"
 }

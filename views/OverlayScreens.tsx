@@ -2,11 +2,11 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { CrabScene } from "../components/CrabScene";
 import { COLORS, SERIF } from "../constants/theme";
-
 interface OverlayScreensProps {
   gatewayError: boolean;
   isOffline: boolean;
   isStructureError: boolean;
+  structureErrorMessage: string | null;
   isLoggedIn: boolean;
   isScrapingFinished: boolean;
   isSelectionError: boolean;
@@ -21,6 +21,7 @@ export function OverlayScreens({
   gatewayError,
   isOffline,
   isStructureError,
+  structureErrorMessage,
   isLoggedIn,
   isScrapingFinished,
   isSelectionError,
@@ -30,86 +31,95 @@ export function OverlayScreens({
   onFullReset,
   onClearSelectionError,
 }: OverlayScreensProps) {
-  return (
-    <>
-      {/* NO INTERNET SCREEN */}
-      {isOffline && (
-        <View style={styles.overlayFull}>
-          <CrabScene />
-          <Text style={styles.syncTitle}>{"No Internet\nConnection"}</Text>
-          <Text style={styles.syncSub}>Please check your network settings and try again.</Text>
+  // Explicit priority: offline > gateway > structure > selection > syncing.
+  if (isOffline) {
+    return (
+      <View style={styles.overlayFull}>
+        <CrabScene />
+        <Text style={styles.syncTitle}>{"No Internet\nConnection"}</Text>
+        <Text style={styles.syncSub}>Please check your network settings and try again.</Text>
+        <TouchableOpacity style={styles.primaryBtn} onPress={onFullReset}>
+          <Text style={styles.btnText}>Retry</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  if (gatewayError) {
+    return (
+      <View style={styles.overlayFull}>
+        <CrabScene />
+        <Text style={styles.syncTitle}>{"Main attendance\nwebsite is not working"}</Text>
+        <Text style={styles.syncSub}>The portal is temporarily unavailable (502).</Text>
+        <TouchableOpacity style={styles.errorBtn} onPress={onFullReset}>
+          <Text style={styles.btnText}>Try again</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  if (isStructureError) {
+    return (
+      <View style={styles.overlayFull}>
+        <View style={styles.errorCard}>
+          <Text style={styles.errorIcon}>!</Text>
+          <Text style={styles.errorTitle}>Portal Layout Changed</Text>
+          <Text style={styles.errorBody}>
+            {structureErrorMessage ??
+              "The original attendance website modified its internal structure. An update to this app is required to parse your subjects correctly."}
+          </Text>
           <TouchableOpacity style={styles.primaryBtn} onPress={onFullReset}>
-            <Text style={styles.btnText}>Retry</Text>
+            <Text style={styles.btnText}>Reload Portal</Text>
           </TouchableOpacity>
         </View>
-      )}
+      </View>
+    );
+  }
 
-      {/* 502 GATEWAY ERROR */}
-      {gatewayError && !isOffline && (
-        <View style={styles.overlayFull}>
-          <CrabScene />
-          <Text style={styles.syncTitle}>{"Main attendance\nwebsite is not working"}</Text>
-          <Text style={styles.syncSub}>The portal is temporarily unavailable (502).</Text>
-          <TouchableOpacity style={styles.errorBtn} onPress={onFullReset}>
+  // Selection error is dismissible; surface it above the syncing loader.
+  if (isSelectionError && isLoggedIn && !isScrapingFinished) {
+    return (
+      <View style={styles.overlayFull}>
+        <View style={styles.errorCard}>
+          <TouchableOpacity style={styles.closeIcon} onPress={onClearSelectionError} accessibilityRole="button" accessibilityLabel="Dismiss loading error">
+            <Text style={styles.closeIconText}>✕</Text>
+          </TouchableOpacity>
+          <Text style={styles.errorIcon}>!</Text>
+          <Text style={styles.errorTitle}>Couldn’t load subjects right now</Text>
+          <Text style={styles.errorBody}>
+            The attendance portal was recently updated, so the app can’t detect your semester or
+            subjects at the moment. This is a temporary issue — we’re working on a fix.
+          </Text>
+          <TouchableOpacity style={styles.errorBtn} onPress={onFullReset} accessibilityRole="button" accessibilityLabel="Retry loading subjects">
             <Text style={styles.btnText}>Try again</Text>
           </TouchableOpacity>
         </View>
-      )}
+      </View>
+    );
+  }
 
-      {/* WEBSITE STRUCTURE CHANGED ERROR */}
-      {isStructureError && !isOffline && (
-        <View style={styles.overlayFull}>
-          <View style={styles.errorCard}>
-            <Text style={styles.errorIcon}>!</Text>
-            <Text style={styles.errorTitle}>Portal Layout Changed</Text>
-            <Text style={styles.errorBody}>
-              The original attendance website modified its internal structure. An update to this app is required to parse your subjects correctly.
-            </Text>
-            <TouchableOpacity style={styles.primaryBtn} onPress={onFullReset}>
-              <Text style={styles.btnText}>Reload Portal</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
+  if (isLoggedIn && !isScrapingFinished) {
+    return (
+      <View style={styles.overlayFull}>
+        <CrabScene />
+        <Text style={styles.syncEyebrow}>SYNCING</Text>
+        <Text style={styles.syncTitle}>{"Reading your\nsemester"}</Text>
+        <Text style={styles.syncSub}>
+          {totalSubjects ? `Processed ${fetchedIndicesCount} of ${totalSubjects} subjects` : "Authenticating session…"}
+        </Text>
+        <Text style={styles.syncPct}>
+          {syncPct}
+          <Text style={styles.syncPctSign}>%</Text>
+        </Text>
+        <Text style={styles.syncFine}>Secure session · jntuaceastudents.classattendance.in</Text>
+        <TouchableOpacity style={styles.primaryBtn} onPress={onFullReset} accessibilityRole="button" accessibilityLabel="Cancel sync">
+          <Text style={styles.btnText}>Cancel</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
-      {/* SYNCING */}
-      {isLoggedIn && !isScrapingFinished && !isSelectionError && !isStructureError && !isOffline && (
-        <View style={styles.overlayFull}>
-          <CrabScene />
-          <Text style={styles.syncEyebrow}>SYNCING</Text>
-          <Text style={styles.syncTitle}>{"Reading your\nsemester"}</Text>
-          <Text style={styles.syncSub}>
-            {totalSubjects ? `Processed ${fetchedIndicesCount} of ${totalSubjects} subjects` : "Authenticating session…"}
-          </Text>
-          <Text style={styles.syncPct}>
-            {syncPct}
-            <Text style={styles.syncPctSign}>%</Text>
-          </Text>
-          <Text style={styles.syncFine}>Secure session · jntuaceastudents.classattendance.in</Text>
-        </View>
-      )}
-
-      {/* SELECTION ERROR */}
-      {isSelectionError && isLoggedIn && !isScrapingFinished && !isOffline && (
-        <View style={styles.overlayFull}>
-          <View style={styles.errorCard}>
-            <TouchableOpacity style={styles.closeIcon} onPress={onClearSelectionError}>
-              <Text style={styles.closeIconText}>✕</Text>
-            </TouchableOpacity>
-            <Text style={styles.errorIcon}>!</Text>
-            <Text style={styles.errorTitle}>Couldn’t load subjects right now</Text>
-            <Text style={styles.errorBody}>
-              The attendance portal was recently updated, so the app can’t detect your semester or
-              subjects at the moment. This is a temporary issue — we’re working on a fix.
-            </Text>
-            <TouchableOpacity style={styles.errorBtn} onPress={onFullReset}>
-              <Text style={styles.btnText}>Try again</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-    </>
-  );
+  return null;
 }
 
 const styles = StyleSheet.create({

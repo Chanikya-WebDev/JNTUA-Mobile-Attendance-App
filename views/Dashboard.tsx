@@ -1,50 +1,183 @@
-import React from "react";
-import { FlatList, Linking, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { memo, useCallback, useMemo } from "react";
+import { FlatList, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import type { ListRenderItemInfo } from "react-native";
 import { Spike } from "../components/Spike";
 import { COLORS, GITHUB_URL, SERIF } from "../constants/theme";
-import { StudentInfo, SubjectAttendanceData } from "../utils/automationScripts";
+import type { StudentInfo, SubjectAttendanceData } from "../utils/automationScripts";
+import {
+  ATTENDANCE_THRESHOLD,
+  calculateCanSkip,
+  calculateClassesToReach75,
+  computeOverallStats,
+  getLastAttendanceDate,
+  sanitizePercentage,
+} from "../utils/attendanceMath";
 
 interface DashboardProps {
   studentInfo: StudentInfo | null;
   subjectsData: SubjectAttendanceData[];
   onSelectSubject: (item: SubjectAttendanceData) => void;
   onFullReset: () => void;
-  isRefreshing: boolean;
 }
+
+function getAttendanceColor(percentage: number): string {
+  if (!Number.isFinite(percentage)) return COLORS.error;
+  if (percentage < ATTENDANCE_THRESHOLD) return COLORS.error;
+  if (percentage <= 77) return COLORS.amber;
+  return COLORS.success;
+}
+
+interface SubjectCardProps {
+  item: SubjectAttendanceData;
+  maxOverallSkippable: number;
+  onSelectSubject: (item: SubjectAttendanceData) => void;
+}
+
+const SubjectCard = memo(function SubjectCard({ item, maxOverallSkippable, onSelectSubject }: SubjectCardProps) {
+  // Per-subject skip budget stays coupled to overall headroom.
+  const pVal = sanitizePercentage(item.percentage);
+  const isLow = pVal < ATTENDANCE_THRESHOLD;
+  const canSkip = calculateCanSkip(item.present, item.total, maxOverallSkippable);
+  const classesToReach75 = calculateClassesToReach75(item.present, item.total);
+  const lastDate = getLastAttendanceDate(item.records);
+  return (
+    <TouchableOpacity
+      activeOpacity={0.8}
+      style={styles.subjectCard}
+      onPress={() => onSelectSubject(item)}
+      accessibilityRole="button"
+      accessibilityLabel={`${item.subjectName}, ${item.percentage} percent attendance`}
+    >
+      <View style={styles.subjectRow1}>
+        <Text style={styles.subjectName} numberOfLines={2}>{item.subjectName}</Text>
+        <Text style={[styles.subjectPct, { color: getAttendanceColor(pVal) }]}>{item.percentage}%</Text>
+      </View>
+      {lastDate && (
+        <Text style={styles.subjectLastDate}>Last class · {lastDate}</Text>
+      )}
+      <View style={styles.subjectRow2}>
+        <Text style={styles.shortStats}>
+          Tot <Text style={styles.shortStatsBold}>{item.total}</Text>
+          {" · "}Att <Text style={styles.shortStatsBold}>{item.present}</Text>
+          {" · "}Abs <Text style={styles.shortStatsBold}>{item.absent}</Text>
+        </Text>
+        <View style={[styles.badgeCoral, canSkip <= 0 && styles.badgeMute]}>
+          <Text style={[styles.badgeCoralText, canSkip <= 0 && styles.badgeMuteText]}>
+            {isLow
+              ? `Attend ${classesToReach75} more`
+              : canSkip > 0
+                ? `Skip ${canSkip} ${canSkip === 1 ? "class" : "classes"}`
+                : "Keep attending"}
+          </Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+});
 
 export function Dashboard({
   studentInfo,
   subjectsData,
   onSelectSubject,
   onFullReset,
-  isRefreshing,
 }: DashboardProps) {
-  /* Aggregation math */
-  const { overallClasses, overallPresent, overallAbsent } = subjectsData.reduce(
-    (acc, x) => ({
-      overallClasses: acc.overallClasses + x.total,
-      overallPresent: acc.overallPresent + x.present,
-      overallAbsent: acc.overallAbsent + x.absent,
-    }),
-    { overallClasses: 0, overallPresent: 0, overallAbsent: 0 }
-  );
+  /* Aggregation math (pure helpers enable unit tests) */
+  const {
+    overallClasses,
+    overallPresent,
+    overallAbsent,
+    overallPercentage,
+    overallPercentageVal,
+    isShortage,
+    maxOverallSkippable,
+  } = useMemo(() => computeOverallStats(subjectsData), [subjectsData]);
 
-  const overallPercentageVal = overallClasses > 0 ? (overallPresent / overallClasses) * 100 : 0;
-  const overallPercentage = overallPercentageVal.toFixed(1);
-  const isShortage = overallPercentageVal < 75;
-  const maxOverallSkippable = Math.max(0, Math.floor((4 * overallPresent - 3 * overallClasses) / 3));
+  const handleOpenGithub = useCallback((): void => {
+    void Linking.canOpenURL(GITHUB_URL)
+      .then((supported) => {
+        if (supported) void Linking.openURL(GITHUB_URL);
+      })
+      .catch(() => undefined);
+  }, []);
 
-  const getAttendanceColor = (percentage: number): string => {
-    if (percentage < 75) return COLORS.error;
-    if (percentage <= 77) return COLORS.amber;
-    return COLORS.success;
-  };
+  const renderSubjectItem = useCallback(({ item }: ListRenderItemInfo<SubjectAttendanceData>) => (
+    <SubjectCard item={item} maxOverallSkippable={maxOverallSkippable} onSelectSubject={onSelectSubject} />
+  ), [maxOverallSkippable, onSelectSubject]);
 
-  const calculateCanSkip = (p: number, t: number): number =>
-    Math.min(Math.max(0, Math.floor((4 * p - 3 * t) / 3)), maxOverallSkippable);
+  const listHeader = useMemo(() => (
+    <View>
+      {studentInfo && (
+        <View style={styles.profileCard}>
+          <Text style={styles.profileName} numberOfLines={1}>{studentInfo.name}</Text>
+          <View style={styles.profileMetaRow}>
+            <View style={styles.liveDot} />
+            <Text style={styles.profileMeta} numberOfLines={1}>
+              {studentInfo.admissionNo} • {studentInfo.className}
+            </Text>
+          </View>
+        </View>
+      )}
 
-  const calculateClassesToReach75 = (p: number, t: number): number =>
-    Math.max(0, 3 * t - 4 * p);
+      <View style={styles.overallCard}>
+        <View style={styles.overallTopRow}>
+          <Text style={styles.eyebrowSm}>OVERALL ATTENDANCE</Text>
+          <View style={styles.badgePill}>
+            <Text style={styles.badgePillText}>{isShortage ? "Shortage" : "Semester 1"}</Text>
+          </View>
+        </View>
+        <Text style={[styles.bigPct, { color: getAttendanceColor(overallPercentageVal) }]}>
+          {overallPercentage}
+          <Text style={styles.bigPctSign}>%</Text>
+        </Text>
+        <View style={styles.miniStats}>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatNum}>{overallClasses}</Text>
+            <Text style={styles.miniStatLabel}>TOT</Text>
+          </View>
+          <View style={styles.miniDivider} />
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatNum}>{overallPresent}</Text>
+            <Text style={styles.miniStatLabel}>ATT</Text>
+          </View>
+          <View style={styles.miniDivider} />
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatNum}>{overallAbsent}</Text>
+            <Text style={styles.miniStatLabel}>ABS</Text>
+          </View>
+        </View>
+        <View style={styles.skipRow}>
+          <View>
+            <Text style={styles.skipTitle}>Overall Safe to skip</Text>
+            <Text style={styles.skipSub}>while staying above 75%</Text>
+          </View>
+          <View style={[styles.badgeCoral, maxOverallSkippable <= 0 && styles.badgeMute]}>
+            <Text style={[styles.badgeCoralText, maxOverallSkippable <= 0 && styles.badgeMuteText]}>
+              {maxOverallSkippable} {maxOverallSkippable === 1 ? "class" : "classes"}
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.listHead}>
+        <Text style={styles.eyebrowSm}>SUBJECTS</Text>
+        <Text style={styles.listCount}>{subjectsData.length}</Text>
+      </View>
+    </View>
+  ), [studentInfo, subjectsData.length, overallClasses, overallPresent, overallAbsent, overallPercentage, overallPercentageVal, isShortage, maxOverallSkippable]);
+
+  const listFooter = useMemo(() => (
+    <View style={styles.footBand}>
+      <Spike size={15} color={COLORS.onDark} />
+      <Text style={styles.footTitle}>Open to Contribute</Text>
+      <Text style={styles.footSub}>{"Found a bug or have an idea?\nThis app is open source."}</Text>
+      <TouchableOpacity style={styles.btnCoral} activeOpacity={0.85} onPress={handleOpenGithub} accessibilityRole="link" accessibilityLabel="View source on GitHub">
+        <Text style={styles.btnCoralText}>View on GitHub</Text>
+      </TouchableOpacity>
+      <Text style={styles.footCredit}>
+        Crafted by <Text style={styles.footCreditName}>J Chanikya</Text> · 2026
+      </Text>
+    </View>
+  ), [handleOpenGithub]);
 
   return (
     <View style={styles.dashboardContainer}>
@@ -54,7 +187,7 @@ export function Dashboard({
           <Text style={styles.wordmarkText}>Chanikya</Text>
           <Text style={styles.wordmarkRole}>·dev</Text>
         </View>
-        <TouchableOpacity style={styles.iconBtn} onPress={onFullReset} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.iconBtn} onPress={onFullReset} activeOpacity={0.7} accessibilityRole="button" accessibilityLabel="Reset and reload attendance">
           <Text style={styles.iconBtnText}>↺</Text>
         </TouchableOpacity>
       </View>
@@ -62,116 +195,20 @@ export function Dashboard({
       <FlatList
         style={{ flex: 1 }}
         data={subjectsData}
-        keyExtractor={(item, index) => `${item.subjectName}-${index}`}
+        keyExtractor={(item, index) =>
+          item.subCode && item.subCode.length > 0
+            ? `${item.subCode}-${index}`
+            : `${item.subjectName}-${index}`
+        }
+        renderItem={renderSubjectItem}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 16 }}
-        ListHeaderComponent={
-          <View>
-            {studentInfo && (
-              <View style={styles.profileCard}>
-                <Text style={styles.profileName} numberOfLines={1}>{studentInfo.name}</Text>
-                <View style={styles.profileMetaRow}>
-                  <View style={styles.liveDot} />
-                  <Text style={styles.profileMeta} numberOfLines={1}>
-                    {studentInfo.admissionNo} • {studentInfo.className}
-                  </Text>
-                </View>
-              </View>
-            )}
-
-            <View style={styles.overallCard}>
-              <View style={styles.overallTopRow}>
-                <Text style={styles.eyebrowSm}>OVERALL ATTENDANCE</Text>
-                <View style={styles.badgePill}>
-                  <Text style={styles.badgePillText}>{isShortage ? "Shortage" : "Semester 1"}</Text>
-                </View>
-              </View>
-              <Text style={[styles.bigPct, { color: getAttendanceColor(overallPercentageVal) }]}>
-                {overallPercentage}
-                <Text style={styles.bigPctSign}>%</Text>
-              </Text>
-              <View style={styles.miniStats}>
-                <View style={styles.miniStat}>
-                  <Text style={styles.miniStatNum}>{overallClasses}</Text>
-                  <Text style={styles.miniStatLabel}>TOT</Text>
-                </View>
-                <View style={styles.miniDivider} />
-                <View style={styles.miniStat}>
-                  <Text style={styles.miniStatNum}>{overallPresent}</Text>
-                  <Text style={styles.miniStatLabel}>ATT</Text>
-                </View>
-                <View style={styles.miniDivider} />
-                <View style={styles.miniStat}>
-                  <Text style={styles.miniStatNum}>{overallAbsent}</Text>
-                  <Text style={styles.miniStatLabel}>ABS</Text>
-                </View>
-              </View>
-              <View style={styles.skipRow}>
-                <View>
-                  <Text style={styles.skipTitle}>Overall Safe to skip</Text>
-                  <Text style={styles.skipSub}>while staying above 75%</Text>
-                </View>
-                <View style={[styles.badgeCoral, maxOverallSkippable <= 0 && styles.badgeMute]}>
-                  <Text style={[styles.badgeCoralText, maxOverallSkippable <= 0 && styles.badgeMuteText]}>
-                    {maxOverallSkippable} {maxOverallSkippable === 1 ? "class" : "classes"}
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.listHead}>
-              <Text style={styles.eyebrowSm}>SUBJECTS</Text>
-              <Text style={styles.listCount}>{subjectsData.length}</Text>
-            </View>
-          </View>
-        }
-        ListFooterComponent={
-          <View style={styles.footBand}>
-            <Spike size={15} color={COLORS.onDark} />
-            <Text style={styles.footTitle}>Open to Contribute</Text>
-            <Text style={styles.footSub}>{"Found a bug or have an idea?\nThis app is open source."}</Text>
-            <TouchableOpacity style={styles.btnCoral} activeOpacity={0.85} onPress={() => Linking.openURL(GITHUB_URL)}>
-              <Text style={styles.btnCoralText}>View on GitHub</Text>
-            </TouchableOpacity>
-            <Text style={styles.footCredit}>
-              Crafted by <Text style={styles.footCreditName}>J Chanikya</Text> · 2026
-            </Text>
-          </View>
-        }
-        renderItem={({ item }) => {
-          const pVal = parseFloat(item.percentage);
-          const isLow = pVal < 75;
-          const canSkip = calculateCanSkip(item.present, item.total);
-          const classesToReach75 = calculateClassesToReach75(item.present, item.total);
-          return (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.subjectCard}
-              onPress={() => onSelectSubject(item)}
-            >
-              <View style={styles.subjectRow1}>
-                <Text style={styles.subjectName} numberOfLines={2}>{item.subjectName}</Text>
-                <Text style={[styles.subjectPct, { color: getAttendanceColor(pVal) }]}>{item.percentage}%</Text>
-              </View>
-              <View style={styles.subjectRow2}>
-                <Text style={styles.shortStats}>
-                  Tot <Text style={styles.shortStatsBold}>{item.total}</Text>
-                  {" · "}Att <Text style={styles.shortStatsBold}>{item.present}</Text>
-                  {" · "}Abs <Text style={styles.shortStatsBold}>{item.absent}</Text>
-                </Text>
-                <View style={[styles.badgeCoral, canSkip <= 0 && styles.badgeMute]}>
-                  <Text style={[styles.badgeCoralText, canSkip <= 0 && styles.badgeMuteText]}>
-                    {isLow
-                      ? `Attend ${classesToReach75} more`
-                      : canSkip > 0
-                        ? `Skip ${canSkip} ${canSkip === 1 ? "class" : "classes"}`
-                        : "Keep attending"}
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          );
-        }}
+        initialNumToRender={8}
+        maxToRenderPerBatch={8}
+        windowSize={5}
+        removeClippedSubviews
+        ListHeaderComponent={listHeader}
+        ListFooterComponent={listFooter}
       />
     </View>
   );
@@ -215,6 +252,7 @@ const styles = StyleSheet.create({
   subjectRow1: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
   subjectName: { flex: 1, fontSize: 14.5, fontWeight: "500", color: COLORS.ink, lineHeight: 20, marginRight: 10 },
   subjectPct: { fontFamily: SERIF, fontSize: 24, letterSpacing: -0.5, color: COLORS.ink },
+  subjectLastDate: { fontSize: 11.5, fontWeight: "600", color: COLORS.body, marginTop: 8 },
   subjectRow2: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 12 },
   shortStats: { fontSize: 11.5, color: COLORS.muted },
   shortStatsBold: { fontWeight: "600", color: COLORS.body },

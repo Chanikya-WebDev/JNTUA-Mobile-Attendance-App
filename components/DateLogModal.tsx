@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import type { ListRenderItemInfo } from "react-native";
 import { COLORS, SERIF } from "../constants/theme";
-import { AttendanceRecord, SubjectAttendanceData } from "../utils/automationScripts";
+import type { AttendanceRecord, SubjectAttendanceData } from "../utils/automationScripts";
 
 const STATUS_COLOR: Record<AttendanceRecord["status"], string> = {
   Present: COLORS.success,
@@ -14,7 +15,25 @@ interface DateLogModalProps {
   onClose: () => void;
 }
 
+function renderLogItem({ item }: ListRenderItemInfo<AttendanceRecord>) {
+  return (
+    <View style={styles.logRow}>
+      <View>
+        <Text style={styles.logDate}>{item.date}</Text>
+        {!!item.time && <Text style={styles.logTime}>{item.time}</Text>}
+      </View>
+      <View style={styles.logBadge}>
+        <Text style={[styles.logBadgeText, { color: STATUS_COLOR[item.status] }]}>
+          {item.status}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
 export function DateLogModal({ selectedSubject, onClose }: DateLogModalProps) {
+  const records = useMemo(() => selectedSubject?.records ?? [], [selectedSubject]);
+
   return (
     <Modal visible={!!selectedSubject} animationType="fade" transparent onRequestClose={onClose}>
       <View style={styles.modalBackdrop}>
@@ -31,27 +50,19 @@ export function DateLogModal({ selectedSubject, onClose }: DateLogModalProps) {
                     Attendance log · {selectedSubject.present} attended, {selectedSubject.absent} missed
                   </Text>
                 </View>
-                <TouchableOpacity style={styles.closeIcon} onPress={onClose}>
+                <TouchableOpacity style={styles.closeIcon} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close attendance log">
                   <Text style={styles.closeIconText}>✕</Text>
                 </TouchableOpacity>
               </View>
               <FlatList
-                data={selectedSubject.records}
+                data={records}
                 keyExtractor={(_, index) => index.toString()}
+                renderItem={renderLogItem}
                 showsVerticalScrollIndicator={false}
-                renderItem={({ item }) => (
-                  <View style={styles.logRow}>
-                    <View>
-                      <Text style={styles.logDate}>{item.date}</Text>
-                      {!!item.time && <Text style={styles.logTime}>{item.time}</Text>}
-                    </View>
-                    <View style={styles.logBadge}>
-                      <Text style={[styles.logBadgeText, { color: STATUS_COLOR[item.status] }]}>
-                        {item.status}
-                      </Text>
-                    </View>
-                  </View>
-                )}
+                initialNumToRender={20}
+                maxToRenderPerBatch={20}
+                windowSize={5}
+                removeClippedSubviews
               />
             </>
           )}

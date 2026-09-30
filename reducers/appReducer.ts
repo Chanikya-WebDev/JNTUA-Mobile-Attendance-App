@@ -1,5 +1,5 @@
-import { StudentInfo, SubjectAttendanceData } from "../utils/automationScripts";
-import { PreviousAttendanceResult } from "../utils/storage";
+import type { StudentInfo, SubjectAttendanceData } from "../utils/automationScripts";
+import type { PreviousAttendanceResult } from "../utils/storage";
 
 export interface AppState {
   webViewKey: number;
@@ -8,6 +8,7 @@ export interface AppState {
   currentIndex: number;
   totalSubjects: number | null;
   fetchedIndices: number[];
+  fetchedSubCodes: string[];
   subjectsData: SubjectAttendanceData[];
   isScrapingFinished: boolean;
   selectedSubject: SubjectAttendanceData | null;
@@ -15,6 +16,7 @@ export interface AppState {
   previousResult: PreviousAttendanceResult | null;
   isSelectionError: boolean;
   isStructureError: boolean;
+  structureErrorMessage: string | null;
   isOffline: boolean;
   isSplashDismissed: boolean;
   gatewayError: boolean;
@@ -27,6 +29,7 @@ export const initialState: AppState = {
   currentIndex: 0,
   totalSubjects: null,
   fetchedIndices: [],
+  fetchedSubCodes: [],
   subjectsData: [],
   isScrapingFinished: false,
   selectedSubject: null,
@@ -34,6 +37,7 @@ export const initialState: AppState = {
   previousResult: null,
   isSelectionError: false,
   isStructureError: false,
+  structureErrorMessage: null,
   isOffline: false,
   isSplashDismissed: false,
   gatewayError: false,
@@ -55,13 +59,14 @@ export type AppAction =
   | { type: "SET_STUDENT_INFO"; data: StudentInfo }
   | { type: "SET_SUBJECT_COUNT"; count: number }
   | { type: "ADD_ATTENDANCE_ITEM"; data: SubjectAttendanceData }
+  | { type: "ADVANCE_INDEX" }
   | { type: "SET_SCRAPING_FINISHED" }
   | { type: "SET_SELECTED_SUBJECT"; data: SubjectAttendanceData | null }
   | { type: "SET_PREVIOUS_RESULT"; result: PreviousAttendanceResult | null }
   | { type: "HYDRATE_PREVIOUS_RESULT"; data: PreviousAttendanceResult }
   | { type: "SET_SELECTION_ERROR" }
   | { type: "CLEAR_SELECTION_ERROR" }
-  | { type: "SET_STRUCTURE_ERROR" }
+  | { type: "SET_STRUCTURE_ERROR"; message?: string }
   | { type: "SET_OFFLINE"; status: boolean }
   | { type: "SET_SPLASH_DISMISSED" }
   | { type: "SET_GATEWAY_ERROR" }
@@ -79,13 +84,31 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       if (state.totalSubjects === action.count) return state;
       return { ...state, totalSubjects: action.count };
     case "ADD_ATTENDANCE_ITEM": {
-      if (state.fetchedIndices.includes(state.currentIndex)) return state;
+      const subCode = action.data.subCode?.trim();
+      if (subCode && state.fetchedSubCodes.includes(subCode)) return state;
+      if (!subCode && state.fetchedIndices.includes(state.currentIndex))
+        return state;
       const nextIndex = state.currentIndex + 1;
-      const finished = state.totalSubjects !== null && nextIndex >= state.totalSubjects;
+      const finished =
+        state.totalSubjects !== null && nextIndex >= state.totalSubjects;
       return {
         ...state,
         fetchedIndices: [...state.fetchedIndices, state.currentIndex],
+        fetchedSubCodes: subCode
+          ? [...state.fetchedSubCodes, subCode]
+          : state.fetchedSubCodes,
         subjectsData: [...state.subjectsData, action.data],
+        currentIndex: finished ? state.currentIndex : nextIndex,
+        isScrapingFinished: finished ? true : state.isScrapingFinished,
+      };
+    }
+    case "ADVANCE_INDEX": {
+      const nextIndex = state.currentIndex + 1;
+      const finished =
+        state.totalSubjects !== null && nextIndex >= state.totalSubjects;
+      return {
+        ...state,
+        fetchedIndices: [...state.fetchedIndices, state.currentIndex],
         currentIndex: finished ? state.currentIndex : nextIndex,
         isScrapingFinished: finished ? true : state.isScrapingFinished,
       };
@@ -97,7 +120,11 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case "CLEAR_SELECTION_ERROR":
       return preserveSession(state, 0);
     case "SET_STRUCTURE_ERROR":
-      return { ...state, isStructureError: true };
+      return {
+        ...state,
+        isStructureError: true,
+        structureErrorMessage: action.message ?? null,
+      };
     case "SET_OFFLINE":
       if (state.isOffline === action.status) return state;
       return { ...state, isOffline: action.status };

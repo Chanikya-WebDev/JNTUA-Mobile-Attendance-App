@@ -1,7 +1,6 @@
 import Constants, { ExecutionEnvironment } from "expo-constants";
 import * as Updates from "expo-updates";
 import { useCallback, useEffect, useRef, useState } from "react";
-
 export type UpdateStatus =
   | "checking"
   | "applying"
@@ -52,19 +51,14 @@ export function useUpdateManager(): UpdateManager {
   }, [isChecking]);
 
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
-    if (isChecking && checkingStartTimeRef.current && !checkingTimedOut) {
-      interval = setInterval(() => {
-        if (
-          checkingStartTimeRef.current !== null &&
-          Date.now() - checkingStartTimeRef.current > CHECK_TIMEOUT_MS
-        ) {
-          setCheckingTimedOut(true);
-          clearInterval(interval);
-        }
-      }, 1000);
-    }
-    return () => clearInterval(interval);
+    if (!isChecking || !checkingStartTimeRef.current || checkingTimedOut)
+      return;
+    const remaining = Math.max(
+      0,
+      CHECK_TIMEOUT_MS - (Date.now() - (checkingStartTimeRef.current ?? 0))
+    );
+    const timeout = setTimeout(() => setCheckingTimedOut(true), remaining);
+    return () => clearTimeout(timeout);
   }, [isChecking, checkingTimedOut]);
 
   let status: UpdateStatus;
@@ -81,22 +75,28 @@ export function useUpdateManager(): UpdateManager {
     if (!shouldCheckOnMount()) return;
     setManualStatus("checking");
 
+    let timedOut = false;
     const timeoutId = setTimeout(() => {
-      setManualStatus("unknown");
+      timedOut = true;
+      setManualStatus((prev) =>
+        prev === "checking" ? "unknown" : prev
+      );
     }, CHECK_TIMEOUT_MS);
 
     try {
       const result = await Updates.checkForUpdateAsync();
+      if (timedOut) return;
       if (result.isAvailable) {
         setManualStatus("applying");
         await Updates.fetchUpdateAsync();
+        if (timedOut) return;
         await Updates.reloadAsync();
       } else {
         setManualStatus("upToDate");
       }
-    } catch (err) {
-      console.warn("Update check failed:", err);
-      setManualStatus("error");
+    } catch {
+      if (__DEV__) console.warn("Update check failed.");
+      if (!timedOut) setManualStatus("error");
     } finally {
       clearTimeout(timeoutId);
     }

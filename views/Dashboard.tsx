@@ -108,7 +108,7 @@ export function Dashboard({
     <View>
       {studentInfo && (
         <View style={styles.profileCard}>
-          <Text style={styles.profileName} numberOfLines={1}>{studentInfo.name}</Text>
+          <Text style={styles.profileName} numberOfLines={1}>{studentInfo.sname}</Text>
           <View style={styles.profileMetaRow}>
             <View style={styles.liveDot} />
             <Text style={styles.profileMeta} numberOfLines={1}>

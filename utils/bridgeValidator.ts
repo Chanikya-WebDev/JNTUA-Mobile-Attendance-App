@@ -10,6 +10,7 @@ export type BridgeMessage =
   | { type: "ATTENDANCE_ITEM"; data: SubjectAttendanceData }
   | { type: "SUBJECT_SKIPPED"; subcode: string; index: number }
   | { type: "SCRAPE_ERROR"; message: string }
+  | { type: "SCRAPE_IDLE"; reason?: string }
   | { type: "STRUCTURE_CHANGED" }
   | { type: "SCRAPING_COMPLETE" };
 
@@ -19,6 +20,7 @@ const KNOWN_TYPES: ReadonlySet<string> = new Set([
   "ATTENDANCE_ITEM",
   "SUBJECT_SKIPPED",
   "SCRAPE_ERROR",
+  "SCRAPE_IDLE",
   "STRUCTURE_CHANGED",
   "SCRAPING_COMPLETE",
 ]);
@@ -30,7 +32,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 export function isStudentInfo(value: unknown): value is StudentInfo {
   if (!isRecord(value)) return false;
   return (
-    typeof value.name === "string" &&
+    typeof value.sname === "string" &&
     typeof value.admissionNo === "string" &&
     typeof value.className === "string"
   );
@@ -90,6 +92,8 @@ export function isBridgeMessage(value: unknown): value is BridgeMessage {
       );
     case "SCRAPE_ERROR":
       return typeof value.message === "string";
+    case "SCRAPE_IDLE":
+      return value.reason === undefined || typeof value.reason === "string";
     case "STRUCTURE_CHANGED":
     case "SCRAPING_COMPLETE":
       return true;

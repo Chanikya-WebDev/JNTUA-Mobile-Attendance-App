@@ -44,7 +44,7 @@ No backend, no REST API — everything runs client-side through the WebView brid
 1. WebView loads the portal root. User logs in normally.
 2. On `studenthome.php` → inject `autoSubmitFirstSemesterScript`: posts `STUDENT_INFO`, clears `sessionStorage.fetchedSubjectCodes`, submits the subjects form.
 3. On `studentsubjects.php` → inject `selectSubjectByIndexScript(currentIndex)`: posts `SUBJECT_COUNT`, skips already-fetched codes (`SUBJECT_SKIPPED`), clicks row `currentIndex`, or posts `SCRAPING_COMPLETE` when done.
-4. On `studentsubatt.php` → inject `parseDetailedAttendanceAndGoHomeScript`: posts `ATTENDANCE_ITEM`, records `subCode` in `sessionStorage`, returns home after 300ms. Posts `SCRAPE_ERROR` on table timeout (25 attempts).
+4. On `studentcourseatt.php` (legacy `studentsubatt.php`) → inject `parseDetailedAttendanceAndGoHomeScript`: posts `ATTENDANCE_ITEM`, records `subCode` in `sessionStorage`, returns via `location.replace('studenthome.php')` after 300ms (home auto-submits back to the subjects list). Emits `SCRAPE_IDLE` on table timeout (25 attempts).
 5. When all subjects are collected the WebView unmounts and the dashboard renders. Result is persisted once (signature-guarded) to `previous_attendance_result.json`.
 
 All scripts are IIFEs ending in `true;`. All bridge payloads are runtime-validated by `parseBridgeMessage` (`utils/bridgeValidator.ts`) — invalid payloads are ignored.
@@ -243,3 +243,5 @@ npm run build:production      # production APK
 ## License
 
 Educational use only. Not affiliated with JNTUA or classattendance.in — use per your institution's policies.
+
+

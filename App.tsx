@@ -13,7 +13,10 @@ import { WebViewScraper, isPortalHost } from "./views/WebViewScraper";
 
 import {
   autoSubmitFirstSemesterScript,
+  beginScrapeSessionScript,
+  endScrapeSessionScript,
   parseDetailedAttendanceAndGoHomeScript,
+  resetScrapeSessionScript,
   selectSubjectByIndexScript,
 } from "./utils/automationScripts";
 import type { SubjectAttendanceData } from "./utils/automationScripts";
@@ -45,12 +48,15 @@ export default function App() {
   useEffect(() => { stateRef.current = state; });
   const lastActivityRef = useRef<number>(Date.now());
   const lastInjectedUrlRef = useRef<string | null>(null);
+  const sessionStartedRef = useRef(false);
   const persistedSigRef = useRef<string | null>(null);
   const backPressTimeRef = useRef<number>(0);
 
   const handleFullReset = useCallback(() => {
     lastInjectedUrlRef.current = null;
     lastActivityRef.current = Date.now();
+    sessionStartedRef.current = false;
+    webViewRef.current?.injectJavaScript(resetScrapeSessionScript);
     dispatch({ type: "RESET" });
   }, []);
   const handleCloseModal = useCallback(() => dispatch({ type: "SET_SELECTED_SUBJECT", data: null }), []);
@@ -64,6 +70,7 @@ export default function App() {
     // Manual reload mid-scrape would corrupt index tracking; reset first.
     lastInjectedUrlRef.current = null;
     lastActivityRef.current = Date.now();
+    sessionStartedRef.current = false;
   }, []);
 
   const handleNavigationStateChange = useCallback((navState: WebViewNavigation) => {
@@ -73,17 +80,22 @@ export default function App() {
     if (snapshot.isSelectionError || snapshot.isStructureError || snapshot.gatewayError) return;
     const shouldInject = !loading && !snapshot.isScrapingFinished;
     if (!shouldInject) return;
-    const injectKey = `${url}|${snapshot.isLoggedIn}|${snapshot.currentIndex}`;
+    const injectKey = `${url.split("#")[0] ?? url}|${snapshot.isLoggedIn}|${snapshot.currentIndex}`;
     if (lastInjectedUrlRef.current === injectKey) return;
     lastInjectedUrlRef.current = injectKey;
     lastActivityRef.current = Date.now();
+
+    if (!sessionStartedRef.current) {
+      sessionStartedRef.current = true;
+      webViewRef.current?.injectJavaScript(beginScrapeSessionScript);
+    }
 
     if (url.includes("studenthome.php")) {
       if (!snapshot.isLoggedIn) dispatch({ type: "SET_LOGGED_IN" });
       webViewRef.current?.injectJavaScript(autoSubmitFirstSemesterScript);
     } else if (url.includes("studentsubjects.php")) {
       webViewRef.current?.injectJavaScript(selectSubjectByIndexScript(snapshot.currentIndex));
-    } else if (url.includes("studentsubatt.php")) {
+    } else if (url.includes("studentsubatt.php") || url.includes("studentcourseatt.php")) {
       webViewRef.current?.injectJavaScript(parseDetailedAttendanceAndGoHomeScript);
     }
   }, []);
@@ -101,8 +113,13 @@ export default function App() {
       case "ATTENDANCE_ITEM": dispatch({ type: "ADD_ATTENDANCE_ITEM", data: payload.data }); break;
       case "SUBJECT_SKIPPED": dispatch({ type: "ADVANCE_INDEX" }); break;
       case "SCRAPE_ERROR": dispatch({ type: "SET_STRUCTURE_ERROR", message: payload.message }); break;
+      case "SCRAPE_IDLE": break;
       case "STRUCTURE_CHANGED": dispatch({ type: "SET_STRUCTURE_ERROR" }); break;
-      case "SCRAPING_COMPLETE": dispatch({ type: "SET_SCRAPING_FINISHED" }); break;
+      case "SCRAPING_COMPLETE":
+        sessionStartedRef.current = false;
+        webViewRef.current?.injectJavaScript(endScrapeSessionScript);
+        dispatch({ type: "SET_SCRAPING_FINISHED" });
+        break;
     }
   }, []);
 
@@ -168,7 +185,7 @@ export default function App() {
     const overallClasses = subjectsData.reduce((acc, x) => acc + x.total, 0);
     const overallPresent = subjectsData.reduce((acc, x) => acc + x.present, 0);
     const overallAbsent = subjectsData.reduce((acc, x) => acc + x.absent, 0);
-    const sig = `${studentInfo.name}|${subjectsData.length}|${overallClasses}|${overallPresent}|${overallAbsent}`;
+    const sig = `${studentInfo.sname}|${subjectsData.length}|${overallClasses}|${overallPresent}|${overallAbsent}`;
     if (persistedSigRef.current === sig) return;
     persistedSigRef.current = sig;
     const latestResult: PreviousAttendanceResult = { studentInfo, subjectsData };

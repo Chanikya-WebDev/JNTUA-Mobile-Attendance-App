@@ -11,7 +11,7 @@ describe("bridgeValidator", () => {
     assert.equal(
       isBridgeMessage({
         type: "STUDENT_INFO",
-        data: { name: "A", admissionNo: "1", className: "CSE" },
+        data: { sname: "A", admissionNo: "1", className: "CSE" },
       }),
       true
     );
@@ -39,6 +39,11 @@ describe("bridgeValidator", () => {
     );
     assert.equal(
       isBridgeMessage({ type: "SCRAPE_ERROR", message: "timeout" }),
+      true
+    );
+    assert.equal(isBridgeMessage({ type: "SCRAPE_IDLE" }), true);
+    assert.equal(
+      isBridgeMessage({ type: "SCRAPE_IDLE", reason: "off-script" }),
       true
     );
     assert.equal(isBridgeMessage({ type: "STRUCTURE_CHANGED" }), true);

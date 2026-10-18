@@ -1,3 +1,4 @@
+/* Shared guard + post helper are interpolated into every script. */
 declare global {
   interface Window {
     ReactNativeWebView?: {
@@ -7,7 +8,7 @@ declare global {
 }
 
 export interface StudentInfo {
-  name: string;
+  sname: string;
   admissionNo: string;
   className: string;
 }
@@ -28,26 +29,65 @@ export interface SubjectAttendanceData {
   records: AttendanceRecord[];
 }
 
+const SCRAPE_GUARD = `
+  function isScrapeActive() {
+    try { return sessionStorage.getItem('scrapeActive') === '1'; }
+    catch (e) { return false; }
+  }
+  if (!isScrapeActive()) { return; }
+`;
+
+const POST_HELPER = `
+  function post(type, extra) {
+    const rn = window.ReactNativeWebView;
+    if (rn) rn.postMessage(JSON.stringify(Object.assign({ type: type }, extra || {})));
+  }
+`;
+
+/** Call once from RN BEFORE the first injection. Starts a fresh run. */
+export const beginScrapeSessionScript = `
+  (function() {
+    try {
+      sessionStorage.removeItem('fetchedSubjectCodes');
+      sessionStorage.setItem('scrapeActive', '1');
+    } catch (e) {}
+  })();
+  true;
+`;
+
+/** Call from RN when the user explicitly aborts or wants a fresh start. */
+export const resetScrapeSessionScript = `
+  (function() {
+    try {
+      sessionStorage.removeItem('fetchedSubjectCodes');
+      sessionStorage.removeItem('scrapeActive');
+    } catch (e) {}
+  })();
+  true;
+`;
+
 export const autoSubmitFirstSemesterScript = `
   (function() {
-    // Clear previously stored fetched subjects on fresh flow start
-    sessionStorage.removeItem('fetchedSubjectCodes');
+    ${SCRAPE_GUARD}
+    ${POST_HELPER}
 
     let admissionNo = '';
-    let name = '';
+    let sname = '';
 
-    const listItems = Array.from(document.querySelectorAll('.list-group-item'));
-    listItems.forEach(item => {
-      const text = item.textContent || '';
-      if (text.includes('Username:')) {
-        admissionNo = text.replace('Username:', '').trim();
-      }
-      if (text.includes('Name:')) {
-        name = text.replace('Name:', '').trim();
-      }
+    document.querySelectorAll('.list-group-item').forEach(function(item) {
+      const strong = item.querySelector('strong');
+      if (!strong) return;
+      const label = strong.textContent || '';
+      const value = ((strong.nextSibling && strong.nextSibling.textContent) || '').trim();
+      if (/Username|Roll No/i.test(label)) admissionNo = value;
+      else if (/Full Name/i.test(label)) sname = value;
     });
 
-    const firstForm = document.querySelector('form[action="studentsubjects.php"]');
+    const firstForm = document.querySelector('.card.bg-light.text-primary form[action="studentsubjects.php"]');
+
+    // Page-type guard: not on home → user-initiated nav. Do nothing.
+    if (!firstForm) { return; }
+
     let className = '';
     if (firstForm) {
       const classInput = firstForm.querySelector('input[name="classname"]');
@@ -59,12 +99,16 @@ export const autoSubmitFirstSemesterScript = `
     if (window.ReactNativeWebView) {
       window.ReactNativeWebView.postMessage(JSON.stringify({
         type: 'STUDENT_INFO',
-        data: { name, admissionNo, className }
+        data: { sname: sname, admissionNo: admissionNo, className: className }
       }));
     }
 
-    if (firstForm) {
+    try {
       firstForm.submit();
+    } catch (e) {
+      post('SCRAPE_ERROR', {
+        message: 'Home form submit failed: ' + (e && e.message ? e.message : String(e))
+      });
     }
   })();
   true;
@@ -72,7 +116,10 @@ export const autoSubmitFirstSemesterScript = `
 
 export const selectSubjectByIndexScript = (targetIndex: number): string => `
   (function() {
-    function safeParseCodes() {
+    ${SCRAPE_GUARD}
+    ${POST_HELPER}
+
+    function readFetched() {
       try {
         const raw = sessionStorage.getItem('fetchedSubjectCodes') || '[]';
         const parsed = JSON.parse(raw);
@@ -81,6 +128,48 @@ export const selectSubjectByIndexScript = (targetIndex: number): string => `
         return [];
       }
     }
+
+    function submitRow(row) {
+      const onclick = row.getAttribute('onclick') || '';
+      const m = onclick.match(/getElementById\s*\(\s*['"]([^'"]+)['"]\s*\)/);
+      if (m) {
+        const form = document.getElementById(m[1]);
+        if (form) {
+          // Foster-parented hidden inputs: move them into the form.
+          let sib = form.nextElementSibling;
+          while (sib && sib.tagName === 'INPUT') {
+            const nxt = sib.nextElementSibling;
+            form.appendChild(sib);
+            sib = nxt;
+          }
+          try { form.removeAttribute('target'); form.target = '_self'; } catch (e0) {}
+          // requestSubmit runs handlers; prototype.submit is immune to
+          // shadowing by <input name="submit">.
+          try {
+            if (typeof form.requestSubmit === 'function') {
+              const btn = form.querySelector('input[type="submit"], button[type="submit"]');
+              if (btn) form.requestSubmit(btn);
+              else form.requestSubmit();
+            } else {
+              HTMLFormElement.prototype.submit.call(form);
+            }
+          } catch (e1) {
+            HTMLFormElement.prototype.submit.call(form);
+          }
+          // Watchdog: form.submit() can silently no-op. Fall back to click.
+          setTimeout(function() {
+            if (location.pathname.indexOf('subatt') === -1
+                && location.pathname.indexOf('courseatt') === -1) {
+              try { row.click(); } catch (e2) {}
+            }
+          }, 3000);
+          return;
+        }
+      }
+      // Fallback — page's own onclick handler submits.
+      row.click();
+    }
+
     let attempts = 0;
     const interval = setInterval(() => {
       attempts++;
@@ -98,7 +187,7 @@ export const selectSubjectByIndexScript = (targetIndex: number): string => `
         }
 
         // State Check: Retrieve stored list of fetched subject codes
-        const fetchedCodes = safeParseCodes();
+        const fetchedCodes = readFetched();
 
         if (${targetIndex} < rows.length) {
           const targetRow = rows[${targetIndex}];
@@ -115,7 +204,7 @@ export const selectSubjectByIndexScript = (targetIndex: number): string => `
               }));
             }
           } else {
-            targetRow.click();
+            submitRow(targetRow);
           }
         } else if (rn) {
           rn.postMessage(JSON.stringify({
@@ -124,10 +213,11 @@ export const selectSubjectByIndexScript = (targetIndex: number): string => `
         }
       } else if (attempts >= 20) {
         clearInterval(interval);
+        // Off-script navigation (user pressed back): soft signal, not error.
         if (window.ReactNativeWebView) {
           window.ReactNativeWebView.postMessage(JSON.stringify({
-            type: 'SCRAPE_ERROR',
-            message: 'Timed out waiting for subject list to load.'
+            type: 'SCRAPE_IDLE',
+            reason: 'No subject rows after 4s — likely off-script navigation.'
           }));
         }
       }
@@ -138,103 +228,153 @@ export const selectSubjectByIndexScript = (targetIndex: number): string => `
 
 export const parseDetailedAttendanceAndGoHomeScript = `
   (function() {
+    ${SCRAPE_GUARD}
+    ${POST_HELPER}
+
+    function parseHeader(el) {
+      if (!el) return { subCode: '', subjectName: '' };
+      let text = el.innerText || '';
+      if (!text) {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = el.innerHTML || '';
+        text = tmp.textContent || '';
+      }
+      const parts = text.split(/\n+/).map(function(s) { return s.trim(); })
+                        .filter(Boolean);
+      if (parts.length >= 2) {
+        return { subCode: parts[0], subjectName: parts.slice(1).join(' ') };
+      }
+      const m = text.match(/^\s*([A-Za-z0-9]+)\s+(.+)$/);
+      if (m) return { subCode: m[1], subjectName: m[2] };
+      return { subCode: '', subjectName: parts[0] || '' };
+    }
+
+    function findAttendanceTable() {
+      const tables = document.querySelectorAll('table');
+      for (let i = 0; i < tables.length; i++) {
+        const head = tables[i].querySelector('thead');
+        if (head && /attendance/i.test(head.textContent || '')) return tables[i];
+      }
+      return null;
+    }
+
+    function goBackToSubjects() {
+      // history.back() proved unreliable (portal pushStates a duplicate entry
+      // per page; POST-result pages do not restore in this WebView, so backs
+      // land on studenthome, never subjects). Deterministic loop instead:
+      // studenthome auto-submits the class form back to the subjects list,
+      // then RN injects the next index (currentIndex already advanced).
+      try {
+        window.location.replace('studenthome.php');
+      } catch (e) {}
+    }
+
     let attempts = 0;
-
-    // Retry/Poll mechanism to ensure DOM elements and dynamic tables are loaded
-    const checkInterval = setInterval(() => {
+    const interval = setInterval(function() {
       attempts++;
-      const cardHeaders = document.querySelectorAll('.card-header');
-      const tableRows = document.querySelectorAll('table.table-bordered.table-striped tbody tr');
-      
-      // Ensure page headers and attendance records are in DOM
-      if (cardHeaders.length >= 2 && tableRows.length > 0) {
-        clearInterval(checkInterval);
+      const headers = document.querySelectorAll('.card-header');
+      const table = findAttendanceTable();
 
-        const subjectHeader = cardHeaders[1];
-        let subjectName = '';
-        let subCode = '';
-
-        if (subjectHeader) {
-          const text = subjectHeader.innerText.trim();
-          const parts = text.split('\\n').map(p => p.trim()).filter(Boolean);
-          if (parts.length >= 2) {
-            subCode = parts[0];
-            subjectName = parts[1];
-          } else {
-            subjectName = text;
-          }
+      if (headers.length < 2 || !table) {
+        if (attempts >= 25) {
+          clearInterval(interval);
+          // Page never rendered the table but user may have navigated away.
+          // Emit idle rather than error.
+          post('SCRAPE_IDLE', {
+            reason: 'Attendance page not detected after 5s '
+                    + '(headers=' + headers.length + ', table=' + (!!table) + ').'
+          });
         }
+        return;
+      }
+      clearInterval(interval);
 
-        // Track completed subject in sessionStorage to avoid re-fetching
-        if (subCode) {
-          try {
-            const rawCodes = sessionStorage.getItem('fetchedSubjectCodes') || '[]';
-            const parsedCodes = JSON.parse(rawCodes);
-            const fetchedCodes = Array.isArray(parsedCodes) ? parsedCodes : [];
-            if (!fetchedCodes.includes(subCode)) {
-              fetchedCodes.push(subCode);
-              sessionStorage.setItem('fetchedSubjectCodes', JSON.stringify(fetchedCodes));
-            }
-          } catch (e) {
-            try { sessionStorage.setItem('fetchedSubjectCodes', JSON.stringify([subCode])); } catch (ignored) {}
-          }
+      // Pick the subject header: the card-header with a <br> ("23A70501 <br>
+      // Deep Learning"). The class header (headers[0]) carries year digits
+      // (2026-2027), so a digit test misfires and every item collapses to one
+      // bogus subCode the reducer dedups → index stuck (infinite re-scrape).
+      function isCodeLike(s) {
+        if (!s || s.length < 3 || s.length > 15) return false;
+        for (let ci = 0; ci < s.length; ci++) {
+          const c = s.charCodeAt(ci);
+          const ok = (c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c >= 97 && c <= 122);
+          if (!ok) return false;
         }
-
-        const records = [];
-        let presentCount = 0;
-        let absentCount = 0;
-
-        tableRows.forEach(row => {
-          const cells = row.querySelectorAll('td');
-          if (cells.length === 3) {
-            const date = cells[0].textContent.trim();
-            const time = cells[1].textContent.trim();
-            const badge = cells[2].querySelector('span.badge');
-            const status = badge ? badge.textContent.trim() : 'Unknown';
-
-            if (status === 'Present') presentCount++;
-            if (status === 'Absent') absentCount++;
-
-            records.push({ date, time, status });
-          }
-        });
-
-        const total = presentCount + absentCount;
-        const percentage = total > 0 ? ((presentCount / total) * 100).toFixed(2) : '0.00';
-
-        if (window.ReactNativeWebView) {
-          window.ReactNativeWebView.postMessage(JSON.stringify({
-            type: 'ATTENDANCE_ITEM',
-            data: {
-              subCode,
-              subjectName,
-              present: presentCount,
-              absent: absentCount,
-              total,
-              percentage,
-              records
-            }
-          }));
-        }
-
-        // Navigate back home safely
-        setTimeout(() => {
-          const homeBtn = document.querySelector('a[href="studenthome.php"]');
-          if (homeBtn) {
-            homeBtn.click();
-          }
-        }, 300);
-
-      } else if (attempts >= 25) {
-        clearInterval(checkInterval);
-        if (window.ReactNativeWebView) {
-          window.ReactNativeWebView.postMessage(JSON.stringify({
-            type: 'SCRAPE_ERROR',
-            message: 'Timed out waiting for attendance records table to load.'
-          }));
+        return true;
+      }
+      let subjectHeader = null;
+      for (let i = 0; i < headers.length; i++) {
+        const el = headers[i];
+        const html = el.innerHTML || '';
+        if (html.indexOf('<br') !== -1 || html.indexOf('<BR') !== -1) {
+          const cand = parseHeader(el);
+          if (cand.subCode && isCodeLike(cand.subCode)) { subjectHeader = el; break; }
+          if (!subjectHeader) subjectHeader = el;
         }
       }
+      if (!subjectHeader) subjectHeader = headers[1] || headers[0];
+
+      const parsed = parseHeader(subjectHeader);
+      const bodyRows = table.querySelectorAll('tbody tr');
+      let present = 0, absent = 0;
+      const records = [];
+
+      for (let i = 0; i < bodyRows.length; i++) {
+        const cells = bodyRows[i].querySelectorAll('td');
+        if (cells.length !== 3) continue;
+        const date = (cells[0].textContent || '').trim();
+        const time = (cells[1].textContent || '').trim();
+        const badge = cells[2].querySelector('span.badge');
+        const raw = badge ? (badge.textContent || '').trim() : 'Unknown';
+        let status = 'Unknown';
+        if (/present/i.test(raw)) status = 'Present';
+        else if (/absent/i.test(raw)) status = 'Absent';
+        if (status === 'Present') present++;
+        else if (status === 'Absent') absent++;
+        records.push({ date: date, time: time, status: status });
+      }
+
+      const total = present + absent;
+      const percentage = total > 0 ? ((present / total) * 100).toFixed(2) : '0.00';
+
+      // Persist for resume.
+      if (parsed.subCode) {
+        try {
+          const raw = sessionStorage.getItem('fetchedSubjectCodes') || '[]';
+          const p = JSON.parse(raw);
+          const list = Array.isArray(p) ? p : [];
+          if (list.indexOf(parsed.subCode) === -1) list.push(parsed.subCode);
+          sessionStorage.setItem('fetchedSubjectCodes', JSON.stringify(list));
+        } catch (e) {
+          try {
+            sessionStorage.setItem('fetchedSubjectCodes', JSON.stringify([parsed.subCode]));
+          } catch (ignored) {}
+        }
+      }
+
+      post('ATTENDANCE_ITEM', {
+        data: {
+          subCode: parsed.subCode,
+          subjectName: parsed.subjectName,
+          present: present,
+          absent: absent,
+          total: total,
+          percentage: percentage,
+          records: records
+        }
+      });
+
+      setTimeout(goBackToSubjects, 300);
     }, 200);
+  })();
+  true;
+`;
+
+/** Call once from RN after SCRAPING_COMPLETE / on explicit user abort,
+ *  to disable further script execution until the next begin. */
+export const endScrapeSessionScript = `
+  (function() {
+    try { sessionStorage.removeItem('scrapeActive'); } catch (e) {}
   })();
   true;
 `;

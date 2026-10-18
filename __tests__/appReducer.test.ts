@@ -38,7 +38,7 @@ describe("appReducer", () => {
 
   it("preserves previous result across RESET", () => {
     const result = {
-      studentInfo: { name: "A", admissionNo: "1", className: "CSE" },
+      studentInfo: { sname: "A", admissionNo: "1", className: "CSE" },
       subjectsData: [],
     };
     const withPrev = appReducer(initialState, {

@@ -41,7 +41,7 @@ function isPreviousAttendanceResult(
   }
   const info = obj.studentInfo as Record<string, unknown>;
   if (
-    typeof info.name !== "string" ||
+    typeof info.sname !== "string" ||
     typeof info.admissionNo !== "string" ||
     typeof info.className !== "string"
   ) {

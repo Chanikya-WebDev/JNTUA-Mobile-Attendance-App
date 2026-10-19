@@ -1,6 +1,6 @@
-# JNTUA Attendance
+# JNTUA Attendance — Native Android (Kotlin + Jetpack Compose)
 
-Expo SDK 54 app that lets JNTUACEA students view portal attendance (`jntuaceastudents.classattendance.in`) as a native dashboard. It embeds the portal in a `WebView`, scrapes subject-wise attendance via injected JS, and highlights shortage below the 75% exam threshold.
+Native Android port of the JNTUA Attendance scraper/dashboard app. It embeds the portal (`jntuaceastudents.classattendance.in`) in a native `WebView`, scrapes subject-wise attendance via injected JavaScript, and renders a Material 3 dashboard highlighting attendance shortage below the 75% exam threshold.
 
 No backend, no REST API — everything runs client-side through the WebView bridge (`postMessage`). No credentials are stored; login happens on the official portal pages.
 
@@ -12,14 +12,13 @@ No backend, no REST API — everything runs client-side through the WebView brid
 - [How It Works](#how-it-works)
 - [Project Structure](#project-structure)
 - [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
+- [Build & Requirements](#build--requirements)
 - [Usage](#usage)
 - [The 75% Rule](#the-75-rule)
 - [Persistence](#persistence)
 - [Error Handling](#error-handling)
-- [OTA Updates](#ota-updates)
+- [OTA Scraper Updates](#ota-scraper-updates)
 - [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
 - [License](#license)
 
 ---
@@ -29,61 +28,108 @@ No backend, no REST API — everything runs client-side through the WebView brid
 - Portal login inside the app (passwords never stored locally).
 - Auto-scrape of all subjects: profile, per-subject present/absent/total, date-wise log.
 - Dashboard with overall card, per-subject cards, skip capacity (`Skip N` / `Keep attending`) and catch-up hint (`Attend N more`).
-- Red (< 75%), amber (75–77%), green (> 77%) zones.
+- Red (< 75%), amber (75–77%), green (> 77%) attendance zones.
 - Previous Attendance: reopen last result without re-scraping.
 - Overlays for syncing, offline, portal 502, portal layout change, and stall.
-- OTA updates via EAS Update; validated by `lint` + `tsc` + unit tests (`scripts/regression-check.sh`).
-- Android-only: no iOS branches — root layout uses `StatusBar.currentHeight`, `SERIF` is a plain constant, WebView props are Android-only.
+- OTA scraper updates: signed ECDSA validation via GitHub raw/CDN, conditional GET with ETag, 15-minute cooldown.
+- Android-only native stack: Kotlin, Jetpack Compose, `enableEdgeToEdge()`, `INTERNET` + `ACCESS_NETWORK_STATE` permissions, minify + shrink enabled in release.
 - Syncing overlay has a Cancel button (`RESET`); overlay priority is offline → gateway → structure → selection → syncing.
-- Dashboard subject list is memoized (`SubjectCard` + stable `renderItem` + tuned `FlatList`); log modal list is tuned; refresh/previous/close/reset buttons carry accessibility labels.
 
 ---
 
 ## How It Works
 
-1. WebView loads the portal root. User logs in normally.
-2. On `studenthome.php` → inject `autoSubmitFirstSemesterScript`: posts `STUDENT_INFO`, clears `sessionStorage.fetchedSubjectCodes`, submits the subjects form.
+1. **WebView loads** the portal root. User logs in normally on official portal pages.
+2. On `studenthome.php` → inject automation script: posts `STUDENT_INFO`, clears `sessionStorage.fetchedSubjectCodes`, submits the subjects form.
 3. On `studentsubjects.php` → inject `selectSubjectByIndexScript(currentIndex)`: posts `SUBJECT_COUNT`, skips already-fetched codes (`SUBJECT_SKIPPED`), clicks row `currentIndex`, or posts `SCRAPING_COMPLETE` when done.
-4. On `studentcourseatt.php` (legacy `studentsubatt.php`) → inject `parseDetailedAttendanceAndGoHomeScript`: posts `ATTENDANCE_ITEM`, records `subCode` in `sessionStorage`, returns via `location.replace('studenthome.php')` after 300ms (home auto-submits back to the subjects list). Emits `SCRAPE_IDLE` on table timeout (25 attempts).
-5. When all subjects are collected the WebView unmounts and the dashboard renders. Result is persisted once (signature-guarded) to `previous_attendance_result.json`.
+4. On `studentcourseatt.php` (legacy `studentsubatt.php`) → inject `parseDetailedAttendanceAndGoHomeScript`: posts `ATTENDANCE_ITEM`, records `subCode` in `sessionStorage`, returns via `history.back()` loop until `studentsubjects.php` is reached. Emits `SCRAPE_IDLE` on table timeout.
+5. When all subjects are collected the WebView is destroyed and the dashboard renders. Result is persisted once (signature-guarded) to `previous_attendance_result.json`.
 
-All scripts are IIFEs ending in `true;`. All bridge payloads are runtime-validated by `parseBridgeMessage` (`utils/bridgeValidator.ts`) — invalid payloads are ignored.
+All bridge payloads are runtime-validated by `BridgeValidator` — invalid payloads are ignored.
 
 | Message | Handler |
 | --- | --- |
-| `STUDENT_INFO` | `SET_STUDENT_INFO` |
-| `SUBJECT_COUNT` | `SET_SUBJECT_COUNT` |
-| `ATTENDANCE_ITEM` | `ADD_ATTENDANCE_ITEM` (dedup by `subCode`, fallback `currentIndex`) |
-| `SUBJECT_SKIPPED` | `ADVANCE_INDEX` |
-| `SCRAPE_ERROR` / `STRUCTURE_CHANGED` | `SET_STRUCTURE_ERROR` (with message) |
-| `SCRAPING_COMPLETE` | `SET_SCRAPING_FINISHED` |
+| `STUDENT_INFO` | Login → `isLoggedIn = true`, capture `studentInfo` |
+| `SUBJECT_COUNT` | Set `totalSubjects`, reset stall watchdog |
+| `ATTENDANCE_ITEM` | Dedup by `subCode`/`index`, append to `subjectsData`, advance index |
+| `SUBJECT_SKIPPED` | Advance index past skipped subject |
+| `SCRAPE_ERROR` / `STRUCTURE_CHANGED` | Show structure error overlay |
+| `SCRAPING_COMPLETE` | Mark scraping finished, persist result |
 
-Injection is driven by `onNavigationStateChange` in `App.tsx` (portal-host check via `isPortalHost`, per-URL dedup key `url|isLoggedIn|currentIndex`, no injection after scrape finishes). Root layout is a plain `View` with `paddingTop: StatusBar.currentHeight ?? 40` (Android-only — no `SafeAreaView`, no iOS branch).
+Injection is driven by `WebViewClient.onPageFinished` (portal-host check via `isPortalHost`, per-URL dedup key `url|isLoggedIn|currentIndex`, no injection after scrape finishes).
 
 ---
 
 ## Project Structure
 
 ```
-App.tsx                    # Orchestrator: state, injection routing, bridge handling, effects
-reducers/appReducer.ts     # AppState, AppAction, preserveSession
-views/WebViewScraper.tsx   # WebView, portal constants, human-verify note, refresh + previous buttons
-views/OverlayScreens.tsx   # Offline / 502 / structure / syncing / stall overlays (priority order)
-views/Dashboard.tsx        # Profile, overall card, subject list, footer (uses attendanceMath)
-components/CrabScene.tsx   # Pure-Animated loader (no external deps)
-components/DateLogModal.tsx# Date-wise log modal (FlatList)
-components/Spike.tsx       # Decorative asterisk mark
-utils/automationScripts.ts # 3 injection scripts + StudentInfo / SubjectAttendanceData / AttendanceRecord
-utils/bridgeValidator.ts   # Runtime bridge guards + parseBridgeMessage
-utils/attendanceMath.ts    # computeOverallStats, calculateCanSkip, calculateClassesToReach75
-utils/storage.ts           # expo-file-system/legacy JSON persistence + validation
-utils/updateManager.ts     # useUpdateManager hook + shouldCheckOnMount
-constants/theme.ts         # COLORS, SERIF, GITHUB_URL, STALL_TIMEOUT_MS (25s)
-__tests__/                 # Unit tests (reducer, math, bridge)
-scripts/regression-check.sh# lint + tsc + compiled tests gate
+android-apk/
+├── app/
+│   ├── build.gradle.kts          # Android app Gradle config (KSP, Compose, signing, minify)
+│   ├── settings.gradle.kts
+│   ├── gradle.properties
+│   ├── proguard-rules.pro
+│   ├── release.keystore          # Release signing keystore
+│   ├── src/main/
+│       ├── AndroidManifest.xml   # INTERNET + ACCESS_NETWORK_STATE, single Activity
+│       ├── res/
+│       │   ├── values/
+│       │   │   ├── colors.xml    # Design surface tokens
+│       │   │   ├── strings.xml
+│       │   │   └── themes.xml
+│       │   ├── xml/
+│       │   │   └── network_security_config.xml
+│       │   ├── mipmap-*/         # Launcher icons
+│       │   └── drawable/ic_launcher_background.xml
+│       └── java/com/chanikya501/jntuaattendance/
+│           ├── MainActivity.kt   # Single Activity, Compose entry, edge-to-edge
+│           ├── AttendanceApp.kt  # Root Composable, BackHandler, layer routing
+│           ├── viewmodel/
+│           │   ├── AttendanceViewModel.kt   # VM: state, bridge handling, persistence, OTA
+│           │   └── AttendanceUiState.kt     # UI state data class + derived syncPct
+│           ├── math/
+│           │   └── AttendanceMath.kt        # computeOverallStats, canSkip, classesToReach75
+│           ├── model/
+│           │   ├── AttendanceModels.kt      # StudentInfo, SubjectAttendanceData, AttendanceRecord, OverallStats
+│           │   └── BridgeMessage.kt         # BridgeMessage sealed interface + BridgeValidator runtime parse
+│           ├── webview/
+│           │   ├── WebViewScraperView.kt    # Native WebView (layer hardware, INVISIBLE during scrape)
+│           │   ├── AutomationScriptManager.kt # OTA script download + ECDSA signature verification
+│           │   └── AttendanceBridge.kt      # JavascriptInterface postMessage bridge shim
+│           ├── storage/
+│           │   └── AttendanceStorage.kt     # File-based JSON persistence
+│           ├── network/
+│           │   ├── NetworkMonitor.kt        # ConnectivityManager NetworkCallback flow
+│           │   └── IssueReportManager.kt    # Google Forms issue report submission
+│           ├── util/
+│           │   └── AppLogger.kt             # In-memory diagnostic log buffer + clipboard copy
+│           ├── ui/
+│           │   ├── AttendanceApp.kt
+│           │   ├── views/
+│           │   │   ├── WebViewScraperView.kt
+│           │   │   ├── DashboardView.kt     # Profile, overall card, subject list, footer
+│           │   │   └── OverlayScreensView.kt # Offline / 502 / structure / syncing / stall overlays
+│           │   ├── components/
+│           │   │   ├── CrabScene.kt         # Pure-Animated loader (no external deps)
+│           │   │   ├── Spike.kt             # Decorative asterisk mark
+│           │   │   ├── DateLogModal.kt      # Date-wise log modal (LazyColumn)
+│           │   │   ├── ReportIssueModal.kt  # Report issue bottom sheet
+│           │   │   └── ...
+│           │   └── theme/
+│           │       ├── Theme.kt             # MaterialTheme + color scheme
+│           │       ├── Color.kt             # Color tokens (Primary, SurfaceCard, CanvasBg, …)
+│           │       └── Type.kt              # Typography tokens (Serif family)
+│           └── test/
+│               ├── AttendanceMathTest.kt
+│               ├── AutomationScriptManagerTest.kt
+│               ├── BridgeValidatorTest.kt
+│               └── IssueReportManagerTest.kt
+├── build.gradle.kts
+├── gradlew / gradlew.bat
+└── gradle/wrapper/
 ```
 
-State lives in one `useReducer`. Aggregates are derived at render — never duplicated. `RESET` / `CLEAR_SELECTION_ERROR` / `CLEAR_GATEWAY_ERROR` preserve `hasPreviousResult`, `previousResult`, `isSplashDismissed` via `preserveSession`.
+State lives in `AttendanceUiState` (single `StateFlow` in `AttendanceViewModel`). Aggregates are derived at render — never mirrored.
 
 ---
 
@@ -91,48 +137,59 @@ State lives in one `useReducer`. Aggregates are derived at render — never dupl
 
 | Layer | Technology | Version |
 | --- | --- | --- |
-| Framework | Expo SDK | `~54.0.37` |
-| Runtime | React Native | `0.81.5` |
-| Language | React + TypeScript (strict) | `19.1.0` / `~5.9.2` |
-| WebView | react-native-webview | `13.15.0` |
-| Storage | expo-file-system | `~19.0.24` (`/legacy` subpath) |
-| OTA | expo-updates | `~29.0.20` |
-| Constants / Splash / Build | expo-constants / expo-splash-screen / expo-build-properties | `~18.0.14` / `~31.0.13` / `~1.0.10` |
-| Web compat | react-native-web | `~0.21.0` |
-| Lint / Types | ESLint + eslint-config-expo / @types/react | `^9.25.0` / `~10.0.0` / `~19.1.0` |
+| Language | Kotlin | 1.9.x |
+| UI | Jetpack Compose Material 3 | BOM 2024.02.00 |
+| Activity | androidx.activity:activity-compose | 1.8.2 |
+| Lifecycle | androidx.lifecycle:lifecycle-viewmodel-compose | 2.7.0 |
+| Coroutines | kotlinx-coroutines-android | 1.8.0 |
+| Core | androidx.core:core-ktx | 1.12.0 |
+| Test | JUnit 4 | 4.13.2 |
+| Test | org.json | 20231013 |
+| Gradle | Gradle wrapper | 8.7 |
+| Compile SDK | Android | 34 |
+| Min SDK | Android | 26 |
+| Target SDK | Android | 34 |
 
-Single-screen app, no router. Android-only `arm64-v8a`, minify + shrink enabled, package `com.chanikya501.JNTUAAttendance`. No iOS code paths: `constants/theme.ts` has no `Platform` import (`SERIF = "serif"`), `views/WebViewScraper.tsx` keeps Android-only WebView props (iOS-only `allowsBackForwardNavigationGestures` removed), and `Platform` in `App.tsx` guards only the Android back handler.
+Single-screen app, no router. Native Android `arm64-v8a`-compatible, minify + shrink enabled in release, package `com.chanikya501.JNTUAAttendance`.
 
 ---
 
-## Getting Started
+## Build & Requirements
 
 ### Prerequisites
 
-- Node.js LTS, npm, Android device/emulator, JNTUA-CEA portal account.
-- Dev build (`expo-dev-client`) for native validation; Expo Go for quick UI checks only.
+- Android Studio (Iguana or newer recommended)
+- JDK 17
+- Android SDK with compileSdk 34, build-tools 34.x
+- Android device/emulator (API 26+) for testing
+
+### Building
 
 ```bash
-git clone <repository-url>
-cd JNTUA-Attendance
-npm install
-npm run start
+cd android-apk
+
+# Debug build
+./gradlew assembleDebug
+
+# Release build (requires keystore config in local.properties or env vars)
+./gradlew assembleRelease
 ```
 
-```bash
-npx expo start --dev-client   # preferred native validation
-```
+The release APK is output at:
+`app/build/outputs/apk/release/app-release.apk`
 
-### Quality gates (mandatory)
+### Release signing
 
-```bash
-npm run lint      # must pass with zero errors
-npx tsc --noEmit
-npx expo-doctor
-bash scripts/regression-check.sh   # lint + typecheck + unit tests
-```
+Release signing reads from environment variables or `local.properties`:
 
-Never disable lint rules or use `@ts-ignore` / `@ts-expect-error` to force a pass.
+| Source | Property |
+| --- | --- |
+| `KEYSTORE_FILE` / `keystore.file` | Keystore path |
+| `KEYSTORE_PASSWORD` / `keystore.password` | Keystore password |
+| `KEY_ALIAS` / `key.alias` | Key alias |
+| `KEY_PASSWORD` / `key.password` | Key password |
+
+If any of these are missing, release signing is skipped and the unsigned APK is produced.
 
 ---
 
@@ -140,10 +197,10 @@ Never disable lint rules or use `@ts-ignore` / `@ts-expect-error` to force a pas
 
 1. **Log in** — embedded portal + human-verify note. Credentials go only to the portal.
 2. **Sync** — automatic subject walk with `Processed X of Y` + `%` overlay (`Authenticating session…` before count arrives). Stall (> 25s no bridge activity) shows `Couldn't load subjects right now`.
-3. **Dashboard** — profile banner, overall card (total/present/absent + skip pill + Shortage/Semester badge), subject cards with `Skip N` / `Keep attending` / `Attend N more` (memoized `SubjectCard`, `subCode`-keyed list). Tap a card for the date-wise log (`Present` / `Absent` / `Unknown`).
+3. **Dashboard** — profile banner, overall card (total/present/absent + skip pill + Shortage/Semester badge), subject cards with `Skip N` / `Keep attending` / `Attend N more`. Tap a card for the date-wise log (`Present` / `Absent` / `Unknown`).
 4. **Refresh** — ⟳ button (hidden while scraping to protect index tracking) reloads the portal.
-5. **Previous Attendance** — button on the login screen when a valid saved result exists; hydrates the dashboard instantly (`HYDRATE_PREVIOUS_RESULT`, no re-auth).
-6. **Reset / Back** — ↻ returns to login (`RESET`, WebView remounted via `webViewKey`). Android back: closes modal → dashboard home → dismisses stall error → double-tap exits with toast.
+5. **Previous Attendance** — button on the login screen when a valid saved result exists; hydrates the dashboard instantly (no re-auth).
+6. **Reset / Back** — ↻ returns to login (`RESET`, WebView remounted via `webViewKey`). Android back: closes modal → dashboard home → dismisses stall error → exits.
 
 ---
 
@@ -166,13 +223,13 @@ canSkip(subject) = min(max(0, floor((4 * subjectPresent - 3 * subjectTotal) / 3)
 classesToReach75 = max(0, 3 * total - 4 * present)
 ```
 
-Implemented in `utils/attendanceMath.ts` (`computeOverallStats`, `calculateCanSkip`, `calculateClassesToReach75`). The overall cap keeps per-subject skips from dragging the aggregate below 75%.
+Implemented in `AttendanceMath.kt` (`computeOverallStats`, `calculateCanSkip`, `calculateClassesToReach75`). The overall cap keeps per-subject skips from dragging the aggregate below 75%.
 
 ---
 
 ## Persistence
 
-- Backend: `expo-file-system/legacy`, file `previous_attendance_result.json` in `documentDirectory`.
+- Backend: `java.io.File` in `context.filesDir`, file `previous_attendance_result.json`.
 - Stores only `studentInfo` + `subjectsData`; aggregates are re-derived.
 - Saves once per unique result (signature `name|count|classes|present|absent`). Best-effort — never crashes the scrape.
 - Loads on mount; validates shape, `total === present + absent`, non-negative numbers, size caps (1MB file, 200 subjects, 1000 records/subject). Corrupt data returns `null`.
@@ -185,34 +242,21 @@ Priority: offline → gateway → structure → selection → syncing (selection
 
 | Overlay | Trigger | Recovery |
 | --- | --- | --- |
-| No Internet | WebView `onError` → `SET_OFFLINE(true)` | Next `onLoadStart` clears it; Retry resets |
-| Portal down (502) | `onHttpError` 502 → `SET_GATEWAY_ERROR` | Next `onLoadStart` clears it; Try again resets |
-| Portal layout changed | `SCRAPE_ERROR` timeout → `SET_STRUCTURE_ERROR(message)` | Reload Portal resets; message shown when provided |
-| Stall | No bridge message for 25s (`STALL_TIMEOUT_MS`, 1s poll) → `SET_SELECTION_ERROR` | Dismiss (✕) or Try again |
+| No Internet | WebView `onReceivedError` → `isOffline = true` | Next `onPageStarted` clears it; Retry resets |
+| Portal down (502) | `onReceivedHttpError` 502 → `gatewayError = true` | Next `onPageStarted` clears it; Try again resets |
+| Portal layout changed | `SCRAPE_ERROR` timeout → `isStructureError = true` | Reload Portal resets; message shown when provided |
+| Stall | No bridge message for 25s → `isSelectionError = true` | Dismiss (✕) or Try again |
 
 ---
 
-## OTA Updates
+## OTA Scraper Updates
 
-Pure EAS Update for JS-only changes (scripts, UI). Native/config changes need a fresh build.
+Pure over-the-air scraper script updates (no app rebuild needed for scraper changes).
 
-- `updates.checkAutomatically: "NEVER"` — single explicit path via `useUpdateManager` (30s timeout, `unknown` fallback). Skipped in `__DEV__`/Expo Go.
-- `runtimeVersion.policy: "appVersion"`; `eas.json` `appVersionSource: "remote"`, production `autoIncrement: true`.
-- Banner shows `Checking for updates…` / `Applying update…` as an absolute overlay (does not shift layout).
-
-| Channel | Build profile | Purpose |
-| --- | --- | --- |
-| `staging` | `preview` (APK) | Validate before users |
-| `production` | `production` (APK) | Live updates |
-
-```bash
-eas-cli login
-npm run update:staging        # JS update → staging
-npm run promote:production    # promote staging → production
-npm run update:production     # direct to production
-npm run build:preview         # staging APK
-npm run build:production      # production APK
-```
+- The scraper script is bundled as an asset (`automation_scripts.js`) and can be updated OTA from GitHub raw / jsDelivr CDN.
+- Updates use HTTP Conditional GET (If-None-Match / ETag) and a 15-minute cooldown for silent background checks.
+- Every downloaded script is validated: structural markers + **cryptographic ECDSA (SHA256withECDSA, NIST P-256) signature verification** against an embedded public key. Unsigned or tampered scripts are rejected.
+- App version code upgrades purge stale cached scripts (prevents the "Bundled Asset Upgrade Trap").
 
 ---
 
@@ -225,23 +269,13 @@ npm run build:production      # production APK
 | Layout-changed overlay | Portal HTML changed — app update needed. |
 | Stall overlay | Portal slow/blocked — Try again. |
 | Previous Attendance missing | No valid saved result yet — complete one full scrape. |
-| Partial subjects | Scrape interrupted — tap ↻ and re-authenticate. |
+| Partial subjects | Scrape interrupted — tap ⟳ and re-authenticate. |
 | Unknown log entries | Portal row lacked a status badge — kept as `Unknown`. |
-| Lint fails | Fix root cause; never disable rules or add `ts-ignore`. |
-
----
-
-## Contributing
-
-1. Branch, make minimal strictly-typed changes per `AGENTS.md`.
-2. `npm run lint`, `npx tsc --noEmit`, `bash scripts/regression-check.sh` — all must pass.
-3. Validate native behavior on a dev/preview build; test scraper changes against the live portal.
-4. New deps only via `npx expo install` (SDK 54 compatible); scripts must end with `true;`.
+| Scraper update failed | Network error or signature mismatch — check connectivity. |
 
 ---
 
 ## License
 
-Educational use only. Not affiliated with JNTUA or classattendance.in — use per your institution's policies.
-
+Educational use only. Not affiliated with JNTUA or classattendance.in
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="canvas">#FAF9F5</color>
+    <color name="surface_card">#EFE9DE</color>
+    <color name="primary">#CC785C</color>
+    <color name="surface_dark">#181715</color>
+    <color name="ic_launcher_background">#FAF9F5</color>
+</resources>

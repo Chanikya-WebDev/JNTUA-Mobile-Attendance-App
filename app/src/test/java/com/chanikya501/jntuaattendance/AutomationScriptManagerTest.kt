@@ -20,6 +20,15 @@ class AutomationScriptManagerTest {
         return file!!.readText()
     }
 
+    private fun loadScraperSource(): String? {
+        val candidates = listOf(
+            File("scraper/automation_scripts.js"),
+            File("../scraper/automation_scripts.js"),
+            File("app/scraper/automation_scripts.js")
+        )
+        return candidates.firstOrNull { it.exists() }?.readText()
+    }
+
     @Test
     fun bundledAssetScript_hasValidSignatureAndPassesValidation() {
         val script = loadBundledAssetScript()
@@ -77,7 +86,7 @@ class AutomationScriptManagerTest {
     @Test
     fun extractVersion_correctlyExtractsVersionString() {
         val script = loadBundledAssetScript()
-        assertEquals("2026.10.18.1", AutomationScriptManager.extractVersion(script))
+        assertEquals("2026.10.24.1", AutomationScriptManager.extractVersion(script))
 
         val scriptWithQuotedVersion = """window.JNTUAScraper = { version: "2.4.5" };"""
         assertEquals("2.4.5", AutomationScriptManager.extractVersion(scriptWithQuotedVersion))
@@ -106,5 +115,47 @@ class AutomationScriptManagerTest {
         assertTrue(dispatchScript.contains("\\\"test\\\""))
         assertTrue(dispatchScript.contains("3"))
         assertTrue(dispatchScript.contains("true"))
+    }
+
+    // ---- Phase 8: corrected version gating (does not get discarded by init) ----
+
+    @Test
+    fun correctedVersion_isNewerThanAnyPriorBundle_soInitDoesNotDiscardOtaCache() {
+        // The device's installed/committed bundle is 2026.10.18.1, and the discarded
+        // working-tree attempt was 2026.10.23.1. The corrected version must be strictly
+        // newer than both so init's `compareVersions(cached, bundled) > 0` keeps it.
+        assertEquals("2026.10.24.1", AutomationScriptManager.extractVersion(loadBundledAssetScript()))
+        assertTrue(AutomationScriptManager.compareVersions("2026.10.24.1", "2026.10.23.1") > 0)
+        assertTrue(AutomationScriptManager.compareVersions("2026.10.24.1", "2026.10.18.1") > 0)
+        // A reused equal marker (2026.10.23.1 cache vs 2026.10.23.1 bundle) WOULD be
+        // discarded by init -- this is exactly the trap we avoided by bumping.
+        assertEquals(0, AutomationScriptManager.compareVersions("2026.10.23.1", "2026.10.23.1"))
+    }
+
+    @Test
+    fun otaSourceScraper_matchesBundledVersionAndHasValidSignature() {
+        val scraper = loadScraperSource()
+        assertNotNull("scraper/automation_scripts.js (OTA source) should exist", scraper)
+        val script = scraper!!
+        assertEquals("2026.10.24.1", AutomationScriptManager.extractVersion(script))
+        assertTrue("OTA source must carry a valid ECDSA signature", AutomationScriptManager.verifySignature(script))
+        // The OTA source and the bundled asset must be the SAME corrected version so a
+        // fresh install and an upgrade both run the fix.
+        assertEquals(
+            0,
+            AutomationScriptManager.compareVersions(
+                AutomationScriptManager.extractVersion(script),
+                AutomationScriptManager.extractVersion(loadBundledAssetScript())
+            )
+        )
+    }
+
+    @Test
+    fun signedScript_isAccepted_andTamperedIsRejected() {
+        val script = loadBundledAssetScript()
+        assertTrue("Correctly signed script must validate", AutomationScriptManager.validateScriptContent(script))
+        val tampered = script.replace("window.JNTUAScraper", "window.EvilScraper")
+        assertFalse("Header-swap must fail validation", AutomationScriptManager.validateScriptContent(tampered))
+        assertFalse("Header-swap must fail signature verification", AutomationScriptManager.verifySignature(tampered))
     }
 }

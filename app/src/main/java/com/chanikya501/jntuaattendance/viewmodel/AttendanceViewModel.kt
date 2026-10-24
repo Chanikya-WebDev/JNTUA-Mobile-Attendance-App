@@ -29,6 +29,9 @@ import kotlinx.coroutines.launch
 private const val RESET_SCRAPE_SESSION_JS =
     "(function(){try{sessionStorage.removeItem('fetchedSubjectCodes');sessionStorage.removeItem('scrapeActive');}catch(e){}})();true;"
 
+private const val RESET_SUBMISSION_JS =
+    "(function(){try{if(window.JNTUAScraper){window.JNTUAScraper._pendingSubjectIdx=-1;window.JNTUAScraper._processedPages={};}}catch(e){}})();true;"
+
 class AttendanceViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(AttendanceUiState())
@@ -70,24 +73,72 @@ class AttendanceViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    private fun resetStallWatchdog() {
+    private fun generateSessionId(): String {
+        val chars = "0123456789abcdef"
+        val sb = StringBuilder(12)
+        val rng = java.util.Random(System.nanoTime())
+        repeat(12) { sb.append(chars[rng.nextInt(chars.length)]) }
+        return sb.toString()
+    }
+
+    fun startScrapingSession() {
+        AppLogger.i("AttendanceViewModel", "Starting new scraping session")
+        _uiState.update { current ->
+            current.copy(
+                scrapingState = ScrapingState.IDLE,
+                sessionId = generateSessionId(),
+                retryCount = 0,
+                currentIndex = 0,
+                totalSubjects = null,
+                fetchedIndices = emptySet(),
+                fetchedSubCodes = emptySet(),
+                subjectsData = emptyList(),
+                isScrapingFinished = false,
+                isSelectionError = false,
+                isStructureError = false,
+                isOffline = false,
+                gatewayError = false,
+                studentInfo = null,
+                isLoggedIn = false
+            )
+        }
+    }
+
+    fun resetStallWatchdog() {
         stallJob?.cancel()
         val state = _uiState.value
         val isScrapingActive = state.isLoggedIn && !state.isScrapingFinished
         if (isScrapingActive && !state.isSelectionError && !state.isStructureError && !state.isOffline && !state.gatewayError) {
-            AppLogger.d("AttendanceViewModel", "resetStallWatchdog: active for index ${state.currentIndex}")
+            AppLogger.d("AttendanceViewModel", "resetStallWatchdog: active for index ${state.currentIndex}, state=${state.scrapingState}")
             stallJob = viewModelScope.launch {
                 delay(25000L)
-                AppLogger.w("AttendanceViewModel", "Stall watchdog fired after 25s idle! Setting isSelectionError = true")
-                _uiState.update { it.copy(isSelectionError = true) }
+                AppLogger.w("AttendanceViewModel", "Stall watchdog fired after 25s idle! state=${state.scrapingState}, index=${state.currentIndex}, retryCount=${state.retryCount}")
+                if (state.retryCount >= 3) {
+                    AppLogger.e("AttendanceViewModel", "Max retries (3) exhausted — terminating with terminal error")
+                    _uiState.update {
+                        it.copy(
+                            isSelectionError = true,
+                            scrapingState = ScrapingState.ERROR,
+                            isScrapingFinished = true
+                        )
+                    }
+                } else {
+                    _uiState.update { current ->
+                        current.copy(
+                            isSelectionError = true,
+                            scrapingState = ScrapingState.ERROR,
+                            retryCount = current.retryCount + 1,
+                            sessionId = generateSessionId()
+                        )
+                    }
+                }
             }
         }
     }
 
     fun onPageLoadStarted() {
-        AppLogger.d("AttendanceViewModel", "onPageLoadStarted: clearing offline/gateway errors")
+        AppLogger.d("AttendanceViewModel", "onPageLoadStarted: index=${_uiState.value.currentIndex}, state=${_uiState.value.scrapingState}")
         _uiState.update { it.copy(isOffline = false, gatewayError = false) }
-        resetStallWatchdog()
     }
 
     fun onReceivedHttpError(statusCode: Int) {
@@ -109,6 +160,7 @@ class AttendanceViewModel(application: Application) : AndroidViewModel(applicati
         AppLogger.clear()
         stallJob?.cancel()
         _jsCommands.tryEmit(RESET_SCRAPE_SESSION_JS)
+        _jsCommands.tryEmit(RESET_SUBMISSION_JS)
         try {
             android.webkit.CookieManager.getInstance().removeAllCookies(null)
             android.webkit.CookieManager.getInstance().flush()
@@ -121,12 +173,12 @@ class AttendanceViewModel(application: Application) : AndroidViewModel(applicati
                 scraperVersion = it.scraperVersion
             )
         }
+        startScrapingSession()
     }
 
     fun handleClearSelectionError() {
         AppLogger.i("AttendanceViewModel", "handleClearSelectionError triggered")
         handleReset()
-        resetStallWatchdog()
     }
 
     fun checkScriptUpdateManually() {
@@ -296,8 +348,17 @@ class AttendanceViewModel(application: Application) : AndroidViewModel(applicati
             AppLogger.i("AttendanceViewModel", "Bridge message received: ${message.javaClass.simpleName}")
             when (message) {
                 is BridgeMessage.StudentInfoMsg -> {
-                    AppLogger.i("AttendanceViewModel", "Student logged in: ${message.data.sname} (${message.data.admissionNo})")
-                    _uiState.update { it.copy(isLoggedIn = true, studentInfo = message.data) }
+                    AppLogger.i("AttendanceViewModel", "StudentInfo received: class=${message.data.className}")
+                    _uiState.update { current ->
+                        current.copy(
+                            isLoggedIn = true,
+                            studentInfo = message.data,
+                            // Generate session ID if not already set (first login)
+                            sessionId = if (current.sessionId.isBlank()) generateSessionId() else current.sessionId,
+                            scrapingState = ScrapingState.DISCOVERING,
+                            retryCount = 0
+                        )
+                    }
                     resetStallWatchdog()
                 }
 
@@ -305,7 +366,10 @@ class AttendanceViewModel(application: Application) : AndroidViewModel(applicati
                     AppLogger.i("AttendanceViewModel", "Subject count reported: ${message.count}")
                     _uiState.update { current ->
                         if (current.totalSubjects == message.count) current
-                        else current.copy(totalSubjects = message.count)
+                        else current.copy(
+                            totalSubjects = message.count,
+                            scrapingState = ScrapingState.DISCOVERING
+                        )
                     }
                     resetStallWatchdog()
                 }
@@ -314,7 +378,7 @@ class AttendanceViewModel(application: Application) : AndroidViewModel(applicati
                     val item = message.data
                     val subCode = item.subCode?.trim().orEmpty()
                     val subCodeNorm = subCode.lowercase()
-                    AppLogger.i("AttendanceViewModel", "Attendance item: $subCode, pct=${item.percentage}%, present=${item.present}/${item.total}")
+                    AppLogger.i("AttendanceViewModel", "Attendance item: subCode=${subCode.ifEmpty { "<none>" }}, pct=${item.percentage}%, present=${item.present}/${item.total}")
 
                     _uiState.update { current ->
                         if (subCodeNorm.isNotEmpty() && current.fetchedSubCodes.contains(subCodeNorm)) {
@@ -340,10 +404,12 @@ class AttendanceViewModel(application: Application) : AndroidViewModel(applicati
                             fetchedSubCodes = updatedFetchedSubCodes,
                             subjectsData = updatedSubjects,
                             currentIndex = if (finished) current.currentIndex else nextIndex,
-                            isScrapingFinished = if (finished) true else current.isScrapingFinished
+                            isScrapingFinished = if (finished) true else current.isScrapingFinished,
+                            scrapingState = ScrapingState.PARSING,
+                            retryCount = 0
                         )
 
-                        AppLogger.i("AttendanceViewModel", "Scraping progress: ${newState.subjectsData.size}/${newState.totalSubjects ?: "?"} subjects (finished=$finished)")
+                        AppLogger.i("AttendanceViewModel", "Scraping progress: ${newState.subjectsData.size}/${newState.totalSubjects ?: "?"} subjects (finished=$finished), idx=${newState.currentIndex}")
 
                         if (newState.isScrapingFinished) {
                             AppLogger.i("AttendanceViewModel", "All subjects finished, persisting result")
@@ -368,7 +434,9 @@ class AttendanceViewModel(application: Application) : AndroidViewModel(applicati
                             fetchedIndices = current.fetchedIndices + skippedIdx,
                             fetchedSubCodes = updatedSubCodes,
                             currentIndex = if (finished) current.currentIndex else nextIndex,
-                            isScrapingFinished = if (finished) true else current.isScrapingFinished
+                            isScrapingFinished = if (finished) true else current.isScrapingFinished,
+                            scrapingState = ScrapingState.SUBMITTING,
+                            retryCount = 0
                         )
                         if (newState.isScrapingFinished) {
                             AppLogger.i("AttendanceViewModel", "All subjects finished via skip, persisting result")
@@ -383,30 +451,51 @@ class AttendanceViewModel(application: Application) : AndroidViewModel(applicati
                 is BridgeMessage.ScrapeErrorMsg -> {
                     AppLogger.e("AttendanceViewModel", "ScrapeError: ${message.message}")
                     stallJob?.cancel()
-                    _uiState.update {
-                        it.copy(
+                    _jsCommands.tryEmit(RESET_SUBMISSION_JS)
+                    _uiState.update { current ->
+                        current.copy(
                             isStructureError = true,
-                            structureErrorMessage = message.message
+                            structureErrorMessage = message.message,
+                            scrapingState = ScrapingState.ERROR,
+                            retryCount = current.retryCount + 1
                         )
                     }
                 }
 
                 is BridgeMessage.ScrapeIdleMsg -> {
                     AppLogger.w("AttendanceViewModel", "ScrapeIdle: ${message.reason}")
-                    resetStallWatchdog()
+                    // Do NOT reset the stall watchdog — idle is not progress.
+                    // Let the watchdog fire if no meaningful action occurs.
+                    _jsCommands.tryEmit(RESET_SUBMISSION_JS)
+                    _uiState.update { current ->
+                        current.copy(
+                            scrapingState = ScrapingState.ERROR,
+                            retryCount = current.retryCount + 1
+                        )
+                    }
                 }
 
                 is BridgeMessage.StructureChangedMsg -> {
                     AppLogger.e("AttendanceViewModel", "StructureChanged error received")
                     stallJob?.cancel()
-                    _uiState.update { it.copy(isStructureError = true) }
+                    _jsCommands.tryEmit(RESET_SUBMISSION_JS)
+                    _uiState.update {
+                        it.copy(
+                            isStructureError = true,
+                            scrapingState = ScrapingState.ERROR,
+                            retryCount = it.retryCount + 1
+                        )
+                    }
                 }
 
                 is BridgeMessage.ScrapingCompleteMsg -> {
                     AppLogger.i("AttendanceViewModel", "ScrapingComplete received")
                     stallJob?.cancel()
                     _uiState.update { current ->
-                        val newState = current.copy(isScrapingFinished = true)
+                        val newState = current.copy(
+                            isScrapingFinished = true,
+                            scrapingState = ScrapingState.COMPLETED
+                        )
                         checkAndPersistResult(newState)
                         newState
                     }

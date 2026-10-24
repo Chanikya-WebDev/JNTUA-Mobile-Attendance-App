@@ -178,7 +178,8 @@ fun WebViewScraperView(
                                     }
 
                                     val currentState = viewModel.uiState.value
-                                    if (!currentState.isLoggedIn && !url.contains("student")) {
+                                    val urlPath = try { android.net.Uri.parse(url)?.path ?: "" } catch (_: Exception) { "" }
+                                    if (!currentState.isLoggedIn && !urlPath.contains("student")) {
                                         view.evaluateJavascript(
                                             "if (window.JNTUAScraper && window.JNTUAScraper.injectHumanNote) { window.JNTUAScraper.injectHumanNote(); }",
                                             null
@@ -194,22 +195,23 @@ fun WebViewScraperView(
                                         return
                                     }
 
-                                    val cleanUrl = url.substringBefore("#")
-                                    val injectKey = "$cleanUrl|${currentState.isLoggedIn}|${currentState.currentIndex}"
+                                      val cleanUrl = url.substringBefore("#")
+                                    val injectKey = "$cleanUrl|${currentState.isLoggedIn}|${currentState.scrapingState}|${currentState.currentIndex}|${currentState.sessionId}"
                                     if (lastInjectedKey == injectKey) {
                                         AppLogger.d("AttendanceScraper", "Duplicate injection ignored for key: $injectKey")
                                         return
                                     }
                                     lastInjectedKey = injectKey
 
-                                    if (!sessionStarted) {
-                                        sessionStarted = true
-                                        AppLogger.i("AttendanceScraper", "Beginning scrape session in sessionStorage")
-                                        view.evaluateJavascript(
-                                            "if (window.JNTUAScraper && window.JNTUAScraper.beginScrapeSession) { window.JNTUAScraper.beginScrapeSession(); }",
-                                            null
-                                        )
-                                    }
+                    if (!sessionStarted) {
+                        sessionStarted = true
+                        AppLogger.i("AttendanceScraper", "Beginning scrape session in sessionStorage")
+                        viewModel.startScrapingSession()
+                        view.evaluateJavascript(
+                            "if (window.JNTUAScraper && window.JNTUAScraper.beginScrapeSession) { window.JNTUAScraper.beginScrapeSession(); }",
+                            null
+                        )
+                    }
 
                                     // 2. Dispatch page execution via OTA script router
                                     val scrapingActive = currentState.isLoggedIn && !currentState.isScrapingFinished
@@ -251,13 +253,20 @@ fun WebViewScraperView(
 
                                     // Intercept ERR_CACHE_MISS: Chromium throws this when navigating back to POST responses.
                                     // Never terminate the flow or flag as offline. Auto-recover by loading studentsubjects.php directly.
-                                    if (errorDesc.contains("ERR_CACHE_MISS", ignoreCase = true) || errorDesc.contains("CACHE_MISS", ignoreCase = true)) {
-                                        AppLogger.w("AttendanceScraper", "ERR_CACHE_MISS intercepted for $reqUrl! Auto-recovering to studentsubjects.php")
-                                        view?.post {
-                                            view.loadUrl("${AutomationScriptManager.PORTAL_BASE_URL}/studentsubjects.php")
-                                        }
-                                        return
-                                    }
+                    if (errorDesc.contains("ERR_CACHE_MISS", ignoreCase = true) || errorDesc.contains("CACHE_MISS", ignoreCase = true)) {
+                        AppLogger.w("AttendanceScraper", "ERR_CACHE_MISS intercepted for $reqUrl! Auto-recovering to studentsubjects.php")
+                        view?.post {
+                            // Clear JS submission guard before reloading to avoid stale state
+                            try {
+                                view.evaluateJavascript(
+                                    "(function(){try{if(window.JNTUAScraper){window.JNTUAScraper._pendingSubjectIdx=-1;window.JNTUAScraper._processedPages={};}}catch(e){}})();true;",
+                                    null
+                                )
+                            } catch (_: Exception) {}
+                            view.loadUrl("${AutomationScriptManager.PORTAL_BASE_URL}/studentsubjects.php")
+                        }
+                        return
+                    }
 
                                     if (isMainFrame) {
                                         viewModel.onReceivedNetworkError()

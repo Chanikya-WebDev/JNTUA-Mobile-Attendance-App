@@ -1,9 +1,9 @@
 /**
  * JNTUA Attendance Automation Scripts (OTA Bundle)
- * Version: 2026.10.18.1
+ * Version: 2026.10.24.1
  * Portal: https://jntuaceastudents.classattendance.in
  */
-// Signature: MEYCIQD9i83rqSH+U0l3LOzR6lm0yuPWqOzSLUdEwZHUYCXkkgIhANB4jHKZCp6TFFegcx5ubhhwDz/FRexbL0me2hKhjaK2
+// Signature: MEYCIQDh95gi7SLFHFyIhCSKf0mMSexaBdsKNgRCB6QC7/h0+gIhAJjaALAxrAXaxVFQAigsEKlgi3PJTeOsizRYZshZInjU
 (function() {
     'use strict';
 
@@ -92,15 +92,41 @@
 
     function goBackToSubjects() {
         var targetUrl = 'https://jntuaceastudents.classattendance.in/studentsubjects.php';
-        console.log('[AttendanceScraper] goBackToSubjects called from ' + window.location.href);
+        var sid = window.JNTUAScraper && window.JNTUAScraper._sessionId ? window.JNTUAScraper._sessionId : '';
+        console.log('[AttendanceScraper][SID:' + sid + '] goBackToSubjects called from ' + window.location.href);
 
         if (window.location.href.indexOf('studentsubjects.php') !== -1 ||
             window.location.pathname.indexOf('studentsubjects.php') !== -1) {
-            console.log('[AttendanceScraper] Already on studentsubjects.php');
+            console.log('[AttendanceScraper][SID:' + sid + '] Already on studentsubjects.php');
+            // Clear pending submission state when we return to the subjects list
+            if (window.JNTUAScraper) window.JNTUAScraper._pendingSubjectIdx = -1;
             return;
         }
 
-        // Primary Method: Submit synthetic POST form to studentsubjects.php with class context.
+        // Primary Method: Submit the existing "Back to Subjects" form that is
+        // already present on the attendance detail page (studentsubjectatt.html).
+        // This form carries the live _csrf, student_id, class_id, classname, and
+        // acad_year values — same fields/methods as the page's own Subjects button.
+        try {
+            var existingForm = document.querySelector('form[action="studentsubjects.php"], form[action*="studentsubjects.php"]');
+            if (existingForm) {
+                console.log('[AttendanceScraper][SID:' + sid + '] Submitting existing "Back to Subjects" form found on the page');
+                try { existingForm.removeAttribute('target'); existingForm.target = '_self'; } catch (e0) {}
+                try {
+                    if (existingForm.requestSubmit) existingForm.requestSubmit();
+                    else HTMLFormElement.prototype.submit.call(existingForm);
+                    return;
+                } catch (e1) {
+                    HTMLFormElement.prototype.submit.call(existingForm);
+                    return;
+                }
+            }
+        } catch (eExisting) {
+            console.error('[AttendanceScraper] Existing "Back to Subjects" form submission failed: ' + (eExisting && eExisting.message ? eExisting.message : String(eExisting)));
+        }
+
+        // Fallback: Submit synthetic POST form to studentsubjects.php with class context
+        // (used when the page doesn't yet render the in-DOM form, e.g. early load).
         try {
             var ctxRaw = sessionStorage.getItem('subjectsCtx') || sessionStorage.getItem('homeFormInputs');
             if (ctxRaw) {
@@ -128,7 +154,7 @@
             console.error('[AttendanceScraper] Synthetic form submission failed: ' + (eForm && eForm.message ? eForm.message : String(eForm)));
         }
 
-        // Fallback: Direct window.location.replace
+        // Last resort: Direct window.location.replace
         try {
             console.log('[AttendanceScraper] Fallback: window.location.replace to ' + targetUrl);
             window.location.replace(targetUrl);
@@ -137,69 +163,72 @@
         }
     }
 
-    function payloadForIndex(idx) {
+    var requiredAttFields = ['_csrf', 'subject_id', 'subcode', 'sub_fullname', 'student_id', 'class_id', 'classname', 'acad_year'];
+
+    function hasAllRequiredFields(map) {
+        for (var k = 0; k < requiredAttFields.length; k++) {
+            var v = map[requiredAttFields[k]];
+            if (v === undefined || v === null || String(v).trim() === '') return false;
+        }
+        return true;
+    }
+
+    function resolveFormForRow(row) {
         try {
-            var buckets = [];
-            var current = null;
-            var all = document.getElementsByTagName('*');
-            for (var bi = 0; bi < all.length; bi++) {
-                var el = all[bi];
-                if (el.tagName === 'FORM' && el.id && el.id.indexOf('subject_form_') === 0) {
-                    current = {};
-                    buckets.push(current);
-                } else if (el.tagName === 'INPUT' && current) {
-                    var nm = el.getAttribute('name');
-                    if (nm) current[nm] = el.value;
-                }
+            var onclick = row.getAttribute('onclick') || '';
+            var m = onclick.match(/getElementById\s*\(\s*['"]([^'"]+)['"]\s*\)/);
+            if (m) return document.getElementById(m[1]);
+        } catch (e) {}
+        return null;
+    }
+
+    function collectSubjectFields(idx) {
+        var rows = document.querySelectorAll('tr.clickable-row');
+        var row = rows[idx];
+        var fields = {};
+        if (!row) return fields;
+        var form = resolveFormForRow(row);
+        if (form) {
+            var owned = form.querySelectorAll('input');
+            for (var i = 0; i < owned.length; i++) {
+                if (owned[i].name) fields[owned[i].name] = owned[i].value;
             }
-            var rows = document.querySelectorAll('tr.clickable-row');
-            var b = buckets[idx] || {};
-            var subcode = b['subcode'] || '';
-            var subjectId = b['subject_id'] || '';
-            var fullname = b['sub_fullname'] || '';
-            var csrfV = b['_csrf'] || '';
-            var sidV = b['student_id'] || '';
-            var cidV = b['class_id'] || '';
-            var cnameV = b['classname'] || '';
-            var acadV = b['acad_year'] || '';
-            if (!csrfV) {
-                var csrf = document.querySelector('input[name="_csrf"]');
-                if (csrf) csrfV = csrf.value;
+            var sib = form.nextElementSibling;
+            while (sib && sib.tagName === 'INPUT') {
+                if (sib.name) fields[sib.name] = sib.value;
+                sib = sib.nextElementSibling;
             }
-            if (!sidV || !cidV) {
-                try {
-                    var ctx = JSON.parse(sessionStorage.getItem('subjectsCtx') || '{}');
-                    if (!sidV && ctx.student_id) sidV = ctx.student_id;
-                    if (!cidV && ctx.class_id) cidV = ctx.class_id;
-                    if (!cnameV && ctx.classname) cnameV = ctx.classname;
-                    if (!acadV && ctx.acad_year) acadV = ctx.acad_year;
-                    if (!csrfV && ctx._csrf) csrfV = ctx._csrf;
-                } catch (eC) {}
+        }
+        if (!fields['subcode']) { var rc = rowCode(row); if (rc) fields['subcode'] = rc; }
+        if (!fields['sub_fullname']) {
+            var tds = row.querySelectorAll('td');
+            if (tds.length >= 2) fields['sub_fullname'] = (tds[1].textContent || '').trim();
+        }
+        try {
+            var ctx = JSON.parse(sessionStorage.getItem('subjectsCtx') || '{}');
+            if (!fields['student_id'] && ctx.student_id) fields['student_id'] = ctx.student_id;
+            if (!fields['class_id'] && ctx.class_id) fields['class_id'] = ctx.class_id;
+            if (!fields['classname'] && ctx.classname) fields['classname'] = ctx.classname;
+            if (!fields['acad_year'] && ctx.acad_year) fields['acad_year'] = ctx.acad_year;
+            if (!fields['_csrf'] && ctx._csrf) fields['_csrf'] = ctx._csrf;
+            if (!fields['_csrf']) {
+                var csrfEl = document.querySelector('input[name="_csrf"]');
+                if (csrfEl) fields['_csrf'] = csrfEl.value;
             }
-            if ((!subcode || !fullname) && rows[idx]) {
-                var tds = rows[idx].querySelectorAll('td');
-                if (!subcode && tds.length >= 1) subcode = (tds[0].textContent || '').trim();
-                if (!fullname && tds.length >= 2) fullname = (tds[1].textContent || '').trim();
-            }
-            if (!subcode && rows[idx]) { subcode = rowCode(rows[idx]); }
-            return {
-                _csrf: csrfV,
-                subject_id: subjectId,
-                subcode: subcode,
-                sub_fullname: fullname,
-                student_id: sidV,
-                class_id: cidV,
-                classname: cnameV,
-                acad_year: acadV
-            };
-        } catch (e) { return null; }
+            if (!fields['subject_id']) fields['subject_id'] = '';
+        } catch (e) {}
+        return fields;
+    }
+
+    function payloadForIndex(idx) {
+        return collectSubjectFields(idx);
     }
 
     function submitPayload(p) {
         try {
             var f = document.createElement('form');
             f.method = 'post';
-            f.action = 'studentcourseatt.php';
+            f.action = 'studentsubjectatt.php';
             f.style.display = 'none';
             Object.keys(p).forEach(function(k) {
                 var inp = document.createElement('input');
@@ -216,46 +245,58 @@
         var rows = document.querySelectorAll('tr.clickable-row');
         var row = rows[idx];
         if (!row) return false;
+        var sid = (window.JNTUAScraper && window.JNTUAScraper._sessionId) || '';
+        var attemptedNative = false;
 
-        // 1. Try finding the associated form by onclick
         try {
-            var onclick = row.getAttribute('onclick') || '';
-            var m = onclick.match(/getElementById\s*\(\s*['"]([^'"]+)['"]\s*\)/);
-            if (m) {
-                var form = document.getElementById(m[1]);
-                if (form) {
-                    var sib = form.nextElementSibling;
-                    while (sib && sib.tagName === 'INPUT') {
-                        var nxt = sib.nextElementSibling;
-                        form.appendChild(sib);
-                        sib = nxt;
-                    }
+            var form = resolveFormForRow(row);
+            if (form) {
+                var sib = form.nextElementSibling;
+                while (sib && sib.tagName === 'INPUT') {
+                    var nxt = sib.nextElementSibling;
+                    form.appendChild(sib);
+                    sib = nxt;
+                }
+                var flds = {};
+                var merged = form.querySelectorAll('input');
+                for (var i = 0; i < merged.length; i++) {
+                    if (merged[i].name) flds[merged[i].name] = merged[i].value;
+                }
+                var code = flds['subcode'] || rowCode(row);
+                console.log('[AttendanceScraper][SID:' + sid + '] [state:SUBMITTING] subject=' + code + ', index=' + idx + ', payload=' + (hasAllRequiredFields(flds) ? 'complete' : 'incomplete'));
+                if (hasAllRequiredFields(flds)) {
+                    attemptedNative = true;
+                    try { sessionStorage.setItem('pendingSubjectCode', code); } catch (e) {}
                     try { form.removeAttribute('target'); form.target = '_self'; } catch (e0) {}
-                    try {
-                        if (form.requestSubmit) form.requestSubmit();
-                        else HTMLFormElement.prototype.submit.call(form);
-                        return true;
-                    } catch (e1) {
-                        HTMLFormElement.prototype.submit.call(form);
+                    if (form.requestSubmit) {
+                        try {
+                            form.requestSubmit();
+                            return true;
+                        } catch (e1) {
+                            try { HTMLFormElement.prototype.submit.call(form); } catch (e2) {}
+                            return true;
+                        }
+                    } else {
+                        try { HTMLFormElement.prototype.submit.call(form); } catch (e3) {}
                         return true;
                     }
                 }
             }
         } catch (eForm) {}
 
-        // 2. Try synthesized payload form
-        var p = payloadForIndex(idx);
-        if (p && (p.subject_id || p.subcode)) {
+        var p = collectSubjectFields(idx);
+        var pcode = p['subcode'] || rowCode(row);
+        console.log('[AttendanceScraper][SID:' + sid + '] [state:SUBMITTING] fallback for subject=' + pcode + ', index=' + idx + ', payload=' + (hasAllRequiredFields(p) ? 'complete' : 'incomplete'));
+        if (!attemptedNative && hasAllRequiredFields(p)) {
+            try { sessionStorage.setItem('pendingSubjectCode', pcode); } catch (e) {}
             if (submitPayload(p)) return true;
         }
-
-        // 3. Fallback: native row click
         try { row.click(); return true; } catch (e) { return false; }
     }
 
     // Master Scraper Object
     window.JNTUAScraper = {
-        version: "2026.10.18.1",
+        version: "2026.10.24.1",
         portalBaseUrl: "https://jntuaceastudents.classattendance.in",
         portalHost: "jntuaceastudents.classattendance.in",
 
@@ -263,7 +304,7 @@
             var existing = document.getElementById('human-verify-note');
             if (location.pathname.indexOf('studenthome.php') !== -1 ||
                 location.pathname.indexOf('studentsubjects.php') !== -1 ||
-                location.pathname.indexOf('studentcourseatt.php') !== -1 ||
+                location.pathname.indexOf('studentsubjectatt.php') !== -1 ||
                 location.pathname.indexOf('studentsubatt.php') !== -1) {
                 if (existing) existing.remove();
                 return;
@@ -277,10 +318,19 @@
             form.insertBefore(note, form.firstChild);
         },
 
+        _sessionId: '',
+        _pendingSubjectIdx: -1,
+        _processedPages: {},
+
         beginScrapeSession: function() {
             try {
-                sessionStorage.removeItem('fetchedSubjectCodes');
                 sessionStorage.setItem('scrapeActive', '1');
+                var existing = sessionStorage.getItem('scrapeSessionId');
+                if (!existing) {
+                    existing = Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 6);
+                    sessionStorage.setItem('scrapeSessionId', existing);
+                }
+                this._sessionId = existing;
             } catch (e) {}
         },
 
@@ -288,7 +338,11 @@
             try {
                 sessionStorage.removeItem('fetchedSubjectCodes');
                 sessionStorage.removeItem('scrapeActive');
+                sessionStorage.removeItem('scrapeSessionId');
+                sessionStorage.removeItem('pendingSubjectCode');
             } catch (e) {}
+            this._sessionId = '';
+            this._pendingSubjectIdx = -1;
         },
 
         endScrapeSession: function() {
@@ -299,13 +353,17 @@
 
         autoSubmitFirstSemester: function() {
             this.beginScrapeSession();
+            var sid = this._sessionId || '';
 
             var attempts = 0;
             var interval = setInterval(function() {
                 attempts++;
-                var firstForm = document.querySelector('.card.bg-light.text-primary form[action="studentsubjects.php"]') ||
-                                document.querySelector('form[action="studentsubjects.php"]');
-                if (firstForm) {
+                // Only match the home-page navigation form, which is inside
+                // .card.bg-light.text-primary AND accompanied by student details.
+                var firstForm = document.querySelector('.card.bg-light.text-primary form[action="studentsubjects.php"]');
+                var hasStudentDetails = !!document.querySelector('.list-group-item');
+
+                if (firstForm && hasStudentDetails) {
                     clearInterval(interval);
                     var admissionNo = '';
                     var sname = '';
@@ -318,11 +376,13 @@
                         if (/Username|Roll No/i.test(label)) admissionNo = value;
                         else if (/Full Name/i.test(label)) sname = value;
                     });
+                    sname = (sname || '').trim();
+                    admissionNo = (admissionNo || '').trim();
 
                     var className = '';
                     var classInput = firstForm.querySelector('input[name="classname"]');
                     if (classInput) {
-                        className = classInput.value.trim();
+                        className = (classInput.value || '').trim();
                     }
 
                     try {
@@ -334,7 +394,19 @@
                         sessionStorage.setItem('homeFormInputs', JSON.stringify(homeInputs));
                     } catch (eInputs) {}
 
-                    console.log('[AttendanceScraper] autoSubmitFirstSemester: student=' + sname + ' (' + admissionNo + '), class=' + className);
+                    console.log('[AttendanceScraper][SID:' + sid + '] [state:SUBMIT_HOME] idx=' + attempts + ', class=' + className);
+
+                    // If student info is empty, do NOT submit the form.
+                    // This prevents the loop where autoSubmitFirstSemester is
+                    // called on the wrong page (e.g., the attendance page which
+                    // has a "Back to Subjects" form but no .list-group-item details).
+                    if (!sname && !admissionNo) {
+                        console.error('[AttendanceScraper][SID:' + sid + '] [state:ERROR] Student info empty on home page — cannot proceed');
+                        post('SCRAPE_ERROR', {
+                            message: 'Missing student information (sname and admissionNo both empty) on home page'
+                        });
+                        return;
+                    }
 
                     post('STUDENT_INFO', {
                         data: { sname: sname, admissionNo: admissionNo, className: className }
@@ -343,20 +415,38 @@
                     try {
                         firstForm.submit();
                     } catch (e) {
-                        console.error('[AttendanceScraper] Home form submit failed: ' + (e && e.message ? e.message : String(e)));
+                        console.error('[AttendanceScraper][SID:' + sid + '] Home form submit failed: ' + (e && e.message ? e.message : String(e)));
                         post('SCRAPE_ERROR', {
                             message: 'Home form submit failed: ' + (e && e.message ? e.message : String(e))
                         });
                     }
                 } else if (attempts >= 20) {
                     clearInterval(interval);
-                    console.error('[AttendanceScraper] Home form not detected after 4s');
+                    if (!hasStudentDetails && !firstForm) {
+                        console.error('[AttendanceScraper][SID:' + sid + '] [state:ERROR] Home page not detected after 4s — possible session expiry or unexpected page');
+                        post('SCRAPE_ERROR', {
+                            message: 'Home page form and student details not detected — possible session expiry or unexpected redirect'
+                        });
+                    } else if (!hasStudentDetails) {
+                        console.error('[AttendanceScraper][SID:' + sid + '] [state:ERROR] Student details (.list-group-item) not found on home page');
+                        post('SCRAPE_ERROR', {
+                            message: 'Student details not found on home page — possible session expiry'
+                        });
+                    } else {
+                        console.warn('[AttendanceScraper][SID:' + sid + '] Home form not detected after 4s');
+                    }
                 }
             }, 200);
-        },
+         },
 
         selectSubjectByIndex: function(targetIndex) {
-            this.beginScrapeSession();
+            var sid = this._sessionId || '';
+
+            // Prevent re-entry while a submission is already in progress for this target
+            if (this._pendingSubjectIdx >= 0) {
+                console.log('[AttendanceScraper][SID:' + sid + '] [state:SUBMITTING] selectSubjectByIndex(' + targetIndex + ') aborted — pending submission for idx=' + this._pendingSubjectIdx);
+                return;
+            }
 
             var attempts = 0;
             var interval = setInterval(function() {
@@ -368,7 +458,8 @@
                     var fetchedNorm = fetchedCodes.map(function(c) { return norm(c); });
                     var rowCodes = [];
                     for (var r = 0; r < rows.length; r++) rowCodes.push(rowCode(rows[r]));
-                    console.log('[AttendanceScraper] Found ' + rows.length + ' subjects, targetIndex=' + targetIndex + ', alreadyFetched=' + fetchedCodes.length);
+                    var sidLocal = window.JNTUAScraper._sessionId || '';
+                    console.log('[AttendanceScraper][SID:' + sidLocal + '] [state:DISCOVERING] Found ' + rows.length + ' subjects, targetIndex=' + targetIndex + ', alreadyFetched=' + fetchedCodes.length);
 
                     post('SUBJECT_COUNT', { count: rows.length });
 
@@ -389,7 +480,7 @@
                     } catch (eCtx) {}
 
                     while (idx < rows.length && fetchedNorm.indexOf(norm(rowCodes[idx])) !== -1 && norm(rowCodes[idx]) !== '') {
-                        console.log('[AttendanceScraper] Skipping already fetched subject ' + rowCodes[idx] + ' at index ' + idx);
+                        console.log('[AttendanceScraper][SID:' + sidLocal + '] [state:SUBMITTING] Skipping already fetched subject ' + rowCodes[idx] + ' at index ' + idx);
                         post('SUBJECT_SKIPPED', {
                             subcode: rowCodes[idx],
                             index: idx
@@ -398,28 +489,38 @@
                     }
 
                     if (idx < rows.length) {
-                        console.log('[AttendanceScraper] Submitting subject ' + rowCodes[idx] + ' at index ' + idx);
+                        console.log('[AttendanceScraper][SID:' + sidLocal + '] [state:SUBMITTING] Submitting subject ' + rowCodes[idx] + ' at index ' + idx);
+                        // Mark submission as in-progress to prevent duplicates
+                        window.JNTUAScraper._pendingSubjectIdx = idx;
+                        try { sessionStorage.setItem('pendingSubjectCode', rowCodes[idx]); } catch (e) {}
                         submitRowByIndex(idx);
 
-                        (function(retryIdx) {
+                        // Bounded retry: check at most 3 times after form submission
+                        var scheduleRetry = function(retryIdx, retryCount) {
+                            if (retryCount <= 0) return;
                             setTimeout(function() {
                                 try {
+                                    var currentPath = (window.location.pathname || '').split('/').pop() || '';
                                     var stillRows = document.querySelectorAll('tr.clickable-row');
                                     if (stillRows.length > 0 && stillRows[retryIdx] &&
-                                        location.href.indexOf('studentsubjects.php') !== -1) {
-                                        console.warn('[AttendanceScraper] Retry onclick for index ' + retryIdx);
+                                        currentPath.indexOf('studentsubjects.php') !== -1 &&
+                                        window.JNTUAScraper._pendingSubjectIdx === retryIdx) {
+                                        console.warn('[AttendanceScraper][SID:' + (window.JNTUAScraper._sessionId || '') + '] [state:SUBMITTING] Retry onclick for index ' + retryIdx + ' (attempt ' + (3 - retryCount + 1) + '/3)');
                                         try { stillRows[retryIdx].click(); } catch (eR) {}
+                                        scheduleRetry(retryIdx, retryCount - 1);
                                     }
                                 } catch (eR2) {}
                             }, 3500);
-                        })(idx);
+                        };
+                        scheduleRetry(idx, 3);
                     } else {
-                        console.log('[AttendanceScraper] All subjects fetched! Posting SCRAPING_COMPLETE');
+                        console.log('[AttendanceScraper][SID:' + sid + '] [state:COMPLETED] All subjects fetched! Posting SCRAPING_COMPLETE');
+                        window.JNTUAScraper._pendingSubjectIdx = -1;
                         post('SCRAPING_COMPLETE');
                     }
                 } else if (attempts >= 20) {
                     clearInterval(interval);
-                    console.error('[AttendanceScraper] No subject rows found after 4s');
+                    console.error('[AttendanceScraper][SID:' + sid + '] [state:ERROR] No subject rows found after 4s');
                     post('SCRAPE_IDLE', {
                         reason: 'No subject rows after 4s — likely off-script navigation.'
                     });
@@ -428,6 +529,7 @@
         },
 
         parseDetailedAttendanceAndGoHome: function() {
+            var sid = this._sessionId || '';
 
             var attempts = 0;
             var interval = setInterval(function() {
@@ -438,7 +540,9 @@
                 if (headers.length < 2 || !table) {
                     if (attempts >= 25) {
                         clearInterval(interval);
-                        console.error('[AttendanceScraper] Attendance page not detected after 5s (headers=' + headers.length + ', table=' + (!!table) + ')');
+                        var errSid = window.JNTUAScraper._sessionId || '';
+                        console.error('[AttendanceScraper][SID:' + errSid + '] [state:ERROR] Attendance page not detected after 5s (headers=' + headers.length + ', table=' + (!!table) + ')');
+                        window.JNTUAScraper._pendingSubjectIdx = -1;
                         post('SCRAPE_IDLE', {
                             reason: 'Attendance page not detected after 5s (headers=' + headers.length + ', table=' + (!!table) + ').'
                         });
@@ -446,7 +550,8 @@
                     return;
                 }
                 clearInterval(interval);
-                console.log('[AttendanceScraper] Attendance table detected. Parsing rows...');
+                var currentSid = window.JNTUAScraper._sessionId || '';
+                console.log('[AttendanceScraper][SID:' + currentSid + '] [state:PARSING] Attendance table detected. Parsing rows...');
 
                 try {
                     var keyEl = headers[1] || headers[0];
@@ -490,6 +595,25 @@
                 var total = present + absent;
                 var percentage = total > 0 ? ((present / total) * 100).toFixed(2) : '0.00';
 
+                if (records.length === 0) {
+                    console.error('[AttendanceScraper][SID:' + currentSid + '] [state:ERROR] Attendance table yielded no parseable rows — aborting to allow retry');
+                    window.JNTUAScraper._pendingSubjectIdx = -1;
+                    post('SCRAPE_ERROR', { message: 'Attendance table present but no parseable rows found' });
+                    setTimeout(function() { window.JNTUAScraper._pendingSubjectIdx = -1; goBackToSubjects(); }, 300);
+                    return;
+                }
+
+                try {
+                    var pendingCode = sessionStorage.getItem('pendingSubjectCode') || '';
+                    if (pendingCode && parsed.subCode && norm(pendingCode) !== norm(parsed.subCode)) {
+                        console.error('[AttendanceScraper][SID:' + currentSid + '] [state:ERROR] Subject code mismatch: submitted=' + pendingCode + ' but detail page returned ' + parsed.subCode);
+                        window.JNTUAScraper._pendingSubjectIdx = -1;
+                        post('SCRAPE_ERROR', { message: 'Subject code mismatch: submitted ' + pendingCode + ' but detail returned ' + parsed.subCode + ' (' + parsed.subjectName + ')' });
+                        setTimeout(function() { window.JNTUAScraper._pendingSubjectIdx = -1; goBackToSubjects(); }, 300);
+                        return;
+                    }
+                } catch (e) {}
+
                 if (parsed.subCode) {
                     try {
                         var raw = sessionStorage.getItem('fetchedSubjectCodes') || '[]';
@@ -509,7 +633,7 @@
                     }
                 }
 
-                console.log('[AttendanceScraper] Parsed ' + parsed.subCode + ' (' + parsed.subjectName + '): ' + percentage + '% (' + present + '/' + total + ' classes). Posting ATTENDANCE_ITEM...');
+                console.log('[AttendanceScraper][SID:' + currentSid + '] [state:PARSING] Parsed ' + parsed.subCode + ' (' + parsed.subjectName + '): ' + percentage + '% (' + present + '/' + total + ' classes). Posting ATTENDANCE_ITEM...');
                 post('ATTENDANCE_ITEM', {
                     data: {
                         subCode: parsed.subCode,
@@ -522,30 +646,68 @@
                     }
                 });
 
-                setTimeout(goBackToSubjects, 300);
+                // Mark this subject as successfully parsed at the JS level
+                window.JNTUAScraper._pendingSubjectIdx = -1;
+
+                setTimeout(function() {
+                    window.JNTUAScraper._pendingSubjectIdx = -1;
+                    goBackToSubjects();
+                }, 300);
             }, 200);
         },
 
-        handlePageLoad: function(url, targetIndex, isLoggedIn, isScrapingActive) {
-            var cleanUrl = (url || window.location.href).split('#')[0];
-            console.log('[AttendanceScraper] handlePageLoad: url=' + cleanUrl + ', targetIndex=' + targetIndex + ', isLoggedIn=' + isLoggedIn);
-            if (!isLoggedIn && cleanUrl.indexOf('student') === -1) {
-                this.injectHumanNote();
+        resetSubmissionState: function() {
+            this._pendingSubjectIdx = -1;
+        },
+
+         handlePageLoad: function(url, targetIndex, isLoggedIn, isScrapingActive) {
+             var sid = this._sessionId || '';
+             // Use the ACTUAL current location for routing, not the (possibly stale)
+             // url parameter from onPageFinished. This prevents a late duplicate
+             // onPageFinished (e.g. from a previous navigation) from routing
+             // based on the wrong URL.
+             var actualHref = window.location.href || '';
+             var cleanUrl = (actualHref || url || '').split('#')[0];
+             // Extract pathname first so root URLs (ending with /) produce an
+             // empty pagePath instead of the hostname fragment. This prevents
+             // "Unhandled page" warnings for the landing/login page.
+             var pathOnly = cleanUrl.replace(/^https?:\/\/[^\/]+/, '') || '/';
+             var pagePath = pathOnly.split('?')[0].split('/').filter(function(p) { return p !== ''; }).pop() || '';
+             console.log('[AttendanceScraper][SID:' + sid + '] [state:ROUTING] handlePageLoad: urlParam=' + (url || '') + ', actual=' + pagePath + ', targetIdx=' + targetIndex + ', loggedIn=' + isLoggedIn);
+             if (!isLoggedIn && (location.pathname || '').indexOf('student') === -1) {
+                 this.injectHumanNote();
+                 return;
+             }
+
+            // Attendance detail page — check FIRST and ALWAYS. The attendance page
+            // renders a "Back to Subjects" button (form action="studentsubjects.php")
+            // which would otherwise match the broad form[action="studentsubjects.php"]
+            // selector and incorrectly route to autoSubmitFirstSemester.
+            // We check both URL and DOM content for robustness.
+            if (pagePath.indexOf('studentsubjectatt.php') !== -1 ||
+                pagePath.indexOf('studentsubatt.php') !== -1 ||
+                findAttendanceTable()) {
+                this.parseDetailedAttendanceAndGoHome();
                 return;
             }
 
-            // studenthome.php: student just logged in. Initialize scrape session and auto-submit first semester
-            if (cleanUrl.indexOf('studenthome.php') !== -1 || document.querySelector('.card.bg-light.text-primary form[action="studentsubjects.php"]') || document.querySelector('form[action="studentsubjects.php"]')) {
+            // Home page (studenthome.php). Only route here when the page actually
+            // contains student details (.list-group-item). This prevents the
+            // attendance page's "Back to Subjects" form from being misrouted.
+            var hasStudentDetails = !!document.querySelector('.list-group-item');
+            if (pagePath.indexOf('studenthome.php') !== -1 || hasStudentDetails) {
                 this.autoSubmitFirstSemester();
                 return;
             }
 
-            if (cleanUrl.indexOf('studentsubjects.php') !== -1 || document.querySelector('tr.clickable-row')) {
+            if (pagePath.indexOf('studentsubjects.php') !== -1 || document.querySelector('tr.clickable-row')) {
                 this.selectSubjectByIndex(targetIndex);
-            } else if (cleanUrl.indexOf('studentsubatt.php') !== -1 || cleanUrl.indexOf('studentcourseatt.php') !== -1 || findAttendanceTable()) {
+            } else if (findAttendanceTable()) {
                 this.parseDetailedAttendanceAndGoHome();
+            } else {
+                console.warn('[AttendanceScraper][SID:' + sid + '] [state:ROUTING] Unhandled page: ' + pagePath);
             }
-        }
+         }
     };
 })();
 true;

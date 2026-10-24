@@ -4,6 +4,15 @@ import com.chanikya501.jntuaattendance.model.PreviousAttendanceResult
 import com.chanikya501.jntuaattendance.model.StudentInfo
 import com.chanikya501.jntuaattendance.model.SubjectAttendanceData
 
+enum class ScrapingState {
+    IDLE,
+    DISCOVERING,
+    SUBMITTING,
+    PARSING,
+    COMPLETED,
+    ERROR
+}
+
 data class AttendanceUiState(
     val webViewKey: Int = 0,
     val isLoggedIn: Boolean = false,
@@ -29,7 +38,10 @@ data class AttendanceUiState(
     val defaultReportIssue: String = "Stuck on Syncing",
     val isSubmittingReport: Boolean = false,
     val reportStatusMessage: String? = null,
-    val reportSubmittedSuccess: Boolean = false
+    val reportSubmittedSuccess: Boolean = false,
+    val scrapingState: ScrapingState = ScrapingState.IDLE,
+    val sessionId: String = "",
+    val retryCount: Int = 0
 ) {
     val syncPct: Int
         get() {

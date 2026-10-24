@@ -1,9 +1,9 @@
 /**
  * JNTUA Attendance Automation Scripts (OTA Bundle)
- * Version: 2026.10.24.1
+ * Version: 2026.10.24.2
  * Portal: https://jntuaceastudents.classattendance.in
  */
-// Signature: MEYCIQDh95gi7SLFHFyIhCSKf0mMSexaBdsKNgRCB6QC7/h0+gIhAJjaALAxrAXaxVFQAigsEKlgi3PJTeOsizRYZshZInjU
+// Signature: MEYCIQD5Zp8+mW3Pj35Uad3/guzpz/cXafs+NtJR85dCs+cr3AIhAKI3vjtMSCgxu9mv9bkCe2NwL0QGJMsSlJq/8UaktfW1
 (function() {
     'use strict';
 
@@ -98,15 +98,10 @@
         if (window.location.href.indexOf('studentsubjects.php') !== -1 ||
             window.location.pathname.indexOf('studentsubjects.php') !== -1) {
             console.log('[AttendanceScraper][SID:' + sid + '] Already on studentsubjects.php');
-            // Clear pending submission state when we return to the subjects list
             if (window.JNTUAScraper) window.JNTUAScraper._pendingSubjectIdx = -1;
             return;
         }
 
-        // Primary Method: Submit the existing "Back to Subjects" form that is
-        // already present on the attendance detail page (studentsubjectatt.html).
-        // This form carries the live _csrf, student_id, class_id, classname, and
-        // acad_year values — same fields/methods as the page's own Subjects button.
         try {
             var existingForm = document.querySelector('form[action="studentsubjects.php"], form[action*="studentsubjects.php"]');
             if (existingForm) {
@@ -125,8 +120,6 @@
             console.error('[AttendanceScraper] Existing "Back to Subjects" form submission failed: ' + (eExisting && eExisting.message ? eExisting.message : String(eExisting)));
         }
 
-        // Fallback: Submit synthetic POST form to studentsubjects.php with class context
-        // (used when the page doesn't yet render the in-DOM form, e.g. early load).
         try {
             var ctxRaw = sessionStorage.getItem('subjectsCtx') || sessionStorage.getItem('homeFormInputs');
             if (ctxRaw) {
@@ -154,7 +147,6 @@
             console.error('[AttendanceScraper] Synthetic form submission failed: ' + (eForm && eForm.message ? eForm.message : String(eForm)));
         }
 
-        // Last resort: Direct window.location.replace
         try {
             console.log('[AttendanceScraper] Fallback: window.location.replace to ' + targetUrl);
             window.location.replace(targetUrl);
@@ -187,6 +179,7 @@
         var row = rows[idx];
         var fields = {};
         if (!row) return fields;
+
         var form = resolveFormForRow(row);
         if (form) {
             var owned = form.querySelectorAll('input');
@@ -199,11 +192,32 @@
                 sib = sib.nextElementSibling;
             }
         }
+
+        // Foster-parenting recovery: scan row siblings in tbody until next TR
+        var rowSib = row.nextElementSibling;
+        while (rowSib && rowSib.tagName !== 'TR') {
+            if (rowSib.tagName === 'INPUT' && rowSib.name) {
+                if (!fields[rowSib.name]) fields[rowSib.name] = rowSib.value;
+            } else if (rowSib.tagName === 'FORM') {
+                var finps = rowSib.querySelectorAll('input');
+                for (var fi = 0; fi < finps.length; fi++) {
+                    if (finps[fi].name && !fields[finps[fi].name]) fields[finps[fi].name] = finps[fi].value;
+                }
+            }
+            rowSib = rowSib.nextElementSibling;
+        }
+
         if (!fields['subcode']) { var rc = rowCode(row); if (rc) fields['subcode'] = rc; }
         if (!fields['sub_fullname']) {
             var tds = row.querySelectorAll('td');
             if (tds.length >= 2) fields['sub_fullname'] = (tds[1].textContent || '').trim();
         }
+
+        if (!fields['subject_id'] && form && form.id) {
+            var mId = form.id.match(/\d+/);
+            if (mId) fields['subject_id'] = mId[0];
+        }
+
         try {
             var ctx = JSON.parse(sessionStorage.getItem('subjectsCtx') || '{}');
             if (!fields['student_id'] && ctx.student_id) fields['student_id'] = ctx.student_id;
@@ -217,6 +231,7 @@
             }
             if (!fields['subject_id']) fields['subject_id'] = '';
         } catch (e) {}
+
         return fields;
     }
 
@@ -245,58 +260,57 @@
         var rows = document.querySelectorAll('tr.clickable-row');
         var row = rows[idx];
         if (!row) return false;
+
         var sid = (window.JNTUAScraper && window.JNTUAScraper._sessionId) || '';
-        var attemptedNative = false;
-
-        try {
-            var form = resolveFormForRow(row);
-            if (form) {
-                var sib = form.nextElementSibling;
-                while (sib && sib.tagName === 'INPUT') {
-                    var nxt = sib.nextElementSibling;
-                    form.appendChild(sib);
-                    sib = nxt;
-                }
-                var flds = {};
-                var merged = form.querySelectorAll('input');
-                for (var i = 0; i < merged.length; i++) {
-                    if (merged[i].name) flds[merged[i].name] = merged[i].value;
-                }
-                var code = flds['subcode'] || rowCode(row);
-                console.log('[AttendanceScraper][SID:' + sid + '] [state:SUBMITTING] subject=' + code + ', index=' + idx + ', payload=' + (hasAllRequiredFields(flds) ? 'complete' : 'incomplete'));
-                if (hasAllRequiredFields(flds)) {
-                    attemptedNative = true;
-                    try { sessionStorage.setItem('pendingSubjectCode', code); } catch (e) {}
-                    try { form.removeAttribute('target'); form.target = '_self'; } catch (e0) {}
-                    if (form.requestSubmit) {
-                        try {
-                            form.requestSubmit();
-                            return true;
-                        } catch (e1) {
-                            try { HTMLFormElement.prototype.submit.call(form); } catch (e2) {}
-                            return true;
-                        }
-                    } else {
-                        try { HTMLFormElement.prototype.submit.call(form); } catch (e3) {}
-                        return true;
-                    }
-                }
-            }
-        } catch (eForm) {}
-
+        var form = resolveFormForRow(row);
         var p = collectSubjectFields(idx);
         var pcode = p['subcode'] || rowCode(row);
-        console.log('[AttendanceScraper][SID:' + sid + '] [state:SUBMITTING] fallback for subject=' + pcode + ', index=' + idx + ', payload=' + (hasAllRequiredFields(p) ? 'complete' : 'incomplete'));
-        if (!attemptedNative && hasAllRequiredFields(p)) {
-            try { sessionStorage.setItem('pendingSubjectCode', pcode); } catch (e) {}
+
+        console.log('[AttendanceScraper][SID:' + sid + '] [state:SUBMITTING] subject=' + pcode + ', index=' + idx + ', payload=' + (hasAllRequiredFields(p) ? 'complete' : 'incomplete'));
+
+        try { sessionStorage.setItem('pendingSubjectCode', pcode); } catch (e) {}
+
+        // If in-DOM form exists, ensure all required inputs are attached before dispatching
+        if (form && hasAllRequiredFields(p)) {
+            var owned = form.querySelectorAll('input');
+            var existingNames = {};
+            for (var oi = 0; oi < owned.length; oi++) {
+                if (owned[oi].name) existingNames[owned[oi].name] = true;
+            }
+            Object.keys(p).forEach(function(k) {
+                if (!existingNames[k]) {
+                    var inp = document.createElement('input');
+                    inp.type = 'hidden';
+                    inp.name = k;
+                    inp.value = p[k] || '';
+                    form.appendChild(inp);
+                }
+            });
+
+            try { form.removeAttribute('target'); form.target = '_self'; } catch (e0) {}
+            if (form.requestSubmit) {
+                try {
+                    form.requestSubmit();
+                    return true;
+                } catch (e1) {
+                    try { HTMLFormElement.prototype.submit.call(form); return true; } catch (e2) {}
+                }
+            } else {
+                try { HTMLFormElement.prototype.submit.call(form); return true; } catch (e3) {}
+            }
+        }
+
+        // Direct synthetic POST fallback
+        if (hasAllRequiredFields(p)) {
             if (submitPayload(p)) return true;
         }
+
         try { row.click(); return true; } catch (e) { return false; }
     }
 
     // Master Scraper Object
     window.JNTUAScraper = {
-        version: "2026.10.24.1",
+        version: "2026.10.24.2",
         portalBaseUrl: "https://jntuaceastudents.classattendance.in",
         portalHost: "jntuaceastudents.classattendance.in",
 
@@ -354,20 +368,15 @@
         autoSubmitFirstSemester: function() {
             this.beginScrapeSession();
             var sid = this._sessionId || '';
-
             var attempts = 0;
             var interval = setInterval(function() {
                 attempts++;
-                // Only match the home-page navigation form, which is inside
-                // .card.bg-light.text-primary AND accompanied by student details.
                 var firstForm = document.querySelector('.card.bg-light.text-primary form[action="studentsubjects.php"]');
                 var hasStudentDetails = !!document.querySelector('.list-group-item');
-
                 if (firstForm && hasStudentDetails) {
                     clearInterval(interval);
                     var admissionNo = '';
                     var sname = '';
-
                     document.querySelectorAll('.list-group-item').forEach(function(item) {
                         var strong = item.querySelector('strong');
                         if (!strong) return;
@@ -396,10 +405,6 @@
 
                     console.log('[AttendanceScraper][SID:' + sid + '] [state:SUBMIT_HOME] idx=' + attempts + ', class=' + className);
 
-                    // If student info is empty, do NOT submit the form.
-                    // This prevents the loop where autoSubmitFirstSemester is
-                    // called on the wrong page (e.g., the attendance page which
-                    // has a "Back to Subjects" form but no .list-group-item details).
                     if (!sname && !admissionNo) {
                         console.error('[AttendanceScraper][SID:' + sid + '] [state:ERROR] Student info empty on home page — cannot proceed');
                         post('SCRAPE_ERROR', {
@@ -436,13 +441,11 @@
                         console.warn('[AttendanceScraper][SID:' + sid + '] Home form not detected after 4s');
                     }
                 }
-            }, 200);
-         },
+            }, 200); 
+        },
 
         selectSubjectByIndex: function(targetIndex) {
             var sid = this._sessionId || '';
-
-            // Prevent re-entry while a submission is already in progress for this target
             if (this._pendingSubjectIdx >= 0) {
                 console.log('[AttendanceScraper][SID:' + sid + '] [state:SUBMITTING] selectSubjectByIndex(' + targetIndex + ') aborted — pending submission for idx=' + this._pendingSubjectIdx);
                 return;
@@ -454,10 +457,12 @@
                 var rows = document.querySelectorAll('tr.clickable-row');
                 if (rows.length > 0) {
                     clearInterval(interval);
+
                     var fetchedCodes = readFetched();
                     var fetchedNorm = fetchedCodes.map(function(c) { return norm(c); });
                     var rowCodes = [];
                     for (var r = 0; r < rows.length; r++) rowCodes.push(rowCode(rows[r]));
+
                     var sidLocal = window.JNTUAScraper._sessionId || '';
                     console.log('[AttendanceScraper][SID:' + sidLocal + '] [state:DISCOVERING] Found ' + rows.length + ' subjects, targetIndex=' + targetIndex + ', alreadyFetched=' + fetchedCodes.length);
 
@@ -490,12 +495,11 @@
 
                     if (idx < rows.length) {
                         console.log('[AttendanceScraper][SID:' + sidLocal + '] [state:SUBMITTING] Submitting subject ' + rowCodes[idx] + ' at index ' + idx);
-                        // Mark submission as in-progress to prevent duplicates
                         window.JNTUAScraper._pendingSubjectIdx = idx;
                         try { sessionStorage.setItem('pendingSubjectCode', rowCodes[idx]); } catch (e) {}
+
                         submitRowByIndex(idx);
 
-                        // Bounded retry: check at most 3 times after form submission
                         var scheduleRetry = function(retryIdx, retryCount) {
                             if (retryCount <= 0) return;
                             setTimeout(function() {
@@ -530,7 +534,6 @@
 
         parseDetailedAttendanceAndGoHome: function() {
             var sid = this._sessionId || '';
-
             var attempts = 0;
             var interval = setInterval(function() {
                 attempts++;
@@ -549,6 +552,7 @@
                     }
                     return;
                 }
+
                 clearInterval(interval);
                 var currentSid = window.JNTUAScraper._sessionId || '';
                 console.log('[AttendanceScraper][SID:' + currentSid + '] [state:PARSING] Attendance table detected. Parsing rows...');
@@ -571,29 +575,33 @@
                     }
                 }
                 if (!subjectHeader) subjectHeader = headers[1] || headers[0];
-
                 var parsed = parseHeader(subjectHeader);
+
+                // Parse every row from the detailed table to populate DateLogModal records
                 var bodyRows = table.querySelectorAll('tbody tr');
                 var present = 0, absent = 0;
                 var records = [];
 
-                for (var i = 0; i < bodyRows.length; i++) {
-                    var cells = bodyRows[i].querySelectorAll('td');
+                for (var r = 0; r < bodyRows.length; r++) {
+                    var cells = bodyRows[r].querySelectorAll('td');
                     if (cells.length !== 3) continue;
                     var date = (cells[0].textContent || '').trim();
                     var time = (cells[1].textContent || '').trim();
                     var badge = cells[2].querySelector('span.badge');
-                    var raw = badge ? (badge.textContent || '').trim() : 'Unknown';
+                    var raw = badge ? (badge.textContent || '').trim() : (cells[2].textContent || '').trim();
                     var status = 'Unknown';
                     if (/present/i.test(raw)) status = 'Present';
                     else if (/absent/i.test(raw)) status = 'Absent';
+
                     if (status === 'Present') present++;
                     else if (status === 'Absent') absent++;
+
                     records.push({ date: date, time: time, status: status });
                 }
 
                 var total = present + absent;
-                var percentage = total > 0 ? ((present / total) * 100).toFixed(2) : '0.00';
+                // Round to the nearest single decimal place (e.g. 83.333% -> 83.3, 89.189% -> 89.2)
+                var percentage = total > 0 ? (Math.round((present / total) * 1000) / 10).toFixed(1) : '0.0';
 
                 if (records.length === 0) {
                     console.error('[AttendanceScraper][SID:' + currentSid + '] [state:ERROR] Attendance table yielded no parseable rows — aborting to allow retry');
@@ -616,9 +624,9 @@
 
                 if (parsed.subCode) {
                     try {
-                        var raw = sessionStorage.getItem('fetchedSubjectCodes') || '[]';
-                        var p = JSON.parse(raw);
-                        var list = Array.isArray(p) ? p : [];
+                        var rawCodes = sessionStorage.getItem('fetchedSubjectCodes') || '[]';
+                        var pList = JSON.parse(rawCodes);
+                        var list = Array.isArray(pList) ? pList : [];
                         var want = norm(parsed.subCode);
                         var has = false;
                         for (var li = 0; li < list.length; li++) {
@@ -634,6 +642,7 @@
                 }
 
                 console.log('[AttendanceScraper][SID:' + currentSid + '] [state:PARSING] Parsed ' + parsed.subCode + ' (' + parsed.subjectName + '): ' + percentage + '% (' + present + '/' + total + ' classes). Posting ATTENDANCE_ITEM...');
+
                 post('ATTENDANCE_ITEM', {
                     data: {
                         subCode: parsed.subCode,
@@ -646,9 +655,7 @@
                     }
                 });
 
-                // Mark this subject as successfully parsed at the JS level
                 window.JNTUAScraper._pendingSubjectIdx = -1;
-
                 setTimeout(function() {
                     window.JNTUAScraper._pendingSubjectIdx = -1;
                     goBackToSubjects();
@@ -660,30 +667,20 @@
             this._pendingSubjectIdx = -1;
         },
 
-         handlePageLoad: function(url, targetIndex, isLoggedIn, isScrapingActive) {
-             var sid = this._sessionId || '';
-             // Use the ACTUAL current location for routing, not the (possibly stale)
-             // url parameter from onPageFinished. This prevents a late duplicate
-             // onPageFinished (e.g. from a previous navigation) from routing
-             // based on the wrong URL.
-             var actualHref = window.location.href || '';
-             var cleanUrl = (actualHref || url || '').split('#')[0];
-             // Extract pathname first so root URLs (ending with /) produce an
-             // empty pagePath instead of the hostname fragment. This prevents
-             // "Unhandled page" warnings for the landing/login page.
-             var pathOnly = cleanUrl.replace(/^https?:\/\/[^\/]+/, '') || '/';
-             var pagePath = pathOnly.split('?')[0].split('/').filter(function(p) { return p !== ''; }).pop() || '';
-             console.log('[AttendanceScraper][SID:' + sid + '] [state:ROUTING] handlePageLoad: urlParam=' + (url || '') + ', actual=' + pagePath + ', targetIdx=' + targetIndex + ', loggedIn=' + isLoggedIn);
-             if (!isLoggedIn && (location.pathname || '').indexOf('student') === -1) {
-                 this.injectHumanNote();
-                 return;
-             }
+        handlePageLoad: function(url, targetIndex, isLoggedIn, isScrapingActive) {
+            var sid = this._sessionId || '';
+            var actualHref = window.location.href || '';
+            var cleanUrl = (actualHref || url || '').split('#')[0];
+            var pathOnly = cleanUrl.replace(/^https?:\/\/[^\/]+/, '') || '/';
+            var pagePath = pathOnly.split('?')[0].split('/').filter(function(p) { return p !== ''; }).pop() || '';
 
-            // Attendance detail page — check FIRST and ALWAYS. The attendance page
-            // renders a "Back to Subjects" button (form action="studentsubjects.php")
-            // which would otherwise match the broad form[action="studentsubjects.php"]
-            // selector and incorrectly route to autoSubmitFirstSemester.
-            // We check both URL and DOM content for robustness.
+            console.log('[AttendanceScraper][SID:' + sid + '] [state:ROUTING] handlePageLoad: urlParam=' + (url || '') + ', actual=' + pagePath + ', targetIdx=' + targetIndex + ', loggedIn=' + isLoggedIn);
+
+            if (!isLoggedIn && (location.pathname || '').indexOf('student') === -1) {
+                this.injectHumanNote();
+                return;
+            }
+
             if (pagePath.indexOf('studentsubjectatt.php') !== -1 ||
                 pagePath.indexOf('studentsubatt.php') !== -1 ||
                 findAttendanceTable()) {
@@ -691,9 +688,6 @@
                 return;
             }
 
-            // Home page (studenthome.php). Only route here when the page actually
-            // contains student details (.list-group-item). This prevents the
-            // attendance page's "Back to Subjects" form from being misrouted.
             var hasStudentDetails = !!document.querySelector('.list-group-item');
             if (pagePath.indexOf('studenthome.php') !== -1 || hasStudentDetails) {
                 this.autoSubmitFirstSemester();
@@ -707,7 +701,7 @@
             } else {
                 console.warn('[AttendanceScraper][SID:' + sid + '] [state:ROUTING] Unhandled page: ' + pagePath);
             }
-         }
+        }
     };
 })();
 true;

@@ -45,7 +45,7 @@ No backend, no REST API — everything runs client-side through the WebView brid
 1. **WebView loads** the portal root (`https://jntuaceastudents.classattendance.in`). The user logs in on the official portal pages.
 2. **On `studenthome.php`**: Injects `automation_scripts.js` to extract `STUDENT_INFO` (`sname`, `admissionNo`, `className`), initialize the scrape session in `sessionStorage`, and auto-submit the first semester form.
 3. **On `studentsubjects.php`**: Injects `selectSubjectByIndex(targetIndex)`: posts `SUBJECT_COUNT`, skips already-fetched subjects (`SUBJECT_SKIPPED`), clicks the target subject row, or posts `SCRAPING_COMPLETE` when all subjects are parsed.
-4. **On `studentcourseatt.php`** (legacy `studentsubatt.php`): Injects `parseDetailedAttendanceAndGoHome`: parses table rows, records `ATTENDANCE_ITEM`, adds `subCode` to `sessionStorage.fetchedSubjectCodes`, and returns to `studentsubjects.php` via synthetic form POST or back-navigation.
+4. **On `studentsubjectatt.php`** (legacy `studentsubatt.php`): Injects `parseDetailedAttendanceAndGoHome`: parses table rows, records `ATTENDANCE_ITEM`, adds `subCode` to `sessionStorage.fetchedSubjectCodes`, and returns to `studentsubjects.php` via synthetic form POST or back-navigation.
 5. **On Completion**: Once all subjects are collected, the WebView is destroyed to free memory, and the native dashboard renders. The result is persisted to `previous_attendance_result.json`.
 
 All bridge messages are runtime-validated by `BridgeValidator` — malformed or foreign payloads are ignored.

@@ -2,9 +2,10 @@
   "expo": {
     "name": "Attendance App",
     "slug": "JNTUA-Attendance",
+    "owner": "sathwik-reddy",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/splash-screen.jpg",
+    "icon": "./assets/images/splash-screen.png",
     "scheme": "jntuaattendance",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -12,7 +13,6 @@
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": true,
       "permissions": [
         "INTERNET"
@@ -23,7 +23,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-screen.jpg",
+          "image": "./assets/images/splash-screen.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
@@ -46,7 +46,7 @@
       ]
     ],
     "updates": {
-      "url": "https://u.expo.dev/214d3218-11c5-4156-8a95-12843b24cd74",
+      "url": "https://u.expo.dev/49d8fdf7-800a-4015-ba61-27950f0b847a",
       "fallbackToCacheTimeout": 0,
       "checkAutomatically": "ON_LOAD"
     },
@@ -58,7 +58,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "554d405b-1ed9-4bb5-bd9f-f8af967a3634"
+        "projectId": "49d8fdf7-800a-4015-ba61-27950f0b847a"
       }
     }
   }

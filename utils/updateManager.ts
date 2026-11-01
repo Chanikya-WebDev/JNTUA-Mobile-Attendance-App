@@ -1,6 +1,6 @@
 import Constants, { ExecutionEnvironment } from "expo-constants";
 import * as Updates from "expo-updates";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export type UpdateStatus =
   | "checking"
@@ -44,28 +44,19 @@ export function useUpdateManager(): UpdateManager {
 
   const [manualStatus, setManualStatus] = useState<UpdateStatus | null>(null);
   const [checkingTimedOut, setCheckingTimedOut] = useState(false);
-  const checkingStartTimeRef = useRef<number | null>(null);
+  const [prevIsChecking, setPrevIsChecking] = useState(isChecking);
 
-  useEffect(() => {
+  // Reset the timeout flag whenever a check starts or ends (adjust during render).
+  if (isChecking !== prevIsChecking) {
+    setPrevIsChecking(isChecking);
     setCheckingTimedOut(false);
-    checkingStartTimeRef.current = isChecking ? Date.now() : null;
-  }, [isChecking]);
+  }
 
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
-    if (isChecking && checkingStartTimeRef.current && !checkingTimedOut) {
-      interval = setInterval(() => {
-        if (
-          checkingStartTimeRef.current !== null &&
-          Date.now() - checkingStartTimeRef.current > CHECK_TIMEOUT_MS
-        ) {
-          setCheckingTimedOut(true);
-          clearInterval(interval);
-        }
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isChecking, checkingTimedOut]);
+    if (!isChecking) return;
+    const timeoutId = setTimeout(() => setCheckingTimedOut(true), CHECK_TIMEOUT_MS);
+    return () => clearTimeout(timeoutId);
+  }, [isChecking]);
 
   let status: UpdateStatus;
   if (isChecking && !checkingTimedOut) status = "checking";

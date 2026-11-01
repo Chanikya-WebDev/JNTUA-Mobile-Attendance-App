@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useReducer, useRef } from "react";
 import {
+  AccessibilityInfo,
   Animated,
+  Easing,
   FlatList,
   Linking,
   Modal,
@@ -8,14 +10,13 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  useAnimatedValue,
   View,
 } from "react-native";
 import type { WebView as WebViewType } from "react-native-webview";
 import { WebView, WebViewMessageEvent, WebViewNavigation } from "react-native-webview";
 import {
-  autoSubmitFirstSemesterScript,
-  parseDetailedAttendanceAndGoHomeScript,
-  selectSubjectByIndexScript,
+  getPortalPageScript,
   AttendanceRecord,
   StudentInfo,
   SubjectAttendanceData,
@@ -49,18 +50,12 @@ const COLORS = {
   live: "#5db872",
   error: "#c64545",
   amber: "#e8a55a",
-  crab: "#d5795f",
-  handle: "#8a5a3b",
-  head: "#9aa0a6",
-  dTop: "#f2d8a0",
-  dMid: "#7d94a1",
-  dBase: "#4f6b78",
   overlay: "rgba(20, 20, 19, 0.58)",
 };
 
 const SERIF = Platform.OS === "ios" ? "Georgia" : "serif";
 const GITHUB_URL = "https://github.com/Chanikya-WebDev/JNTUA-Mobile-Attendance-App";
-const STALL_TIMEOUT_MS = 15000;
+const STALL_TIMEOUT_MS = 30000;
 
 const STATUS_COLOR: Record<AttendanceRecord["status"], string> = {
   Present: COLORS.success,
@@ -93,97 +88,6 @@ function Spike({ size = 13, color = COLORS.primary }: { size?: number; color?: s
   );
 }
 
-/* Claude crab — looping sync animation, pure Animated, no deps */
-function CrabScene() {
-  const walkX = useRef(new Animated.Value(-170)).current;
-  const hopY = useRef(new Animated.Value(0)).current;
-  const swing = useRef(new Animated.Value(14)).current;
-  const squish = useRef(new Animated.Value(1)).current;
-  const sparkOp = useRef(new Animated.Value(0)).current;
-  const sparkT = useRef(new Animated.Value(0)).current;
-  const blink = useRef(new Animated.Value(1)).current;
-  const legA = useRef(new Animated.Value(0)).current;
-  const legB = useRef(new Animated.Value(-2.5)).current;
-
-  useEffect(() => {
-    const t = (v: Animated.Value, to: number, d: number) =>
-      Animated.timing(v, { toValue: to, duration: d, useNativeDriver: true });
-    const anims = [
-      t(walkX, 0, 900),
-      Animated.loop(Animated.sequence([Animated.delay(200), t(hopY, -14, 420), t(hopY, 0, 420), Animated.delay(650)])),
-      Animated.loop(Animated.sequence([
-        t(swing, -8, 280), t(swing, 78, 200), t(squish, 0.5, 110),
-        Animated.parallel([t(squish, 1, 220), t(sparkOp, 1, 90), t(sparkT, 1, 420)]),
-        t(sparkOp, 0, 180), t(sparkT, 0, 0), t(swing, 14, 380), Animated.delay(420),
-      ])),
-      Animated.loop(Animated.sequence([Animated.delay(2600), t(blink, 0.12, 110), t(blink, 1, 110)])),
-      Animated.loop(Animated.parallel([
-        Animated.sequence([t(legA, -2.5, 220), t(legA, 0, 220)]),
-        Animated.sequence([t(legB, 0, 220), t(legB, -2.5, 220)]),
-      ])),
-    ];
-    anims.forEach((a) => a.start());
-    return () => anims.forEach((a) => a.stop());
-  }, [walkX, hopY, swing, squish, sparkOp, sparkT, blink, legA, legB]);
-
-  const rot = swing.interpolate({ inputRange: [-20, 90], outputRange: ["-20deg", "90deg"] });
-  const ringScale = sparkT.interpolate({ inputRange: [0, 1], outputRange: [0.4, 1.6] });
-  const ringOp = sparkT.interpolate({ inputRange: [0, 0.2, 1], outputRange: [0, 0.8, 0] });
-  const sparks = [
-    { dx: 14, dy: -14, c: COLORS.primary },
-    { dx: 4, dy: -22, c: COLORS.amber },
-    { dx: -10, dy: -14, c: COLORS.primary },
-  ];
-
-  return (
-    <View style={{ width: 250, height: 150 }}>
-      <Animated.View style={{ position: "absolute", width: 250, height: 150, transform: [{ translateX: walkX }] }}>
-        <View style={{ position: "absolute", left: 58, top: 140, width: 80, height: 6, backgroundColor: COLORS.ink }} />
-        <Animated.View style={{ position: "absolute", width: 250, height: 150, transform: [{ translateY: hopY }] }}>
-          <View style={{ position: "absolute", left: 36, top: 92, width: 14, height: 16, backgroundColor: COLORS.crab }} />
-          <View style={{ position: "absolute", left: 50, top: 68, width: 88, height: 56, backgroundColor: COLORS.crab }} />
-          <View style={{ position: "absolute", left: 138, top: 90, width: 12, height: 16, backgroundColor: COLORS.crab }} />
-          <Animated.View style={{ position: "absolute", left: 66, top: 82, width: 8, height: 16, backgroundColor: COLORS.ink, transform: [{ scaleY: blink }] }} />
-          <Animated.View style={{ position: "absolute", left: 114, top: 82, width: 8, height: 16, backgroundColor: COLORS.ink, transform: [{ scaleY: blink }] }} />
-          <Animated.View style={{ position: "absolute", left: 64, top: 124, width: 10, height: 16, backgroundColor: COLORS.crab, transform: [{ translateY: legA }] }} />
-          <Animated.View style={{ position: "absolute", left: 82, top: 124, width: 10, height: 16, backgroundColor: COLORS.crab, transform: [{ translateY: legB }] }} />
-          <Animated.View style={{ position: "absolute", left: 108, top: 124, width: 10, height: 16, backgroundColor: COLORS.crab, transform: [{ translateY: legA }] }} />
-          <Animated.View style={{ position: "absolute", left: 126, top: 124, width: 10, height: 16, backgroundColor: COLORS.crab, transform: [{ translateY: legB }] }} />
-          <Animated.View style={{ position: "absolute", left: 131, top: 44, width: 28, height: 116, transform: [{ rotate: rot }] }}>
-            <View style={{ position: "absolute", left: 0, top: 0, width: 28, height: 15, backgroundColor: COLORS.head }} />
-            <View style={{ position: "absolute", left: 11, top: 12, width: 6, height: 46, backgroundColor: COLORS.handle }} />
-          </Animated.View>
-        </Animated.View>
-      </Animated.View>
-
-      <Animated.View style={{ position: "absolute", left: 209, top: 112, width: 28, height: 48, transform: [{ scaleY: squish }] }}>
-        <View style={{ position: "absolute", left: 7, top: 0, width: 14, height: 8, backgroundColor: COLORS.dTop }} />
-        <View style={{ position: "absolute", left: 0, top: 8, width: 28, height: 16, backgroundColor: COLORS.dMid }} />
-      </Animated.View>
-      <View style={{ position: "absolute", left: 200, top: 136, width: 46, height: 10, backgroundColor: COLORS.dBase }} />
-
-      <Animated.View
-        style={{
-          position: "absolute", left: 205, top: 95, width: 30, height: 30, borderRadius: 15,
-          borderWidth: 2, borderColor: COLORS.primary, opacity: ringOp, transform: [{ scale: ringScale }],
-        }}
-      />
-      {sparks.map((s, i) => (
-        <Animated.View
-          key={i}
-          style={{
-            position: "absolute", left: 216, top: 100, width: 6, height: 6, backgroundColor: s.c, opacity: sparkOp,
-            transform: [
-              { translateX: sparkT.interpolate({ inputRange: [0, 1], outputRange: [0, s.dx] }) },
-              { translateY: sparkT.interpolate({ inputRange: [0, 1], outputRange: [0, s.dy] }) },
-            ],
-          }}
-        />
-      ))}
-    </View>
-  );
-}
-
 /* ------------------------------------------------------------------ */
 /*  State — unchanged workflow                                         */
 /* ------------------------------------------------------------------ */
@@ -199,7 +103,7 @@ interface AppState {
   selectedSubject: SubjectAttendanceData | null;
   hasPreviousResult: boolean;
   previousResult: PreviousAttendanceResult | null;
-  isSelectionError: boolean;
+  selectionError: string | null;
 }
 
 const initialState: AppState = {
@@ -214,7 +118,7 @@ const initialState: AppState = {
   selectedSubject: null,
   hasPreviousResult: false,
   previousResult: null,
-  isSelectionError: false,
+  selectionError: null,
 };
 
 function preserveSession(state: AppState, webViewKeyDelta: number): AppState {
@@ -231,12 +135,12 @@ type AppAction =
   | { type: "SET_LOGGED_IN" }
   | { type: "SET_STUDENT_INFO"; data: StudentInfo }
   | { type: "SET_SUBJECT_COUNT"; count: number }
-  | { type: "ADD_ATTENDANCE_ITEM"; data: SubjectAttendanceData }
+  | { type: "ADD_ATTENDANCE_ITEM"; index: number; data: SubjectAttendanceData }
   | { type: "SET_SCRAPING_FINISHED" }
   | { type: "SET_SELECTED_SUBJECT"; data: SubjectAttendanceData | null }
   | { type: "SET_PREVIOUS_RESULT"; result: PreviousAttendanceResult | null }
   | { type: "HYDRATE_PREVIOUS_RESULT"; data: PreviousAttendanceResult }
-  | { type: "SET_SELECTION_ERROR" }
+  | { type: "SET_SELECTION_ERROR"; message: string }
   | { type: "CLEAR_SELECTION_ERROR" };
 
 function appReducer(state: AppState, action: AppAction): AppState {
@@ -250,7 +154,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case "SET_SUBJECT_COUNT":
       return { ...state, totalSubjects: action.count };
     case "ADD_ATTENDANCE_ITEM": {
-      if (state.fetchedIndices.includes(state.currentIndex)) return state;
+      if (action.index !== state.currentIndex || state.fetchedIndices.includes(action.index)) return state;
       const nextIndex = state.currentIndex + 1;
       const finished = state.totalSubjects !== null && nextIndex >= state.totalSubjects;
       return {
@@ -264,7 +168,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case "SET_SCRAPING_FINISHED":
       return { ...state, isScrapingFinished: true };
     case "SET_SELECTION_ERROR":
-      return { ...state, isSelectionError: true };
+      return { ...state, selectionError: action.message };
     case "CLEAR_SELECTION_ERROR":
       return preserveSession(state, 0);
     case "SET_SELECTED_SUBJECT":
@@ -288,10 +192,13 @@ function appReducer(state: AppState, action: AppAction): AppState {
 }
 
 type MessagePayload =
+  | { type: "SCRAPING_STARTED"; stage: "home" | "subjects" | "attendance" }
   | { type: "STUDENT_INFO"; data: StudentInfo }
   | { type: "SUBJECT_COUNT"; count: number }
-  | { type: "ATTENDANCE_ITEM"; data: SubjectAttendanceData }
-  | { type: "SCRAPING_COMPLETE" };
+  | { type: "ATTENDANCE_ITEM"; index: number; data: SubjectAttendanceData }
+  | { type: "SCRAPING_COMPLETE" }
+  | { type: "SCRAPING_DIAGNOSTIC"; data: unknown }
+  | { type: "SCRAPING_ERROR"; message: string };
 
 export default function Index() {
   const webViewRef = useRef<WebViewType>(null);
@@ -306,30 +213,29 @@ export default function Index() {
   const {
     webViewKey, isLoggedIn, studentInfo, totalSubjects, fetchedIndices,
     subjectsData, isScrapingFinished, selectedSubject,
-    hasPreviousResult, previousResult, isSelectionError,
+    hasPreviousResult, previousResult, selectionError,
   } = state;
 
   const stateRef = useRef(state);
   useEffect(() => { stateRef.current = state; });
-  const lastActivityRef = useRef<number>(Date.now());
+  const lastActivityRef = useRef<number>(0);
+  const scraperStageRef = useRef<"home" | "subjects" | "attendance" | null>(null);
   const persistedSigRef = useRef<string | null>(null);
 
-  const handleFullReset = useCallback(() => dispatch({ type: "RESET" }), []);
+  const handleFullReset = useCallback(() => {
+    scraperStageRef.current = null;
+    dispatch({ type: "RESET" });
+  }, []);
   const handlePreviousAttendance = useCallback(() => {
     if (previousResult) dispatch({ type: "HYDRATE_PREVIOUS_RESULT", data: previousResult });
   }, [previousResult]);
 
-  const handleNavigationStateChange = useCallback((navState: WebViewNavigation) => {
+  const handleNavigationStateChange = useCallback((navState: Pick<WebViewNavigation, "url" | "loading">) => {
     const { url, loading } = navState;
     const { isLoggedIn: loggedIn, isScrapingFinished: scrapingFinished, currentIndex } = stateRef.current;
-    const shouldInject = !loading && !scrapingFinished;
-    if (url.includes("studenthome.php")) {
+    if (/\/(studenthome|studentsubjects|studentsubjectatt|studentcourseatt|studentsubatt)\.php(?:[?#]|$)/i.test(url)) {
       if (!loggedIn) dispatch({ type: "SET_LOGGED_IN" });
-      if (shouldInject) webViewRef.current?.injectJavaScript(autoSubmitFirstSemesterScript);
-    } else if (url.includes("studentsubjects.php") && shouldInject) {
-      webViewRef.current?.injectJavaScript(selectSubjectByIndexScript(currentIndex));
-    } else if (url.includes("studentsubatt.php") && shouldInject) {
-      webViewRef.current?.injectJavaScript(parseDetailedAttendanceAndGoHomeScript);
+      if (!loading && !scrapingFinished) webViewRef.current?.injectJavaScript(getPortalPageScript(currentIndex));
     }
   }, []);
 
@@ -338,10 +244,25 @@ export default function Index() {
       const payload = JSON.parse(event.nativeEvent.data) as MessagePayload;
       lastActivityRef.current = Date.now();
       switch (payload.type) {
+        case "SCRAPING_STARTED":
+          scraperStageRef.current = payload.stage;
+          dispatch({ type: "SET_LOGGED_IN" });
+          if (__DEV__) console.info("Attendance fetching started:", payload.stage);
+          break;
         case "STUDENT_INFO": dispatch({ type: "SET_STUDENT_INFO", data: payload.data }); break;
-        case "SUBJECT_COUNT": dispatch({ type: "SET_SUBJECT_COUNT", count: payload.count }); break;
-        case "ATTENDANCE_ITEM": dispatch({ type: "ADD_ATTENDANCE_ITEM", data: payload.data }); break;
+        case "SUBJECT_COUNT":
+          if (__DEV__) console.info("Attendance subjects found:", payload.count);
+          dispatch({ type: "SET_SUBJECT_COUNT", count: payload.count });
+          break;
+        case "ATTENDANCE_ITEM": dispatch({ type: "ADD_ATTENDANCE_ITEM", index: payload.index, data: payload.data }); break;
         case "SCRAPING_COMPLETE": dispatch({ type: "SET_SCRAPING_FINISHED" }); break;
+        case "SCRAPING_DIAGNOSTIC":
+          if (__DEV__) console.info("Attendance portal layout:", JSON.stringify(payload.data));
+          break;
+        case "SCRAPING_ERROR":
+          if (__DEV__) console.warn("Attendance fetching failed:", payload.message);
+          dispatch({ type: "SET_SELECTION_ERROR", message: payload.message });
+          break;
       }
     } catch (err) {
       console.warn("WebView Message Error:", err);
@@ -393,18 +314,53 @@ export default function Index() {
 
   /* Stall detection */
   useEffect(() => {
-    if (!isLoggedIn || isScrapingFinished) return;
+    if (!isLoggedIn || isScrapingFinished || selectionError) return;
     lastActivityRef.current = Date.now();
     const interval = setInterval(() => {
       if (Date.now() - lastActivityRef.current > STALL_TIMEOUT_MS) {
-        dispatch({ type: "SET_SELECTION_ERROR" });
+        const stage = scraperStageRef.current;
+        const message = stage
+          ? `The portal stopped responding while ${stage === "home" ? "opening your semester" : stage === "subjects" ? "opening a subject" : "reading attendance"}. Open the portal to check the page, then try again.`
+          : "Fetching could not start on the portal page. Open the portal to check whether your semester or login needs attention, then try again.";
+        dispatch({ type: "SET_SELECTION_ERROR", message });
         clearInterval(interval);
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [isLoggedIn, isScrapingFinished]);
+  }, [isLoggedIn, isScrapingFinished, selectionError]);
 
   const syncPct = totalSubjects ? Math.round((fetchedIndices.length / totalSubjects) * 100) : 0;
+  const isFetching = isLoggedIn && !isScrapingFinished && !selectionError;
+  const digging = useAnimatedValue(0);
+
+  useEffect(() => {
+    if (!isFetching) return;
+    let disposed = false;
+    const animation = Animated.loop(Animated.timing(digging, {
+      toValue: 1,
+      duration: 1400,
+      easing: Easing.linear,
+      useNativeDriver: true,
+      isInteraction: false,
+    }));
+    const updateMotion = (reduceMotion: boolean): void => {
+      animation.stop();
+      digging.setValue(0);
+      if (!reduceMotion && !disposed) animation.start();
+    };
+    const subscription = AccessibilityInfo.addEventListener("reduceMotionChanged", updateMotion);
+    void AccessibilityInfo.isReduceMotionEnabled().then((reduceMotion: boolean) => {
+      if (!disposed) updateMotion(reduceMotion);
+    }).catch(() => {
+      if (!disposed) animation.start();
+    });
+    return () => {
+      disposed = true;
+      subscription.remove();
+      animation.stop();
+      digging.setValue(0);
+    };
+  }, [digging, isFetching]);
 
   return (
     <View style={styles.container}>
@@ -412,6 +368,15 @@ export default function Index() {
         <View style={styles.updateBanner}>
           <Text style={styles.updateBannerText}>
             {update.status === "applying" ? "Applying update…" : "Checking for updates…"}
+          </Text>
+        </View>
+      )}
+
+      {!isLoggedIn && (
+        <View style={styles.loginNotice}>
+          <Text style={styles.loginNoticeTitle}>Before you log in</Text>
+          <Text style={styles.loginNoticeText}>
+            Wait for the “Verify you are human” check to show success before tapping Login.
           </Text>
         </View>
       )}
@@ -424,6 +389,14 @@ export default function Index() {
           ref={webViewRef}
           source={{ uri: "https://jntuaceastudents.classattendance.in/" }}
           onNavigationStateChange={handleNavigationStateChange}
+          onLoadEnd={(event) => handleNavigationStateChange(event.nativeEvent)}
+          onLoadProgress={(event) => {
+            if (event.nativeEvent.progress >= 0.5) {
+              handleNavigationStateChange({ url: event.nativeEvent.url, loading: false });
+            }
+          }}
+          injectedJavaScriptBeforeContentLoaded={isScrapingFinished ? undefined : getPortalPageScript(state.currentIndex)}
+          onError={(event) => dispatch({ type: "SET_SELECTION_ERROR", message: `The portal could not load: ${event.nativeEvent.description}` })}
           onMessage={handleMessage}
           javaScriptEnabled
           domStorageEnabled
@@ -438,24 +411,55 @@ export default function Index() {
       </View>
 
       {/* ---------- SYNC · opaque overlay, no webpage flash ---------- */}
-      {isLoggedIn && !isScrapingFinished && !isSelectionError && (
+      {isFetching && (
         <View style={styles.overlayFull}>
-          <CrabScene />
-          <Text style={styles.syncEyebrow}>SYNCING</Text>
-          <Text style={styles.syncTitle}>{"Reading your\nsemester"}</Text>
-          <Text style={styles.syncSub}>
-            {totalSubjects ? `Processed ${fetchedIndices.length} of ${totalSubjects} subjects` : "Authenticating session…"}
-          </Text>
-          <Text style={styles.syncPct}>
+          <View style={styles.digScene} accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+            <View style={styles.digBackdrop} />
+            <View style={styles.digGround} />
+            <View style={styles.digRock} />
+            <Animated.View style={[styles.digWorker, { transform: [{
+              translateY: digging.interpolate({ inputRange: [0, 0.4, 0.58, 1], outputRange: [0, -3, 2, 0] }),
+            }] }]}>
+              <View style={styles.digLegBack} />
+              <View style={styles.digLegFront} />
+              <View style={styles.digBody} />
+              <View style={styles.digHead} />
+              <View style={styles.digEye} />
+              <View style={styles.digHelmet} />
+              <View style={styles.digHelmetBrim} />
+              <Animated.View style={[styles.digSwing, { transform: [{ rotate: digging.interpolate({
+                inputRange: [0, 0.4, 0.58, 0.72, 1],
+                outputRange: ["-35deg", "-85deg", "85deg", "85deg", "-35deg"],
+              }) }] }]}>
+                <View style={styles.digArm} />
+                <View style={styles.digHandle} />
+                <View style={styles.digHammer} />
+              </Animated.View>
+            </Animated.View>
+            {[-1, 0, 1].map((direction: number) => (
+              <Animated.View key={direction} style={[styles.digChip, {
+                opacity: digging.interpolate({ inputRange: [0, 0.57, 0.6, 0.85, 1], outputRange: [0, 0, 1, 0, 0] }),
+                transform: [
+                  { translateX: digging.interpolate({ inputRange: [0, 0.58, 1], outputRange: [0, 0, direction * 38] }) },
+                  { translateY: digging.interpolate({ inputRange: [0, 0.58, 0.72, 1], outputRange: [0, 0, -26 - Math.abs(direction) * 10, 8] }) },
+                  { rotate: digging.interpolate({ inputRange: [0, 1], outputRange: ["0deg", `${direction * 150}deg`] }) },
+                ],
+              }]} />
+            ))}
+          </View>
+          <Text style={styles.syncTitle}>Digging up your attendance</Text>
+          <Text style={styles.syncPct} adjustsFontSizeToFit numberOfLines={1}>
             {syncPct}
             <Text style={styles.syncPctSign}>%</Text>
           </Text>
-          <Text style={styles.syncFine}>Secure session · jntuaceastudents.classattendance.in</Text>
+          <Text style={styles.syncDetail} accessibilityLiveRegion="polite">
+            {totalSubjects === null ? "Finding your subjects..." : `${fetchedIndices.length} of ${totalSubjects} subjects fetched`}
+          </Text>
         </View>
       )}
 
       {/* ---------- SELECTION ERROR · opaque overlay ---------- */}
-      {isSelectionError && isLoggedIn && !isScrapingFinished && (
+      {!!selectionError && isLoggedIn && !isScrapingFinished && (
         <View style={styles.overlayFull}>
           <View style={styles.errorCard}>
             <TouchableOpacity style={styles.closeIcon} onPress={() => dispatch({ type: "CLEAR_SELECTION_ERROR" })}>
@@ -464,8 +468,7 @@ export default function Index() {
             <Text style={styles.errorIcon}>!</Text>
             <Text style={styles.errorTitle}>Couldn’t load subjects right now</Text>
             <Text style={styles.errorBody}>
-              The attendance portal was recently updated, so the app can’t detect your semester or
-              subjects at the moment. This is a temporary issue — we’re working on a fix.
+              {selectionError}
             </Text>
             <TouchableOpacity style={styles.errorBtn} onPress={handleFullReset}>
               <Text style={styles.errorBtnText}>Try again</Text>
@@ -477,36 +480,30 @@ export default function Index() {
       {/* ---------- DASHBOARD · profile + overall scroll with the list ---------- */}
       {isLoggedIn && isScrapingFinished && (
         <View style={styles.dashboardContainer}>
-          <View style={styles.sigRow}>
-            <View style={styles.wordmark}>
-              <Spike />
-              <Text style={styles.wordmarkText}>Chanikya</Text>
-              <Text style={styles.wordmarkRole}>·dev</Text>
-            </View>
-            <TouchableOpacity style={styles.iconBtn} onPress={handleFullReset} activeOpacity={0.7}>
-              <Text style={styles.iconBtnText}>↺</Text>
-            </TouchableOpacity>
-          </View>
-
           <FlatList
             style={{ flex: 1 }}
             data={subjectsData}
             keyExtractor={(item, index) => `${item.subjectName}-${index}`}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 16 }}
+            contentContainerStyle={{ paddingTop: 12, paddingBottom: 16 }}
             ListHeaderComponent={
               <View>
-                {studentInfo && (
-                  <View style={styles.profileCard}>
-                    <Text style={styles.profileName} numberOfLines={1}>{studentInfo.name}</Text>
-                    <View style={styles.profileMetaRow}>
-                      <View style={styles.liveDot} />
-                      <Text style={styles.profileMeta} numberOfLines={1}>
-                        {studentInfo.admissionNo} • {studentInfo.className}
-                      </Text>
-                    </View>
+                <View style={styles.profileCard}>
+                  <View style={{ flex: 1, marginRight: 12 }}>
+                    <Text style={styles.profileName} numberOfLines={1}>{studentInfo?.name || "Attendance"}</Text>
+                    {studentInfo && (
+                      <View style={styles.profileMetaRow}>
+                        <View style={styles.liveDot} />
+                        <Text style={styles.profileMeta} numberOfLines={1}>
+                          {studentInfo.admissionNo} • {studentInfo.className}
+                        </Text>
+                      </View>
+                    )}
                   </View>
-                )}
+                  <TouchableOpacity style={styles.iconBtn} onPress={handleFullReset} activeOpacity={0.7}>
+                    <Text style={styles.iconBtnText}>↺</Text>
+                  </TouchableOpacity>
+                </View>
 
                 <View style={styles.overallCard}>
                   <View style={styles.overallTopRow}>
@@ -670,6 +667,16 @@ const styles = StyleSheet.create({
   },
   updateBannerText: { fontSize: 12, fontWeight: "600", color: COLORS.primaryActive, letterSpacing: 0.3 },
 
+  loginNotice: {
+    backgroundColor: COLORS.surfaceCard,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.hairline,
+  },
+  loginNoticeTitle: { fontSize: 14, fontWeight: "600", color: COLORS.primaryActive, marginBottom: 4 },
+  loginNoticeText: { fontSize: 13, lineHeight: 19, color: COLORS.body },
+
   hiddenWebView: { width: 0, height: 0, overflow: "hidden" },
   fullWebView: { flex: 1 },
 
@@ -696,7 +703,7 @@ const styles = StyleSheet.create({
 
   /* Opaque full-screen overlays — kill the webpage flash */
   overlayFull: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     zIndex: 10,
     backgroundColor: COLORS.canvas,
     alignItems: "center",
@@ -704,12 +711,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
   },
 
-  syncEyebrow: { fontSize: 11, fontWeight: "500", letterSpacing: 1.6, color: COLORS.primary, marginTop: 20 },
-  syncTitle: { fontFamily: SERIF, fontSize: 26, letterSpacing: -0.5, color: COLORS.ink, lineHeight: 31, marginTop: 10, textAlign: "center" },
-  syncSub: { fontSize: 12.5, color: COLORS.muted, marginTop: 8 },
-  syncPct: { fontFamily: SERIF, fontSize: 54, letterSpacing: -2, color: COLORS.primary, lineHeight: 60, marginTop: 16 },
-  syncPctSign: { fontSize: 24, color: COLORS.mutedSoft },
-  syncFine: { fontSize: 10.5, color: COLORS.mutedSoft, marginTop: 14, letterSpacing: 0.3 },
+  syncPct: { fontFamily: SERIF, fontSize: 96, letterSpacing: -3, color: COLORS.primary, lineHeight: 110, textAlign: "center" },
+  syncPctSign: { fontSize: 40, color: COLORS.mutedSoft },
+  syncTitle: { fontFamily: SERIF, fontSize: 23, color: COLORS.ink, textAlign: "center", marginTop: 12 },
+  syncDetail: { fontSize: 13, color: COLORS.muted, textAlign: "center", marginTop: 4 },
+  digScene: { width: 240, height: 180 },
+  digBackdrop: { position: "absolute", width: 158, height: 158, borderRadius: 79, backgroundColor: COLORS.surfaceCard, left: 36, top: 2 },
+  digGround: { position: "absolute", left: 12, right: 12, bottom: 15, height: 3, borderRadius: 2, backgroundColor: COLORS.creamStrong },
+  digRock: { position: "absolute", left: 148, bottom: 18, width: 48, height: 27, borderTopLeftRadius: 22, borderTopRightRadius: 15, backgroundColor: COLORS.mutedSoft },
+  digWorker: { position: "absolute", left: 54, top: 31, width: 124, height: 132 },
+  digHead: { position: "absolute", left: 28, top: 19, width: 30, height: 30, borderRadius: 12, backgroundColor: "#e6b58e" },
+  digEye: { position: "absolute", left: 50, top: 29, width: 3, height: 3, borderRadius: 2, backgroundColor: COLORS.ink },
+  digHelmet: { position: "absolute", left: 23, top: 7, width: 38, height: 22, borderTopLeftRadius: 20, borderTopRightRadius: 20, backgroundColor: COLORS.amber },
+  digHelmetBrim: { position: "absolute", left: 20, top: 24, width: 48, height: 6, borderRadius: 3, backgroundColor: COLORS.amber },
+  digBody: { position: "absolute", left: 23, top: 47, width: 37, height: 45, borderRadius: 11, backgroundColor: COLORS.primary, transform: [{ rotate: "-10deg" }] },
+  digLegBack: { position: "absolute", left: 23, top: 84, width: 15, height: 46, borderRadius: 6, backgroundColor: COLORS.body, transform: [{ rotate: "14deg" }] },
+  digLegFront: { position: "absolute", left: 48, top: 84, width: 15, height: 46, borderRadius: 6, backgroundColor: COLORS.ink, transform: [{ rotate: "-17deg" }] },
+  digSwing: { position: "absolute", left: 0, top: 19, width: 100, height: 90 },
+  digArm: { position: "absolute", left: 44, top: 39, width: 41, height: 13, borderRadius: 7, backgroundColor: "#e6b58e" },
+  digHandle: { position: "absolute", left: 79, top: 0, width: 7, height: 63, borderRadius: 3, backgroundColor: COLORS.primaryActive },
+  digHammer: { position: "absolute", left: 64, top: 0, width: 37, height: 20, borderRadius: 5, backgroundColor: COLORS.body },
+  digChip: { position: "absolute", left: 159, top: 131, width: 7, height: 7, borderRadius: 2, backgroundColor: COLORS.primary },
 
   errorCard: {
     width: "100%",
@@ -736,17 +758,16 @@ const styles = StyleSheet.create({
 
   /* Dashboard */
   dashboardContainer: { flex: 1, paddingHorizontal: 20 },
-  sigRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10, marginBottom: 4 },
-  wordmark: { flexDirection: "row", alignItems: "center" },
-  wordmarkText: { fontFamily: SERIF, fontStyle: "italic", fontSize: 23, letterSpacing: -0.4, color: COLORS.ink, marginLeft: 8 },
-  wordmarkRole: { fontSize: 10, fontWeight: "500", letterSpacing: 1.4, color: COLORS.mutedSoft, marginLeft: 7, marginTop: 4 },
   iconBtn: {
     width: 34, height: 34, borderRadius: 17, backgroundColor: COLORS.canvas,
     borderWidth: 1, borderColor: COLORS.hairline, alignItems: "center", justifyContent: "center",
   },
   iconBtnText: { fontSize: 15, color: COLORS.body, fontWeight: "600" },
 
-  profileCard: { backgroundColor: COLORS.surfaceDark, borderRadius: 12, padding: 18, marginBottom: 12 },
+  profileCard: {
+    flexDirection: "row", alignItems: "center",
+    backgroundColor: COLORS.surfaceDark, borderRadius: 12, padding: 18, marginBottom: 12,
+  },
   profileName: { fontFamily: SERIF, fontSize: 24, letterSpacing: -0.5, color: COLORS.onDark },
   profileMetaRow: { flexDirection: "row", alignItems: "center", marginTop: 6 },
   liveDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: COLORS.live, marginRight: 7 },
